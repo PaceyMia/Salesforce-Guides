@@ -469,94 +469,20 @@
   </div>
 </div>
 
-<!-- BONUS: CONFETTI LWC FROM GITHUB -->
+<!-- BONUS: CONFETTI LWC TEASER -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#EC489918;color:var(--pink)">🎉</div>
     <div>
-      <div class="phase-title">Bonus: Install the Confetti LWC from GitHub</div>
-      <div class="phase-desc">No git knowledge. No command-line typing. Claude does the work.</div>
+      <div class="phase-title">Bonus: Install a real component from GitHub</div>
+      <div class="phase-desc">Put your new setup to work straight away.</div>
     </div>
   </div>
 
-  <div class="callout callout-success" style="margin-bottom:16px">
-    <span class="callout-label">How easy this actually was</span>
-    Paste a folder path, approve a few prompts, drag-and-drop to finish. That is the whole thing. Here is what happened step by step.
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#EC489918;color:var(--pink)">1</div>
-      <div class="step-content">
-        <div class="step-title">Download the code from GitHub — no git required</div>
-        <div class="step-body">
-          <p>Go to the GitHub repo. Click the green <strong>Code</strong> button then <strong>Download ZIP</strong>. Save it somewhere you can find it (Downloads is fine). Unzip it.</p>
-          <div class="callout callout-tip">
-            <span class="callout-label">That is the only step you do yourself</span>
-            Everything after this — moving files, running the deploy, wiring it up — Claude handles.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#EC489918;color:var(--pink)">2</div>
-      <div class="step-content">
-        <div class="step-title">Tell Claude where you put it</div>
-        <div class="step-body">
-          <p>Open Claude Code (<code>Ctrl + Esc</code>) and paste this prompt — just swap in your actual folder path:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Claude Code prompt</span>
-            <span class="cmd-line">I have downloaded and unzipped the confetti LWC from GitHub.</span>
-            <span class="cmd-line">The unzipped folder is at: C:\Users\YourName\Downloads\confetti-lwc-main</span>
-            <span class="cmd-line">Please copy the component files into this project and deploy to my connected org.</span>
-          </div>
-          <p style="margin-top:10px">Claude knows your project structure. It will move the four component parts — the confetti widget, helper code, settings object, and starter colour themes — into the right spots automatically.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#EC489918;color:var(--pink)">3</div>
-      <div class="step-content">
-        <div class="step-title">Approve the permission prompts as they appear</div>
-        <div class="step-body">
-          <p>Claude will pop up a permission prompt each time it wants to run a terminal command. You will see this a few times. That is a built-in safety check — not a sign of trouble.</p>
-          <p>In this specific install, each prompt maps to one safe action:</p>
-          <div class="ui-mock">
-            <span class="ui-mock-label">What each prompt is actually doing</span>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">1</div><span><code>sf org list</code> — checks which org is connected. Reads only, changes nothing.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">2</div><span><code>Copy-Item</code> — moves your downloaded files into the project folder. Stays entirely inside your own machine.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">3</div><span><code>sf project deploy start</code> — uploads the component to your already-connected org. Adds new pieces only, removes nothing.</span></div>
-          </div>
-          <div class="callout callout-warn">
-            <span class="callout-label">Good habit to keep</span>
-            It is safe to approve all three of these because each one acts only on your own downloaded files and your own connected org — nothing reaches outside that scope. That said, it is always worth a quick glance at what a prompt says before approving rather than auto-approving everything forever.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#EC489918;color:var(--pink)">4</div>
-      <div class="step-content">
-        <div class="step-title">Drag and drop to finish — in Salesforce, not VS Code</div>
-        <div class="step-body">
-          <p>Once Claude confirms the deploy succeeded, go to your Salesforce org. Open any record page in <strong>App Builder</strong> (Setup → App Builder, or the gear icon on a record → Edit Page).</p>
-          <p>Find <strong>Custom Confetti</strong> in the component list on the left. Drag it onto the page. Fill in three boxes — the object API name, the field to watch, and the value that triggers the confetti. Save and activate.</p>
-          <div class="callout callout-success">
-            <span class="callout-label">Done</span>
-            Go to a record, set your field to the trigger value, and watch it go. Total effort: paste a folder path, approve three prompts, drag-and-drop.
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="callout callout-tip">
+    <span class="callout-label">Try it now you're set up</span>
+    Now that VS Code, your org, and Claude Code are all connected, the fastest way to see it all working together is to install something real. The <strong>Confetti LWC</strong> guide walks through grabbing a component from GitHub, having Claude deploy it to your org, and dragging it onto a record page — paste a folder path, approve a few prompts, drag-and-drop to finish.
+    <div style="margin-top:10px"><a href="confetti-lwc-install.html" style="color:var(--pink);font-weight:600">→ Install the Confetti LWC from GitHub</a></div>
   </div>
 </div>
 
