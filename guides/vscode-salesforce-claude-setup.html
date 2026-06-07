@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VS Code + Salesforce Setup Guide Â· Mia's Admin Playbook</title>
+<title>VS Code + Salesforce Setup Guide · Mia's Admin Playbook</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -120,10 +120,10 @@
 </head>
 <body>
 
-<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">â† All guides</a>
-<div class="doc-tag">Admin Setup Guide Â· Windows Â· Dev Org</div>
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+<div class="doc-tag">Admin Setup Guide · Windows · Dev Org</div>
 <h1>VS Code + Salesforce +<br><span>Claude in 45 minutes</span></h1>
-<p class="subtitle">A plain-English guide for <strong>Salesforce admins</strong> who have never opened a terminal.<br>Starting from absolute zero â€” no VS Code, no Salesforce CLI, nothing.</p>
+<p class="subtitle">A plain-English guide for <strong>Salesforce admins</strong> who have never opened a terminal.<br>Starting from absolute zero — no VS Code, no Salesforce CLI, nothing.</p>
 
 <!-- PHASE NAV -->
 <div class="phase-nav">
@@ -134,7 +134,7 @@
   <div class="phase-nav-item p5"><span class="phase-num">5</span>Claude<br>Code</div>
 </div>
 
-<!-- â•â•â• PHASE 1 â•â•â• -->
+<!-- ═══ PHASE 1 ═══ -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#00A1E018;color:var(--blue)">1</div>
@@ -150,8 +150,8 @@
       <div class="step-content">
         <div class="step-title">Download VS Code</div>
         <div class="step-body">
-          <p>Go to <strong>code.visualstudio.com</strong> â€” it will auto-detect Windows and show you the download button. Click the big blue <strong>Download for Windows</strong> button.</p>
-          <a class="dl-btn" href="https://code.visualstudio.com/download">code.visualstudio.com/download â†—</a>
+          <p>Go to <strong>code.visualstudio.com</strong> — it will auto-detect Windows and show you the download button. Click the big blue <strong>Download for Windows</strong> button.</p>
+          <a class="dl-btn" href="https://code.visualstudio.com/download">code.visualstudio.com/download ↗</a>
         </div>
       </div>
     </div>
@@ -163,9 +163,9 @@
       <div class="step-content">
         <div class="step-title">Run the installer</div>
         <div class="step-body">
-          <p>Open the downloaded file (it'll be something like <code>VSCodeUserSetup-x64-1.xx.x.exe</code>). Click through the installer â€” all defaults are fine.</p>
+          <p>Open the downloaded file (it'll be something like <code>VSCodeUserSetup-x64-1.xx.x.exe</code>). Click through the installer — all defaults are fine.</p>
           <div class="callout callout-tip">
-            <span class="callout-label">âœ“ One setting to check</span>
+            <span class="callout-label">✓ One setting to check</span>
             On the "Select Additional Tasks" screen, tick <strong>"Add to PATH"</strong> if it's not already ticked. This lets you open VS Code from the terminal later.
           </div>
         </div>
@@ -179,10 +179,10 @@
       <div class="step-content">
         <div class="step-title">Open VS Code</div>
         <div class="step-body">
-          <p>Launch it from Start menu or desktop. You should see a welcome screen with a dark sidebar on the left. That's it â€” VS Code is installed.</p>
+          <p>Launch it from Start menu or desktop. You should see a welcome screen with a dark sidebar on the left. That's it — VS Code is installed.</p>
           <div class="callout callout-warn">
-            <span class="callout-label">âš  First-time popup</span>
-            Windows may ask "Do you trust the authors of files in this folder?" â€” click <strong>Yes, I trust the authors</strong>. You'll see this every time you open a new project folder.
+            <span class="callout-label">⚠ First-time popup</span>
+            Windows may ask "Do you trust the authors of files in this folder?" — click <strong>Yes, I trust the authors</strong>. You'll see this every time you open a new project folder.
           </div>
         </div>
       </div>
@@ -190,7 +190,7 @@
   </div>
 </div>
 
-<!-- â•â•â• PHASE 2 â•â•â• -->
+<!-- ═══ PHASE 2 ═══ -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#F2652218;color:var(--orange)">2</div>
@@ -202,7 +202,7 @@
 
   <div class="callout callout-tip" style="margin-bottom:16px">
     <span class="callout-label">What is the Salesforce CLI?</span>
-    Think of it like a remote control for your org that lives in your computer. The VS Code extensions use it behind the scenes to push and pull metadata, run deployments, and authenticate. You don't need to memorise commands â€” the extensions give you buttons for most things.
+    Think of it like a remote control for your org that lives in your computer. The VS Code extensions use it behind the scenes to push and pull metadata, run deployments, and authenticate. You don't need to memorise commands — the extensions give you buttons for most things.
   </div>
 
   <div class="step">
@@ -212,8 +212,8 @@
         <div class="step-title">Download the Salesforce CLI</div>
         <div class="step-body">
           <p>Go to the Salesforce CLI download page and get the Windows installer (<code>.exe</code> file).</p>
-          <a class="dl-btn orange" href="https://developer.salesforce.com/tools/salesforcecli">developer.salesforce.com/tools/salesforcecli â†—</a>
-          <p style="margin-top:10px">Look for <strong>Download for Windows</strong>. Run the installer â€” click through all defaults.</p>
+          <a class="dl-btn orange" href="https://developer.salesforce.com/tools/salesforcecli">developer.salesforce.com/tools/salesforcecli ↗</a>
+          <p style="margin-top:10px">Look for <strong>Download for Windows</strong>. Run the installer — click through all defaults.</p>
         </div>
       </div>
     </div>
@@ -227,17 +227,17 @@
         <div class="step-body">
           <div class="callout callout-warn">
             <span class="callout-label">Do this before testing</span>
-            <strong>Close VS Code completely and reopen it</strong> before running the command below. The CLI installer updates your system PATH and VS Code won't pick it up until it restarts. Don't just close the terminal tab â€” close the whole application.
+            <strong>Close VS Code completely and reopen it</strong> before running the command below. The CLI installer updates your system PATH and VS Code won't pick it up until it restarts. Don't just close the terminal tab — close the whole application.
           </div>
-          <p>Once VS Code is back open, go to <strong>Terminal â†’ New Terminal</strong>. A panel will open at the bottom. Type:</p>
+          <p>Once VS Code is back open, go to <strong>Terminal → New Terminal</strong>. A panel will open at the bottom. Type:</p>
           <div class="cmd-block">
             <span class="cmd-label">Terminal</span>
             <span class="cmd-line">sf --version</span>
           </div>
-          <p>You should see something like <code>@salesforce/cli/2.xx.xx win32-x64</code>. If you see that â€” you're good.</p>
+          <p>You should see something like <code>@salesforce/cli/2.xx.xx win32-x64</code>. If you see that — you're good.</p>
           <div class="callout callout-danger">
             <span class="callout-label">Still says 'sf is not recognised' after reopening?</span>
-            Do a full Windows restart â€” not just VS Code. Sometimes the PATH update needs a full system restart to take effect. After rebooting, open VS Code and try the command again.
+            Do a full Windows restart — not just VS Code. Sometimes the PATH update needs a full system restart to take effect. After rebooting, open VS Code and try the command again.
           </div>
         </div>
       </div>
@@ -245,7 +245,7 @@
   </div>
 </div>
 
-<!-- â•â•â• PHASE 3 â•â•â• -->
+<!-- ═══ PHASE 3 ═══ -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#8B5CF618;color:var(--purple)">3</div>
@@ -280,12 +280,12 @@
             One click installs everything: Apex language support, Lightning Web Components support, Salesforce CLI integration, SOQL query runner, and more. You don't need to install them individually.
           </div>
           <div class="callout callout-danger">
-            <span class="callout-label">âš  Do NOT install "Salesforce Extension Pack (Expanded)"</span>
-            In the search results you'll also see <strong>Salesforce Extension Pack (Expanded)</strong> â€” do not install this. It conflicts with the standard pack and will cause errors. You only need the plain <strong>Salesforce Extension Pack</strong>.
+            <span class="callout-label">⚠ Do NOT install "Salesforce Extension Pack (Expanded)"</span>
+            In the search results you'll also see <strong>Salesforce Extension Pack (Expanded)</strong> — do not install this. It conflicts with the standard pack and will cause errors. You only need the plain <strong>Salesforce Extension Pack</strong>.
           </div>
           <div class="ui-mock">
             <span class="ui-mock-label">What you'll see in the extensions panel</span>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">SF</div><span><strong>Salesforce Extension Pack</strong> â€” Salesforce Â· â˜… 4.5 Â· Installing...</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">SF</div><span><strong>Salesforce Extension Pack</strong> — Salesforce · ★ 4.5 · Installing...</span></div>
             <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#8B5CF620;color:var(--purple)">AP</div><span>Salesforce Apex Language Server (installs automatically)</span></div>
             <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">LW</div><span>Lightning Web Components (installs automatically)</span></div>
           </div>
@@ -307,7 +307,7 @@
   </div>
 </div>
 
-<!-- â•â•â• PHASE 4 â•â•â• -->
+<!-- ═══ PHASE 4 ═══ -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
@@ -319,7 +319,7 @@
 
   <div class="callout callout-warn" style="margin-bottom:16px">
     <span class="callout-label">Before you start</span>
-    You need a folder on your computer to store your project. Create one now â€” something like <code>C:\Users\YourName\Documents\salesforce-dev</code>. Don't use a OneDrive or cloud-synced folder for this â€” it can cause permission issues.
+    You need a folder on your computer to store your project. Create one now — something like <code>C:\Users\YourName\Documents\salesforce-dev</code>. Don't use a OneDrive or cloud-synced folder for this — it can cause permission issues.
   </div>
 
   <div class="step">
@@ -328,7 +328,7 @@
       <div class="step-content">
         <div class="step-title">Open your project folder in VS Code</div>
         <div class="step-body">
-          <p>Go to <strong>File â†’ Open Folder</strong> and navigate to the folder you just created. Click <strong>Select Folder</strong>. VS Code will reload with that folder open in the sidebar.</p>
+          <p>Go to <strong>File → Open Folder</strong> and navigate to the folder you just created. Click <strong>Select Folder</strong>. VS Code will reload with that folder open in the sidebar.</p>
         </div>
       </div>
     </div>
@@ -340,15 +340,15 @@
       <div class="step-content">
         <div class="step-title">Create a new SFDX project</div>
         <div class="step-body">
-          <p>Press <code>Ctrl + Shift + P</code> to open the Command Palette. This is the most important keyboard shortcut in VS Code â€” it lets you search for any command.</p>
+          <p>Press <code>Ctrl + Shift + P</code> to open the Command Palette. This is the most important keyboard shortcut in VS Code — it lets you search for any command.</p>
           <p>Type: <code>SFDX: Create Project with Manifest</code> and press Enter.</p>
           <div class="ui-mock">
-            <span class="ui-mock-label">Command palette â€” what to type</span>
+            <span class="ui-mock-label">Command palette — what to type</span>
             <div class="ui-mock-item" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7DD3FC">
               > SFDX: Create Project with Manifest
             </div>
           </div>
-          <p style="margin-top:10px">It will ask for a project name â€” call it something like <code>dev-org-project</code>. Press Enter. Choose your folder when prompted. VS Code will create the project structure automatically.</p>
+          <p style="margin-top:10px">It will ask for a project name — call it something like <code>dev-org-project</code>. Press Enter. Choose your folder when prompted. VS Code will create the project structure automatically.</p>
         </div>
       </div>
     </div>
@@ -361,11 +361,11 @@
         <div class="step-title">Authorise (connect) your Developer Edition org</div>
         <div class="step-body">
           <p>Press <code>Ctrl + Shift + P</code> again. Type: <code>SFDX: Authorize an Org</code> and press Enter.</p>
-          <p>It will ask: <strong>What type of org?</strong> â€” choose <strong>Production</strong> (Developer Edition orgs use the production login URL).</p>
-          <p>It will ask for an alias â€” type something easy like <code>mydevorg</code>.</p>
+          <p>It will ask: <strong>What type of org?</strong> — choose <strong>Production</strong> (Developer Edition orgs use the production login URL).</p>
+          <p>It will ask for an alias — type something easy like <code>mydevorg</code>.</p>
           <p>Your browser will open automatically and take you to the Salesforce login page. <strong>Log in with your Developer Edition credentials.</strong> Click Allow when asked for permissions.</p>
           <div class="callout callout-success">
-            <span class="callout-label">âœ“ Success looks like this</span>
+            <span class="callout-label">✓ Success looks like this</span>
             VS Code terminal will show: <code>Successfully authorized [youremail@example.com] with org ID 00D...</code> and the bottom status bar of VS Code will show your org name.
           </div>
           <div class="callout callout-tip">
@@ -383,9 +383,9 @@
       <div class="step-content">
         <div class="step-title">Pull metadata from your org (optional but useful)</div>
         <div class="step-body">
-          <p>To get a local copy of your org's metadata â€” LWCs, Apex classes, flows â€” right-click on the <code>manifest/package.xml</code> file in your sidebar and select <strong>SFDX: Retrieve Source in Manifest from Org</strong>.</p>
+          <p>To get a local copy of your org's metadata — LWCs, Apex classes, flows — right-click on the <code>manifest/package.xml</code> file in your sidebar and select <strong>SFDX: Retrieve Source in Manifest from Org</strong>.</p>
           <div class="callout callout-warn">
-            <span class="callout-label">âš  Dev org only â€” don't do this on a real org without guidance</span>
+            <span class="callout-label">⚠ Dev org only — don't do this on a real org without guidance</span>
             This pulls your org's metadata to your local machine. For a Developer Edition org it's fine. For a production or sandbox org, make sure you know what you're doing first.
           </div>
         </div>
@@ -394,7 +394,7 @@
   </div>
 </div>
 
-<!-- â•â•â• PHASE 5 â•â•â• -->
+<!-- ═══ PHASE 5 ═══ -->
 <div class="phase">
   <div class="phase-header">
     <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
@@ -406,7 +406,7 @@
 
   <div class="callout callout-tip" style="margin-bottom:16px">
     <span class="callout-label">What is Claude Code?</span>
-    Claude Code is a version of Claude that runs inside VS Code and can see your actual project files. Ask it about your org's metadata, get it to help you build or fix components, or diagnose errors â€” all with the context of your real project sitting right there. You need a Claude Pro subscription (or higher) to use it.
+    Claude Code is a version of Claude that runs inside VS Code and can see your actual project files. Ask it about your org's metadata, get it to help you build or fix components, or diagnose errors — all with the context of your real project sitting right there. You need a Claude Pro subscription (or higher) to use it.
   </div>
 
   <div class="step">
@@ -419,10 +419,10 @@
           <p>Look for the extension by <strong>Anthropic</strong> and click <strong>Install</strong>.</p>
           <div class="ui-mock">
             <span class="ui-mock-label">What you're looking for in the Extensions panel</span>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F59E0B20;color:var(--amber)">âœ³</div><span><strong>Claude Code</strong> â€” Anthropic Â· The extension that puts Claude inside VS Code</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F59E0B20;color:var(--amber)">✳</div><span><strong>Claude Code</strong> — Anthropic · The extension that puts Claude inside VS Code</span></div>
           </div>
           <div class="callout callout-success">
-            <span class="callout-label">âœ“ That's it â€” no terminal commands needed</span>
+            <span class="callout-label">✓ That's it — no terminal commands needed</span>
             Installing the extension this way handles everything automatically in the background. You don't need to run any PowerShell commands or touch the terminal.
           </div>
         </div>
@@ -436,7 +436,7 @@
       <div class="step-content">
         <div class="step-title">Sign in with your Claude account</div>
         <div class="step-body">
-          <p>After the extension installs, a sign-in prompt will appear. Click <strong>Sign in to Claude</strong>. Your browser will open â€” log in with the same Claude account you use at claude.ai.</p>
+          <p>After the extension installs, a sign-in prompt will appear. Click <strong>Sign in to Claude</strong>. Your browser will open — log in with the same Claude account you use at claude.ai.</p>
           <p>Click <strong>Allow</strong> when asked for permissions, then return to VS Code.</p>
           <div class="callout callout-warn">
             <span class="callout-label">You need a paid Claude plan</span>
@@ -453,15 +453,15 @@
       <div class="step-content">
         <div class="step-title">Open Claude Code and test it</div>
         <div class="step-body">
-          <p>Press <code>Ctrl + Esc</code> to open the Claude Code panel. You'll see a chat input box appear â€” this is Claude, running with access to your project files.</p>
+          <p>Press <code>Ctrl + Esc</code> to open the Claude Code panel. You'll see a chat input box appear — this is Claude, running with access to your project files.</p>
           <p>Type this to test it:</p>
           <div class="cmd-block">
             <span class="cmd-label">Claude Code prompt</span>
             <span class="cmd-line">What files are in this project?</span>
           </div>
           <div class="callout callout-success">
-            <span class="callout-label">âœ“ How to know it's working</span>
-            Claude should list your actual Salesforce project folders â€” force-app, manifest, lwc etc. If it does that, it's reading your real project. That's the difference between this and the regular Claude chat window.
+            <span class="callout-label">✓ How to know it's working</span>
+            Claude should list your actual Salesforce project folders — force-app, manifest, lwc etc. If it does that, it's reading your real project. That's the difference between this and the regular Claude chat window.
           </div>
         </div>
       </div>
@@ -472,7 +472,7 @@
 <!-- BONUS: CONFETTI LWC FROM GITHUB -->
 <div class="phase">
   <div class="phase-header">
-    <div class="phase-badge" style="background:#EC489918;color:var(--pink)">ðŸŽ‰</div>
+    <div class="phase-badge" style="background:#EC489918;color:var(--pink)">🎉</div>
     <div>
       <div class="phase-title">Bonus: Install the Confetti LWC from GitHub</div>
       <div class="phase-desc">No git knowledge. No command-line typing. Claude does the work.</div>
@@ -488,12 +488,12 @@
     <div class="step-header">
       <div class="step-num" style="background:#EC489918;color:var(--pink)">1</div>
       <div class="step-content">
-        <div class="step-title">Download the code from GitHub â€” no git required</div>
+        <div class="step-title">Download the code from GitHub — no git required</div>
         <div class="step-body">
           <p>Go to the GitHub repo. Click the green <strong>Code</strong> button then <strong>Download ZIP</strong>. Save it somewhere you can find it (Downloads is fine). Unzip it.</p>
           <div class="callout callout-tip">
             <span class="callout-label">That is the only step you do yourself</span>
-            Everything after this â€” moving files, running the deploy, wiring it up â€” Claude handles.
+            Everything after this — moving files, running the deploy, wiring it up — Claude handles.
           </div>
         </div>
       </div>
@@ -506,14 +506,14 @@
       <div class="step-content">
         <div class="step-title">Tell Claude where you put it</div>
         <div class="step-body">
-          <p>Open Claude Code (<code>Ctrl + Esc</code>) and paste this prompt â€” just swap in your actual folder path:</p>
+          <p>Open Claude Code (<code>Ctrl + Esc</code>) and paste this prompt — just swap in your actual folder path:</p>
           <div class="cmd-block">
             <span class="cmd-label">Claude Code prompt</span>
             <span class="cmd-line">I have downloaded and unzipped the confetti LWC from GitHub.</span>
             <span class="cmd-line">The unzipped folder is at: C:\Users\YourName\Downloads\confetti-lwc-main</span>
             <span class="cmd-line">Please copy the component files into this project and deploy to my connected org.</span>
           </div>
-          <p style="margin-top:10px">Claude knows your project structure. It will move the four component parts â€” the confetti widget, helper code, settings object, and starter colour themes â€” into the right spots automatically.</p>
+          <p style="margin-top:10px">Claude knows your project structure. It will move the four component parts — the confetti widget, helper code, settings object, and starter colour themes — into the right spots automatically.</p>
         </div>
       </div>
     </div>
@@ -525,17 +525,17 @@
       <div class="step-content">
         <div class="step-title">Approve the permission prompts as they appear</div>
         <div class="step-body">
-          <p>Claude will pop up a permission prompt each time it wants to run a terminal command. You will see this a few times. That is a built-in safety check â€” not a sign of trouble.</p>
+          <p>Claude will pop up a permission prompt each time it wants to run a terminal command. You will see this a few times. That is a built-in safety check — not a sign of trouble.</p>
           <p>In this specific install, each prompt maps to one safe action:</p>
           <div class="ui-mock">
             <span class="ui-mock-label">What each prompt is actually doing</span>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">1</div><span><code>sf org list</code> â€” checks which org is connected. Reads only, changes nothing.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">2</div><span><code>Copy-Item</code> â€” moves your downloaded files into the project folder. Stays entirely inside your own machine.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">3</div><span><code>sf project deploy start</code> â€” uploads the component to your already-connected org. Adds new pieces only, removes nothing.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">1</div><span><code>sf org list</code> — checks which org is connected. Reads only, changes nothing.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">2</div><span><code>Copy-Item</code> — moves your downloaded files into the project folder. Stays entirely inside your own machine.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">3</div><span><code>sf project deploy start</code> — uploads the component to your already-connected org. Adds new pieces only, removes nothing.</span></div>
           </div>
           <div class="callout callout-warn">
             <span class="callout-label">Good habit to keep</span>
-            It is safe to approve all three of these because each one acts only on your own downloaded files and your own connected org â€” nothing reaches outside that scope. That said, it is always worth a quick glance at what a prompt says before approving rather than auto-approving everything forever.
+            It is safe to approve all three of these because each one acts only on your own downloaded files and your own connected org — nothing reaches outside that scope. That said, it is always worth a quick glance at what a prompt says before approving rather than auto-approving everything forever.
           </div>
         </div>
       </div>
@@ -546,10 +546,10 @@
     <div class="step-header">
       <div class="step-num" style="background:#EC489918;color:var(--pink)">4</div>
       <div class="step-content">
-        <div class="step-title">Drag and drop to finish â€” in Salesforce, not VS Code</div>
+        <div class="step-title">Drag and drop to finish — in Salesforce, not VS Code</div>
         <div class="step-body">
-          <p>Once Claude confirms the deploy succeeded, go to your Salesforce org. Open any record page in <strong>App Builder</strong> (Setup â†’ App Builder, or the gear icon on a record â†’ Edit Page).</p>
-          <p>Find <strong>Custom Confetti</strong> in the component list on the left. Drag it onto the page. Fill in three boxes â€” the object API name, the field to watch, and the value that triggers the confetti. Save and activate.</p>
+          <p>Once Claude confirms the deploy succeeded, go to your Salesforce org. Open any record page in <strong>App Builder</strong> (Setup → App Builder, or the gear icon on a record → Edit Page).</p>
+          <p>Find <strong>Custom Confetti</strong> in the component list on the left. Drag it onto the page. Fill in three boxes — the object API name, the field to watch, and the value that triggers the confetti. Save and activate.</p>
           <div class="callout callout-success">
             <span class="callout-label">Done</span>
             Go to a record, set your field to the trigger value, and watch it go. Total effort: paste a folder path, approve three prompts, drag-and-drop.
@@ -572,46 +572,46 @@
 
   <div class="trouble-item">
     <div class="trouble-q">Terminal says 'sf is not recognised' after installing the Salesforce CLI</div>
-    <div class="trouble-a"><strong>Close VS Code completely and reopen it</strong> â€” don't just close the terminal tab, close the whole application. Open a new terminal and try again. If it still fails, do a full Windows restart. The CLI installer updates your system PATH and Windows sometimes needs a full reboot to pick it up.</div>
+    <div class="trouble-a"><strong>Close VS Code completely and reopen it</strong> — don't just close the terminal tab, close the whole application. Open a new terminal and try again. If it still fails, do a full Windows restart. The CLI installer updates your system PATH and Windows sometimes needs a full reboot to pick it up.</div>
   </div>
 
   <div class="trouble-item">
     <div class="trouble-q">The browser opened for org auth but nothing happened in VS Code</div>
-    <div class="trouble-a">Check that you clicked <strong>Allow</strong> on the Salesforce permissions screen in the browser. VS Code waits for that confirmation before proceeding. If you closed the browser window before clicking Allow, run the authorise command again from the Command Palette (<code>Ctrl+Shift+P</code> â†’ SFDX: Authorize an Org).</div>
+    <div class="trouble-a">Check that you clicked <strong>Allow</strong> on the Salesforce permissions screen in the browser. VS Code waits for that confirmation before proceeding. If you closed the browser window before clicking Allow, run the authorise command again from the Command Palette (<code>Ctrl+Shift+P</code> → SFDX: Authorize an Org).</div>
   </div>
 
   <div class="trouble-item">
     <div class="trouble-q">Claude Code extension installed but Ctrl+Esc doesn't open anything</div>
-    <div class="trouble-a">Try <code>Ctrl+Shift+P</code> and search for "Claude Code" to find the open panel command manually. If nothing appears, reload VS Code â€” go to <code>Ctrl+Shift+P</code> â†’ "Reload Window". If you're still not signed in, the panel will prompt you to log in first.</div>
+    <div class="trouble-a">Try <code>Ctrl+Shift+P</code> and search for "Claude Code" to find the open panel command manually. If nothing appears, reload VS Code — go to <code>Ctrl+Shift+P</code> → "Reload Window". If you're still not signed in, the panel will prompt you to log in first.</div>
   </div>
 
   <div class="trouble-item">
     <div class="trouble-q">Claude Code asks me to sign in every time I open VS Code</div>
-    <div class="trouble-a">This can happen if VS Code doesn't have permission to store credentials. Try signing in again â€” it's quick. If it keeps happening, check that you're running VS Code as your normal user (not as Administrator), as credential storage behaves differently in elevated mode.</div>
+    <div class="trouble-a">This can happen if VS Code doesn't have permission to store credentials. Try signing in again — it's quick. If it keeps happening, check that you're running VS Code as your normal user (not as Administrator), as credential storage behaves differently in elevated mode.</div>
   </div>
 
   <div class="trouble-item">
-    <div class="trouble-q">Deployment failed â€” 'This component is not available for this page type'</div>
-    <div class="trouble-a">Open your <code>js-meta.xml</code> file and check the <code>&lt;targets&gt;</code> section. It needs to include <code>lightning__AppPage</code> or <code>lightning__RecordPage</code> depending on where you want to place it. Ask Claude Code to fix the meta file for you â€” paste the error and it will diagnose it against your actual file.</div>
+    <div class="trouble-q">Deployment failed — 'This component is not available for this page type'</div>
+    <div class="trouble-a">Open your <code>js-meta.xml</code> file and check the <code>&lt;targets&gt;</code> section. It needs to include <code>lightning__AppPage</code> or <code>lightning__RecordPage</code> depending on where you want to place it. Ask Claude Code to fix the meta file for you — paste the error and it will diagnose it against your actual file.</div>
   </div>
 
   <div class="trouble-item">
-    <div class="trouble-q">Deployment failed â€” API version error</div>
-    <div class="trouble-a">The API version in your <code>js-meta.xml</code> needs to match your org's current API version. Find yours in Salesforce Setup â†’ Apex Classes â€” the version shown there is what to use. Ask Claude Code to update your meta.xml with the right version.</div>
+    <div class="trouble-q">Deployment failed — API version error</div>
+    <div class="trouble-a">The API version in your <code>js-meta.xml</code> needs to match your org's current API version. Find yours in Salesforce Setup → Apex Classes — the version shown there is what to use. Ask Claude Code to update your meta.xml with the right version.</div>
   </div>
 </div>
 
 <!-- SUCCESS BANNER -->
 <div class="success-banner">
   <h2>You're set up. Now go build something.</h2>
-  <p>VS Code is running. Your dev org is connected. Claude Code is open in the sidebar.<br>Drop your LWC files in the right folder, right-click â†’ Deploy, watch it go live.</p>
+  <p>VS Code is running. Your dev org is connected. Claude Code is open in the sidebar.<br>Drop your LWC files in the right folder, right-click → Deploy, watch it go live.</p>
 </div>
 
 <div class="footer">
-  <strong>Mia Â· AOC Salesforce Platform Lead</strong> Â· Part of the 30 Days of Claude series<br>
+  <strong>Mia · AOC Salesforce Platform Lead</strong> · Part of the 30 Days of Claude series<br>
   Built for Salesforce admins starting from zero. All steps tested on Windows.<br>
   <br>
-  âš ï¸ This guide is for connecting to a <strong>Developer Edition org only</strong>. Do not connect to a production or sandbox org without understanding what you're deploying and getting appropriate approval first.
+  ⚠️ This guide is for connecting to a <strong>Developer Edition org only</strong>. Do not connect to a production or sandbox org without understanding what you're deploying and getting appropriate approval first.
 </div>
 
 </body>
