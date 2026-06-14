@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce Order of Execution · The Airport Walkthrough · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --red:#EF4444;--teal:#14B8A6;
+    --load:#4B607A;--before:#00A1E0;--savept:#F59E0B;--after:#F26522;--commit:#22C55E;--async:#8B5CF6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{background:var(--dark);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:900;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
+  h1 span{color:var(--blue)}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+  .subtitle strong{color:var(--light)}
+
+  .source-note{font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 13px;margin-bottom:24px;line-height:1.5}
+  .source-note strong{color:var(--light)}
+
+  .phase-nav{display:flex;gap:0;margin-bottom:18px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .phase-nav-item{flex:1;padding:10px 6px;text-align:center;font-size:10px;font-weight:700;letter-spacing:0.3px;border-right:1px solid var(--border);cursor:default}
+  .phase-nav-item:last-child{border-right:none}
+  .phase-nav-item.pL{color:var(--muted);background:#4B607A12}
+  .phase-nav-item.pB{color:var(--before);background:#00A1E010}
+  .phase-nav-item.pA{color:var(--after);background:#F2652210}
+  .phase-nav-item.pC{color:var(--commit);background:#22C55E10}
+  .phase-nav-item.pY{color:var(--async);background:#8B5CF610}
+  .phase-num{display:block;font-size:15px;font-weight:900;font-family:'Syne',sans-serif;margin-bottom:2px}
+
+  .expand-hint{font-size:12px;color:var(--muted);margin-bottom:26px;font-style:italic}
+
+  .phase{margin-bottom:30px}
+  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .phase-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-bottom:2px}
+  .phase-desc{font-size:12px;color:var(--muted)}
+
+  .step{background:var(--card);border:1.5px solid var(--border);border-left-width:4px;border-radius:12px;margin-bottom:9px;overflow:hidden;cursor:pointer;transition:background 0.18s}
+  .step.open{background:var(--card2)}
+  .step-header{display:flex;align-items:center;gap:13px;padding:14px 15px}
+  .step-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:'Syne',sans-serif;flex-shrink:0}
+  .step-content{flex:1;min-width:0}
+  .step-airport{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;line-height:1.2;margin-bottom:2px}
+  .step-sf{font-size:11.5px;color:var(--muted);font-weight:500}
+  .step-arrow{font-size:14px;color:var(--muted);flex-shrink:0;transition:transform 0.25s}
+  .step.open .step-arrow{transform:rotate(180deg)}
+  .step-body{display:none;padding:0 15px 15px;font-size:13px;line-height:1.7}
+  .step.open .step-body{display:block}
+  .redflag{font-size:13px;margin-left:5px}
+
+  .detail-row{margin-top:10px}
+  .detail-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;display:block;margin-bottom:3px}
+  .d-plain{color:var(--light)}
+  .d-ex{color:var(--light)}.d-ex .detail-label{color:var(--green)}
+  .d-wrong{color:var(--light)}.d-wrong .detail-label{color:var(--red)}
+
+  .decision{border-radius:12px;padding:14px 16px;margin:9px 0;font-size:13px;line-height:1.6}
+  .decision .dq{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .decision-skip{background:#8B5CF60D;border:1.5px dashed #8B5CF655}
+  .decision-skip .dq{color:var(--async)}
+  .decision-stop{background:#EF44440D;border:1.5px solid #EF444455}
+  .decision-stop .dq{color:var(--red)}
+  .decision .light{color:var(--light)}
+  .decision .light strong{color:var(--white)}
+
+  .section-block{margin-top:42px}
+  .block-head{display:flex;align-items:center;gap:13px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+  .block-badge{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .block-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800}
+  .block-desc{font-size:12px;color:var(--muted)}
+
+  .debug-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+  .debug-q{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:5px;display:flex;align-items:flex-start;gap:8px}
+  .debug-q .qn{color:var(--muted);font-weight:800;flex-shrink:0}
+  .debug-a{font-size:12.5px;color:var(--light);line-height:1.65;padding-left:20px}
+  .debug-a strong{color:var(--white)}
+
+  .qref{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-top:14px}
+  .qref-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+  .qref-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:900}
+  .qref-print{background:var(--blue);color:var(--dark);border:none;padding:8px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity 0.2s}
+  .qref-print:hover{opacity:0.88}
+  .qref-list{list-style:none;padding:0}
+  .qref-row{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12.5px;line-height:1.5}
+  .qref-row:last-child{border-bottom:none}
+  .qref-n{font-family:'Syne',sans-serif;font-weight:800;color:var(--muted);width:22px;flex-shrink:0;text-align:right}
+  .qref-air{font-weight:700;color:var(--white)}
+  .qref-sf{color:var(--blue);font-size:11px;font-weight:500}
+  .qref-desc{color:var(--light)}
+  .qref-commit{background:#22C55E12;border-radius:6px;padding:7px 8px;margin:3px 0}
+
+  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center;line-height:1.7}
+  .footer strong{color:var(--light)}
+  .footer a{color:var(--blue);text-decoration:none}
+
+  @media print{
+    body{background:#fff;color:#000;max-width:100%;padding:10px}
+    .phase,.phase-nav,.expand-hint,.subtitle,.doc-tag,.source-note,h1{display:none}
+    .section-block:not(.qref-block){display:none}
+    .qref-block .block-head{display:none}
+    .qref{border:1px solid #999;page-break-inside:avoid}
+    .qref-print{display:none}
+    .qref-title,.qref-air{color:#000}
+    .qref-n{color:#666}.qref-sf{color:#0a6}.qref-desc{color:#222}
+    .qref-row{border-color:#ddd}.qref-commit{background:#eee}
+    .footer{display:block;color:#444}
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-tag">Admin Playbook · PD1 Study Guide · Order of Execution</div>
+<h1>The Salesforce Order of Execution,<br><span>walked through an airport</span></h1>
+<p class="subtitle">Every record save is a passenger going through the terminal. Each checkpoint must be passed <strong>in order, every time, no skipping</strong> — except where the diagram says it skips.<br>Tap any checkpoint to see what it does, when it matters, and what goes wrong.</p>
+
+<div class="source-note">
+  📋 Built directly from the official <strong>Salesforce Order of Execution Overview</strong> — Apex API v64.0 (Summer '25), diagram updated 15 April 2025. All 20 steps, in the real sequence, including the ones people usually skip.
+</div>
+
+<div class="phase-nav">
+  <div class="phase-nav-item pL"><span class="phase-num">1–2</span>Load</div>
+  <div class="phase-nav-item pB"><span class="phase-num">3–6</span>Before save</div>
+  <div class="phase-nav-item pA"><span class="phase-num">7–18</span>Saved &amp; after</div>
+  <div class="phase-nav-item pC"><span class="phase-num">19</span>Commit</div>
+  <div class="phase-nav-item pY"><span class="phase-num">20</span>Async</div>
+</div>
+<p class="expand-hint">👆 Tap a checkpoint to expand it. 🚩 = the steps most often behind automation conflicts.</p>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#4B607A18">🛫</div>
+    <div>
+      <div class="phase-title">Arriving at the airport</div>
+      <div class="phase-desc">Steps 1–2 · The record is pulled and your new values are loaded before anything runs.</div>
+    </div>
+  </div>
+  <div id="phase-load"></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#00A1E018">🧳</div>
+    <div>
+      <div class="phase-title">On the ground — still editable</div>
+      <div class="phase-desc">Steps 3–6 · Before the record is written. Everything here is cheap and reversible.</div>
+    </div>
+  </div>
+  <div id="phase-before"></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F2652218">🎫</div>
+    <div>
+      <div class="phase-title">Past security — the record is saved</div>
+      <div class="phase-desc">Steps 7–18 · Saved to the database but not committed. Reacting automation runs here.</div>
+    </div>
+  </div>
+  <div id="phase-after"></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#22C55E18">✈️</div>
+    <div>
+      <div class="phase-title">Wheels up</div>
+      <div class="phase-desc">Step 19 · The point of no return.</div>
+    </div>
+  </div>
+  <div id="phase-commit"></div>
+</div>
+
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#8B5CF618">🧭</div>
+    <div>
+      <div class="phase-title">After takeoff</div>
+      <div class="phase-desc">Step 20 · A separate timeline, its own transaction, fresh governor limits.</div>
+    </div>
+  </div>
+  <div id="phase-async"></div>
+</div>
+
+<div class="section-block">
+  <div class="block-head">
+    <div class="block-badge" style="background:#F59E0B18">🛠️</div>
+    <div>
+      <div class="block-title">Common debugging checklist</div>
+      <div class="block-desc">When something fires in the wrong order, walk the airport. These gates come up most.</div>
+    </div>
+  </div>
+
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">1.</span>A field value gets overwritten and I don't know what set it</div>
+    <div class="debug-a">Check the <strong>kiosk vs the bag desk</strong>. A before-save flow (Step 3) sets a value, then a before-trigger (Step 4) runs <em>after</em> it and overwrites it. Both run before save and fight over the same field. Order is: flow first, trigger second.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">2.</span>A trigger seems to fire twice (or three times)</div>
+    <div class="debug-a">Two re-fire sources stack. <strong>Workflow field updates (11A)</strong> re-fire before/after update triggers <em>exactly once</em>. <strong>After-save flows (Step 14)</strong> that update the record re-fire them <em>again</em>. Different steps, different causes, same symptom.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">3.</span>My Process Builder and my flow run in an order I didn't expect</div>
+    <div class="debug-a"><strong>Step 13 runs in NO PARTICULAR ORDER.</strong> Processes, process-launched flows, and workflow-launched flows have no guaranteed sequence between them. If you depend on one running before another here, you have a latent bug. The diagram itself warns about this.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">4.</span>The second save in a recursion didn't run my automation</div>
+    <div class="debug-a">After after-triggers (Step 8), Salesforce asks <strong>"is this a recursive save?"</strong> — if yes, it <strong>skips Steps 9–17</strong>. Assignment, auto-response, workflow, escalation, processes, after-save flows, entitlement and roll-ups are all skipped on the recursive pass.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">5.</span>A validation rule fails on a value I thought was set</div>
+    <div class="debug-a">Security screening (Step 5) runs after before-triggers and before-save flows, but the rule may reference a field a <em>later</em> step was going to populate. Validation can't see the future. Move the logic earlier or rethink the rule.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">6.</span>The record just didn't save and nothing downstream ran</div>
+    <div class="debug-a"><strong>Duplicate rules (Step 6) set to block</strong> stop the save dead — no save, no after-triggers, no workflow, nothing. Check Setup → Duplicate Rules before assuming it's your code.</div>
+  </div>
+  <div class="debug-item">
+    <div class="debug-q"><span class="qn">7.</span>A parent record is doing things I didn't trigger</div>
+    <div class="debug-a">The <strong>connecting flight</strong> (Steps 16–17). A roll-up or cross-object update makes the parent re-save — running the parent's <em>own</em> triggers and flows, and then the grandparent's. Chain reactions and surprise governor limits live here.</div>
+  </div>
+</div>
+
+<div class="section-block qref-block">
+  <div class="block-head">
+    <div class="block-badge" style="background:#00A1E018">🎫</div>
+    <div>
+      <div class="block-title">Quick reference card</div>
+      <div class="block-desc">Print it. Walk it from memory. 🚩 = the three steps most often behind automation conflicts.</div>
+    </div>
+  </div>
+  <div class="qref">
+    <div class="qref-head">
+      <div class="qref-title">Order of Execution — Boarding Pass</div>
+      <button class="qref-print" onclick="window.print()">🖨️ Print this card</button>
+    </div>
+    <ul class="qref-list" id="qrefList"></ul>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Mia · AOC Salesforce Platform Lead</strong> · Part of the 30 Days of Claude series<br>
+  Built on the official Salesforce Order of Execution Overview (Apex API v64.0, Summer '25).<br>
+  Memorise the walk, not the list.<br>
+  <a href="https://paceymia.github.io/Salesforce-Guides/">paceymia.github.io/Salesforce-Guides ↗</a>
+</div>
+
+<script>
+const STEPS=[
+  {n:1,phase:'load',air:'Pulling your booking',sf:'Loads the original record',
+   plain:'Salesforce loads the existing record from the database, or initialises a fresh one for an upsert.',
+   ex:'Any update needs the current state first so it knows what is changing.',
+   wrong:'Nothing fires yet. People forget this is where field values start, before any automation touches them.',flag:false},
+  {n:2,phase:'load',air:'Updating the details',sf:'Loads the new record values',
+   plain:'The new field values from the request overwrite the old ones. Then validation branches: a standard UI save runs full layout validation; an API/DML save first checks only foreign keys and restricted picklists.',
+   ex:'A standard UI edit page enforces layout-required fields. An Apex insert does not, which is a common "why did it save without that field" surprise.',
+   wrong:'Custom validation rules can fire early here (2D) for multi-line items (Quote/Opportunity Line Items) or a User object from standard UI.',flag:false},
+
+  {n:3,phase:'before',air:'Self-service kiosk',sf:'Before-save record-triggered flows',
+   plain:'Last-minute edits to your own booking before you enter the terminal. Fast, no staff, no extra DML cost.',
+   ex:'Defaulting or stamping a field on the same record without writing a trigger, the cheapest place to do it.',
+   wrong:'Runs FIRST, before before-triggers. A value you set here can be overwritten by a trigger seconds later.',flag:false},
+  {n:4,phase:'before',air:'Bag tagging desk',sf:'All before triggers',
+   plain:'Staff adjust your record before you are locked in. Still fully editable, still no extra save cost.',
+   ex:'Auto-populating or cross-checking field values right before the record is written.',
+   wrong:'Trigger order is NOT guaranteed, so use one handler per object. Updating its own object can recurse. Fights with before-save flows over the same field.',flag:true},
+  {n:5,phase:'before',air:'Security screening',sf:'Most system validation again + custom validation rules',
+   plain:'The hard checkpoint. Required fields, formats, max length, and your custom validation rules. Bad passport? Turned back, the whole save fails.',
+   ex:'Enforcing "Close Date required when Stage = Closed Won" before anything saves.',
+   wrong:'Does NOT re-run layout-specific rules if the request came from a standard UI edit page. A rule referencing a not-yet-set field fails records you expected to pass.',flag:false},
+  {n:6,phase:'before',air:'Duplicate-passenger check',sf:'Duplicate rules',
+   plain:'Are you already booked on this flight? Duplicate detection runs as its own step.',
+   ex:'Blocking a second Lead with the same email on create.',
+   wrong:'A duplicate rule set to BLOCK stops the save dead. No save, no after-triggers, no workflow. Nothing downstream runs at all.',flag:false},
+
+  {n:7,phase:'after',air:'Departure lounge',sf:'Record saved to DB (NOT committed)',
+   plain:'Through security, but the plane has not left. The record now has an Id, and everything from here is still reversible.',
+   ex:'You can reference the Id in after-triggers, but a downstream error rolls the entire thing back.',
+   wrong:'"Saved" does not mean "committed". A later failure undoes it. This trips people constantly.',flag:false},
+  {n:8,phase:'after',air:'Gate agents',sf:'All after triggers',
+   plain:'Staff react now that you are cleared. They act on the saved record and can even send you back through (recursion).',
+   ex:'Acting on the final saved state or updating related records, you need the Id so it must be here.',
+   wrong:'Updating the same record re-runs the whole save procedure. A very common recursion source.',flag:false},
+  {n:9,phase:'after',air:'Gate assignment',sf:'Assignment rules',
+   plain:'Which crew or queue you get routed to.',
+   ex:'Routing new Leads or Cases to the right owner automatically.',
+   wrong:'Silent. Wrong active rule means records land with the wrong owner and no error fires.',flag:false},
+  {n:10,phase:'after',air:'Boarding announcement',sf:'Auto-Response rules',
+   plain:'The automated confirmation message goes out.',
+   ex:'Auto-emailing on Lead or Case creation (e.g. web-to-lead, web-to-case).',
+   wrong:'Wrong template or recipient, and easy to forget it is even running.',flag:false},
+  {n:11,phase:'after',air:'Old manual stamp desk',sf:'Workflow rules',
+   plain:'Legacy desk that can stamp updates on your pass. If it CHANGES your details, part of the journey repeats.',
+   ex:'Field updates and outbound messages on older automation still live in many orgs.',
+   wrong:'See 11A below. Field updates re-fire before/after update triggers EXACTLY ONCE. The recursion most people miss on the exam.',flag:true},
+  {n:'11A',phase:'after',air:'Sent back through screening',sf:'If there are workflow field updates',
+   plain:'Updates the record again and re-runs system validations. Then re-fires before-update and after-update triggers, regardless of insert or update, ONE more time and only one more time.',
+   ex:'A workflow that sets a field on save quietly causes your triggers to run a second time.',
+   wrong:'What does NOT re-run: custom validation rules, flows, duplicate rules, Process Builder processes, and escalation rules. Only the triggers re-fire. Memorise this exactly.',flag:false},
+  {n:12,phase:'after',air:'Supervisor desk',sf:'Escalation rules',
+   plain:'Problem-passenger handling for overdue items.',
+   ex:'Escalating a Case that has breached its SLA.',
+   wrong:'Runs AFTER workflow, not bundled with assignment. People place it too early in their mental model.',flag:false},
+  {n:13,phase:'after',air:'Back-office processing team',sf:'Process Builder + process-launched + workflow-launched flows',
+   plain:'A whole team processes your booking, but they work in NO particular order between themselves.',
+   ex:'A Process Builder process and a flow it launches both running on the same save.',
+   wrong:'No guaranteed order here. If you depend on one running before another, you have a latent bug. This is its OWN step, separate from after-save flows.',flag:false},
+  {n:14,phase:'after',air:'Post-boarding crew',sf:'After-save record-triggered flows',
+   plain:'Service crew reacting to the fully saved record.',
+   ex:'Cross-record automation that needs the record already written to the database.',
+   wrong:'If it updates the record, it re-triggers before/after update triggers AGAIN, stacking on the workflow recursion from 11A.',flag:true},
+  {n:15,phase:'after',air:'Loyalty / SLA desk',sf:'Entitlement rules',
+   plain:'What service level you are entitled to.',
+   ex:'Applying entitlements and milestones to a Case.',
+   wrong:'Quietly does nothing if no entitlement process is configured.',flag:false},
+  {n:16,phase:'after',air:'Connecting flight',sf:'Roll-up summary on parent records',
+   plain:'Your action updates the parent aircraft\u2019s manifest, and THAT record goes through its own full save procedure.',
+   ex:'A child amount changing a roll-up total on its parent.',
+   wrong:'The parent fires its own triggers and flows. Only relevant if a roll-up field exists or it is part of a cross-object workflow.',flag:false},
+  {n:17,phase:'after',air:'Onward connection',sf:'Roll-up summary on grand-parent records',
+   plain:'If the parent\u2019s change rolls up again, the grandparent goes through its own save procedure too.',
+   ex:'Three-level hierarchies where totals cascade upward.',
+   wrong:'Recursion up the hierarchy, with surprise governor limits on deep or wide relationships.',flag:false},
+  {n:18,phase:'after',air:'Lounge access recalc',sf:'Criteria-based sharing rules',
+   plain:'Recalculating who is allowed to see you.',
+   ex:'Sharing rules re-evaluating when a field they depend on changes.',
+   wrong:'Performance hit on high-volume objects. Sharing recalcs can be expensive.',flag:false},
+
+  {n:19,phase:'commit',air:'Wheels up',sf:'Commits all DML to the database',
+   plain:'Doors locked, plane in the air. Now it is irreversible.',
+   ex:'The point past which nothing rolls back.',
+   wrong:'Anything that errors after this cannot undo what is already committed.',flag:false},
+
+  {n:20,phase:'async',air:'In-flight service / later baggage',sf:'Post-commit logic — email, Queueable, Future, async flow paths',
+   plain:'Happens after takeoff, on a separate timeline, in its own transaction with fresh governor limits.',
+   ex:'Sending email, enqueued async Apex (queueable + future), and asynchronous paths in record-triggered flows.',
+   wrong:'You cannot rely on timing or order. Never put time-sensitive UI logic here.',flag:false},
+];
+
+const PC={load:'var(--load)',before:'var(--before)',after:'var(--after)',commit:'var(--commit)',async:'var(--async)'};
+const PHASE_BUCKET={load:'phase-load',before:'phase-before',after:'phase-after',commit:'phase-commit',async:'phase-async'};
+
+function buildSteps(){
+  const buckets={'phase-load':'','phase-before':'','phase-after':'','phase-commit':'','phase-async':''};
+  STEPS.forEach(s=>{
+    const c=PC[s.phase];
+    let card='<div class="step" style="border-left-color:'+c+'" onclick="this.classList.toggle(\'open\')">'
+      +'<div class="step-header">'
+        +'<div class="step-num" style="background:'+c+'22;color:'+c+'">'+s.n+'</div>'
+        +'<div class="step-content">'
+          +'<div class="step-airport">'+s.air+(s.flag?'<span class="redflag">🚩</span>':'')+'</div>'
+          +'<div class="step-sf">'+s.sf+'</div>'
+        +'</div>'
+        +'<span class="step-arrow">▾</span>'
+      +'</div>'
+      +'<div class="step-body">'
+        +'<div class="detail-row d-plain"><span class="detail-label" style="color:'+c+'">What it does</span>'+s.plain+'</div>'
+        +'<div class="detail-row d-ex"><span class="detail-label">When it matters</span>'+s.ex+'</div>'
+        +'<div class="detail-row d-wrong"><span class="detail-label">What goes wrong</span>'+s.wrong+'</div>'
+      +'</div>'
+    +'</div>';
+
+    buckets[PHASE_BUCKET[s.phase]]+=card;
+
+    if(s.n===6){
+      buckets['phase-before']+='<div class="decision decision-stop"><div class="dq">🛑 Duplicate found &amp; rule = block?</div>'
+        +'<span class="light">If yes: <strong>the record is NOT saved.</strong> No after-triggers, no workflow, no flows. The journey ends at the gate.</span></div>';
+    }
+    if(s.n===8){
+      buckets['phase-after']+='<div class="decision decision-skip"><div class="dq">↪️ Is this a recursive save?</div>'
+        +'<span class="light">If yes: <strong>skip Steps 9–17.</strong> Assignment, auto-response, workflow, escalation, processes, after-save flows, entitlement and roll-ups are all bypassed on the recursive pass. It jumps straight toward commit.</span></div>';
+    }
+  });
+  for(const id in buckets){document.getElementById(id).innerHTML=buckets[id];}
+}
+
+function buildQref(){
+  let html='';
+  STEPS.forEach(s=>{
+    const isCommit=s.phase==='commit';
+    html+='<li class="qref-row'+(isCommit?' qref-commit':'')+'">'
+      +'<span class="qref-n">'+s.n+'</span>'
+      +'<span><span class="qref-air">'+s.air+(s.flag?' 🚩':'')+'</span> '
+      +'<span class="qref-sf">('+s.sf+')</span> — '
+      +'<span class="qref-desc">'+s.plain.split('. ')[0].split(', ')[0]+'.</span></span>'
+    +'</li>';
+  });
+  document.getElementById('qrefList').innerHTML=html;
+}
+
+buildSteps();
+buildQref();
+</script>
+</body>
+</html>
