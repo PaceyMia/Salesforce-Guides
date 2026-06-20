@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order of Execution — Overhead Map · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;}
+  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;display:flex;flex-direction:column;}
+
+  /* Brand header */
+  .brand-header{flex:none;padding:9px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--dark);}
+  .brand-left{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .doc-tag{font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(15px,2.5vw,20px);font-weight:700;line-height:1.1;letter-spacing:-0.3px;}
+  h1 span{color:var(--blue);}
+  .back-link{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 13px;border:1px solid var(--border);border-radius:20px;transition:color .2s,border-color .2s;white-space:nowrap;}
+  .back-link:hover{color:var(--blue);border-color:var(--blue);}
+
+  /* Map area */
+  #fc-map-area{flex:1;min-height:0;background:radial-gradient(120% 80% at 50% -10%,#241a4d 0%,#15102e 60%);display:flex;flex-direction:column;overflow:hidden;}
+  #fc-subheader{flex:none;padding:8px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  #fc-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:5px;}
+  .legend-swatch{width:12px;height:12px;border-radius:3px;display:inline-block;flex:none;}
+  .legend-label{font-size:10.5px;font-weight:600;color:#b3a8dd;letter-spacing:.02em;}
+  .key-hints{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .key-hint{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;}
+
+  /* Canvas */
+  #fc-stage{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0;padding:4px 12px 8px;}
+  #fc-sizer{position:relative;flex:none;}
+  #fc-canvas{position:absolute;top:0;left:0;width:1680px;height:1140px;}
+  #fc-svg{position:absolute;top:0;left:0;overflow:visible;}
+  .fc-node{position:absolute;cursor:pointer;}
+  .fc-node>div{transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;}
+  .fc-node:hover>div{transform:translateY(-3px) scale(1.025);box-shadow:0 14px 30px rgba(20,16,46,.22);filter:brightness(1.02);}
+  .fc-box{width:100%;height:100%;border-radius:14px;border-width:2px;border-style:solid;padding:11px 14px;display:flex;flex-direction:column;justify-content:center;gap:7px;box-shadow:0 5px 14px rgba(40,20,90,.12);}
+  .fc-diamond-wrap{width:100%;height:100%;filter:drop-shadow(0 7px 12px rgba(40,20,90,.20));}
+  .fc-diamond{width:100%;height:100%;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);display:flex;align-items:center;justify-content:center;}
+  .fc-num{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 7px;border-radius:7px;color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  .fc-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;line-height:1.18;color:#172033;text-wrap:balance;}
+  .fc-diamond-label{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12.5px;line-height:1.15;color:#6b34d6;text-align:center;padding:0 26px;text-wrap:balance;}
+  .fc-badge{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:.02em;padding:2px 7px;border-radius:6px;white-space:nowrap;}
+  .conn-label{position:absolute;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.04em;padding:3px 9px;border-radius:7px;white-space:nowrap;color:#fff;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.18);}
+
+  /* Modal */
+  #fc-backdrop{position:fixed;inset:0;background:rgba(12,8,30,.62);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:28px;z-index:50;}
+  #fc-backdrop.open{display:flex;}
+  #fc-modal{width:100%;max-width:660px;max-height:88vh;overflow-y:auto;background:#fbfaf7;border-radius:24px;box-shadow:0 36px 90px rgba(0,0,0,.5);position:relative;}
+  #fc-modal::-webkit-scrollbar{width:10px;}
+  #fc-modal::-webkit-scrollbar-thumb{background:#d9d4ea;border-radius:8px;border:3px solid #fbfaf7;}
+  .modal-top-bar{height:7px;border-radius:24px 24px 0 0;}
+  #modal-close{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:11px;border:none;background:#f0edf7;color:#5b5470;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+  #modal-close:hover{background:#e7e2f5;}
+  .modal-body{padding:30px 38px 36px;}
+  .modal-hook-row{display:flex;align-items:center;gap:18px;margin-bottom:18px;}
+  #modal-hook{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:38px;flex:none;}
+  .modal-cat-tag{display:inline-flex;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.12em;padding:5px 11px;border-radius:999px;}
+  .modal-step-label{display:block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;color:#9aa3b2;margin-top:6px;}
+  #modal-title{font-family:'Space Grotesk',sans-serif;font-size:28px;line-height:1.12;font-weight:700;letter-spacing:-.02em;margin:0 0 20px;color:#15203a;text-wrap:balance;}
+  #modal-analogy{border-radius:16px;padding:18px 20px;}
+  .modal-analogy-label{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;margin-bottom:9px;}
+  .modal-analogy-text{font-size:17px;line-height:1.5;font-weight:500;text-wrap:pretty;}
+  #modal-decision{margin:20px 0 4px;}
+  .modal-decision-q{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;color:#8a93a3;margin-bottom:12px;}
+  .modal-decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .modal-yn{display:flex;flex-direction:column;gap:9px;align-items:flex-start;border-radius:15px;padding:15px 16px;}
+  .modal-yn-badge{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;padding:4px 11px;border-radius:7px;color:#fff;}
+  .modal-yn-text{font-size:14px;line-height:1.4;color:#28324a;text-wrap:pretty;}
+  #modal-11a{display:none;grid-template-columns:1fr 1fr;gap:13px;margin:20px 0 4px;}
+  #modal-11a.vis{display:grid;}
+  .modal-11a-col{border-radius:15px;padding:15px 16px;}
+  .modal-11a-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;margin-bottom:10px;}
+  .modal-11a-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .modal-11a-li{font-size:13px;line-height:1.4;display:flex;gap:7px;}
+  .modal-scenario{display:flex;gap:13px;margin-top:22px;padding:16px 18px;background:#f1f3f7;border-radius:15px;}
+  .modal-scenario-label{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:#5b6678;writing-mode:vertical-rl;transform:rotate(180deg);}
+  #modal-scenario-text{font-size:15px;line-height:1.55;color:#37425a;text-wrap:pretty;}
+  #modal-rollback{border-radius:15px;padding:15px 18px;margin-top:14px;display:none;}
+  .modal-rollback-head{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+  .modal-rollback-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;line-height:1.25;margin-bottom:8px;}
+  .modal-rollback-text{font-size:14px;line-height:1.5;}
+  #modal-exam{margin-top:14px;border-left-width:3px;border-left-style:solid;border-radius:0 13px 13px 0;padding:14px 18px;}
+  #modal-exam-label{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.04em;margin-bottom:6px;}
+  #modal-exam-text{font-size:14px;line-height:1.55;}
+  .modal-nav{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:20px;border-top:1px solid #eceaf3;}
+  .modal-nav-btn{flex:1;display:flex;align-items:center;gap:10px;padding:12px 16px;border:1.5px solid #e3def0;background:#fff;border-radius:13px;cursor:pointer;font-family:'Inter',sans-serif;min-width:0;transition:background .14s,border-color .14s;}
+  .modal-nav-btn:not(:disabled):hover{border-color:#b89cf0;background:#faf8ff;}
+  .modal-nav-btn:disabled{border-color:#eee9f0;background:#f6f4fb;opacity:.45;cursor:default;}
+  .modal-nav-btn.next{justify-content:flex-end;text-align:right;}
+  .nav-arrow{font-size:20px;color:#7c3aed;line-height:1;flex:none;}
+  .nav-label-wrap{display:flex;flex-direction:column;gap:1px;min-width:0;}
+  .nav-small{font-size:10px;font-weight:700;letter-spacing:.1em;color:#a59cc4;}
+  .nav-main{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:#2a2342;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #modal-pos{text-align:center;margin-top:12px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:.06em;color:#aab0bd;}
+
+  /* Footer */
+  .brand-footer{flex:none;padding:7px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;background:var(--dark);}
+  .brand-footer a{color:var(--blue);text-decoration:none;}
+  .brand-footer a:hover{text-decoration:underline;}
+  .brand-footer strong{color:var(--light);}
+</style>
+</head>
+<body>
+
+<header class="brand-header">
+  <div class="brand-left">
+    <div class="doc-tag">Admin Playbook · PD1 · Order of Execution</div>
+    <h1>Overhead <span>Map</span></h1>
+  </div>
+  <a href="../index.html" class="back-link">← All guides</a>
+</header>
+
+<div id="fc-map-area">
+  <div id="fc-subheader">
+    <div id="fc-legend"></div>
+    <div class="key-hints">
+      <div class="key-hint"><span>↩️</span><span style="color:#cdb9b9;">erasable — error rolls back</span></div>
+      <div class="key-hint"><span>🖊️</span><span style="color:#c2ccda;">committed — permanent</span></div>
+      <div class="key-hint"><span style="width:22px;height:0;border-top:2.5px dashed #9b6bf0;display:inline-block;"></span><span style="color:#c5b8ec;">recursive skip</span></div>
+    </div>
+  </div>
+  <div id="fc-stage">
+    <div id="fc-sizer">
+      <div id="fc-canvas">
+        <svg id="fc-svg"></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="fc-backdrop">
+  <div id="fc-modal">
+    <div class="modal-top-bar" id="modal-top-bar"></div>
+    <button id="modal-close">&times;</button>
+    <div class="modal-body">
+      <div class="modal-hook-row">
+        <div id="modal-hook"></div>
+        <div>
+          <span id="modal-cat-tag" class="modal-cat-tag"></span>
+          <span id="modal-step-label" class="modal-step-label"></span>
+        </div>
+      </div>
+      <h2 id="modal-title"></h2>
+      <div id="modal-analogy">
+        <div class="modal-analogy-label" id="modal-analogy-label">PICTURE THIS</div>
+        <div class="modal-analogy-text" id="modal-analogy-text"></div>
+      </div>
+      <div id="modal-decision" style="display:none;">
+        <div class="modal-decision-q" id="modal-decision-q"></div>
+        <div class="modal-decision-grid">
+          <div class="modal-yn" style="border:2px solid #cfe9e0;background:#f1f9f5;">
+            <span class="modal-yn-badge" style="background:#2fa37a;">YES</span>
+            <span id="modal-yes-text" class="modal-yn-text"></span>
+          </div>
+          <div class="modal-yn" style="border:2px solid #f0dcc7;background:#fdf6ee;">
+            <span class="modal-yn-badge" style="background:#d0863c;">NO</span>
+            <span id="modal-no-text" class="modal-yn-text"></span>
+          </div>
+        </div>
+      </div>
+      <div id="modal-11a">
+        <div class="modal-11a-col" style="border:1.5px solid #cdeadd;background:#edf8f2;">
+          <div class="modal-11a-title" style="color:#147a53;">&#x21BB; Runs AGAIN</div>
+          <ul id="modal-reruns" class="modal-11a-list"></ul>
+        </div>
+        <div class="modal-11a-col" style="border:1.5px solid #f1d9bf;background:#fdf3e8;">
+          <div class="modal-11a-title" style="color:#b4651f;">&#x2715; Does NOT re-run</div>
+          <ul id="modal-notruns" class="modal-11a-list"></ul>
+        </div>
+      </div>
+      <div class="modal-scenario">
+        <div class="modal-scenario-label">ON THE JOB</div>
+        <div id="modal-scenario-text"></div>
+      </div>
+      <div id="modal-rollback"></div>
+      <div id="modal-exam">
+        <div id="modal-exam-label"></div>
+        <div id="modal-exam-text"></div>
+      </div>
+      <div class="modal-nav">
+        <button id="modal-prev" class="modal-nav-btn">
+          <span class="nav-arrow">&#8592;</span>
+          <div class="nav-label-wrap">
+            <span class="nav-small">PREVIOUS</span>
+            <span id="prev-title" class="nav-main"></span>
+          </div>
+        </button>
+        <button id="modal-next" class="modal-nav-btn next">
+          <div class="nav-label-wrap">
+            <span class="nav-small">NEXT</span>
+            <span id="next-title" class="nav-main"></span>
+          </div>
+          <span class="nav-arrow">&#8594;</span>
+        </button>
+      </div>
+      <div id="modal-pos"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="brand-footer">
+  <strong>Mia &middot; AOC Salesforce Platform Lead</strong> &middot; Part of the 30 Days of Claude series &middot;
+  <a href="../index.html">&#8592; Mia's Salesforce Guides</a>
+</footer>
+
+<script>
+'use strict';
+
+/* ---- Data ---- */
+const CATS = {
+  browser:{label:'THE DOORS OPEN',color:'#8a6d1f',bg:'#fbf3da',bar:'#c9a53a'},
+  load:{label:'LOAD',color:'#b85f28',bg:'#fbeede',bar:'#e0934e'},
+  validate:{label:'VALIDATE',color:'#2563c9',bg:'#e8f0fd',bar:'#5b8def'},
+  execute:{label:'EXECUTE',color:'#147a53',bg:'#e6f5ed',bar:'#34a878'},
+  calculate:{label:'CALCULATE',color:'#0e8e99',bg:'#e1f4f5',bar:'#27b3bd'},
+  commit:{label:'SAVE / COMMIT',color:'#475569',bg:'#edeff3',bar:'#7c8ba0'},
+  decision:{label:'A FORK IN THE ROAD',color:'#7c3aed',bg:'#f2ebfd',bar:'#9b6bf0'},
+  stop:{label:'BLOCKED',color:'#b91c1c',bg:'#fce9e9',bar:'#e05656'},
+  done:{label:'COMPLETE',color:'#147a53',bg:'#e6f5ed',bar:'#34a878'}
+};
+
+const N = {
+  start:{cat:'browser',num:'▶',hook:'🚪',title:'You hit Save',
+    analogy:'The doors of an exclusive club swing open. Before you even step inside, the bouncer does ONE quick glance — your dependent picklist combos. That is the only check the browser does.',
+    scenario:'You built dependent picklists so State only shows options valid for the chosen Country. Pick a bad combo and the browser stops you instantly — the server never even hears about it.',
+    exam:'The ONLY client-side validation is dependent picklists. Required fields and validation rules all wait for the server.',kind:'remember'},
+  n1:{cat:'load',num:'1',hook:'🗄️',title:'Loads the original record',
+    analogy:'The club pulls your file from the cabinet — your “before” photo. Like a bank teller checking your current balance before processing today’s deposit.',
+    scenario:'This snapshot is Trigger.old. You use it to ask “did Stage just change to Closed Won?” by comparing old vs new.',
+    exam:'Trigger.old = this loaded original. For a brand-new insert there is no “old” version yet.',kind:'remember'},
+  n2:{cat:'load',num:'2',hook:'📝',title:'Loads the new values',
+    analogy:'Sticky notes with the user’s edits get slapped over the file — but only on a photocopy in memory. The real cabinet copy is still untouched.',
+    scenario:'Now Trigger.new holds exactly what the user typed. Still nothing has hit the database.',
+    exam:'After this, the record = new values in memory only. The DB write is still five steps away.',kind:'remember'},
+  d1:{cat:'decision',num:'?',hook:'🔀',title:'Which door did you come through?',question:'DID THE SAVE COME FROM A STANDARD UI EDIT PAGE?',
+    analogy:'Two entrances: the grand front lobby (a user clicking Save on a record page) or the quiet staff side-door (an API call, Data Loader, or Apex). Each gets a different security check.',
+    scenario:'A salesperson editing in Lightning walks through the lobby. Your nightly integration inserting 10,000 rows uses the side-door.',
+    yesLabel:'Front lobby (UI) → full security scan (2A)',noLabel:'Side-door (API / Apex) → quick badge check (2B → 2C)',
+    exam:'UI saves get layout + required-field checks. API/Apex saves skip layout rules entirely — a classic exam contrast.',kind:'trap'},
+  n2a:{cat:'validate',num:'2A',hook:'🛂',title:'Full system validation',
+    analogy:'The front-lobby metal detector — the thorough scan: required fields, formats, lengths, and page-layout rules all get checked.',
+    scenario:'A rep leaves a layout-required “Lost Reason” blank. They are stopped right here, in the lobby.',
+    exam:'Layout-specific rules and layout-level required fields ONLY happen on the UI path.',kind:'remember'},
+  n2b:{cat:'validate',num:'2B',hook:'🪪',title:'FK & restricted picklists only',
+    analogy:'Staff side-door: a quick badge swipe. No full body scan.',
+    scenario:'Your Data Loader insert will not fail just because a field is required ON THE PAGE LAYOUT — layout rules are skipped for the API.',
+    exam:'API/Apex only checks FKs, restricted picklists, and universally-required (field-definition) fields.',kind:'trap'},
+  n2c:{cat:'validate',num:'2C',hook:'🪞',title:'Self-reference check',
+    analogy:'Making sure your “emergency contact” is not… yourself. A custom lookup cannot point the record back at its own object.',
+    scenario:'A quick custom foreign-key sanity check, just before triggers run.',
+    exam:'Verifies custom FKs do not reference the object itself.',kind:'remember'},
+  d2:{cat:'decision',num:'?',hook:'📋',title:'Line item or new User?',question:'MULTI-LINE ITEMS, OR A USER-OBJECT SAVE FROM THE UI?',
+    analogy:'Some guests get their paperwork stamped EARLY at the door: line items (Quote / Opportunity Line Items) and Users signing up at the front desk.',
+    scenario:'Adding Opportunity Line Items to a Quote? Their custom validation rules fire sooner than for a normal object.',
+    yesLabel:'YES → run custom validation now (2D)',noLabel:'NO → on to before-save flows (3)',
+    exam:'Edge case: line items and User-UI saves run custom validation early.',kind:'remember'},
+  n2d:{cat:'validate',num:'2D',hook:'📜',title:'Custom validation (early)',
+    analogy:'Line items get their rulebook checked at the door instead of inside.',
+    scenario:'Your validation rule on Quote Line Item runs here, ahead of the usual spot.',
+    exam:'Only for multi-line items and User-UI saves.',kind:'remember'},
+  n3:{cat:'execute',num:'3',hook:'🤝',title:'Before-save flows',
+    analogy:'A free, super-fast assistant tidies your form for you BEFORE any official looks — no paperwork trip required, they just fix it right in your hand.',
+    scenario:'A before-save record-triggered flow stamps “Discount = 10%” on the same record with ZERO extra DML — the cheapest automation there is.',
+    exam:'Before-save flows run BEFORE before-triggers and need no DML to update the same record. Order among flows is not guaranteed.',kind:'remember'},
+  n4:{cat:'execute',num:'4',hook:'🧰',title:'Before triggers',
+    analogy:'Your personal prep team adjusts your outfit before the photo. You are right there — they can change anything on you instantly, no extra trip.',
+    scenario:'A before-insert Apex trigger defaults the Owner or formats a phone number by editing Trigger.new directly — no DML needed.',
+    exam:'Before-triggers run AFTER before-save flows. Order between triggers is NOT guaranteed — use a handler framework.',kind:'trap'},
+  n5:{cat:'validate',num:'5',hook:'🔍',title:'Validation runs AGAIN',
+    analogy:'A re-scan — because the prep team just touched you. What if they slipped something in? This is where YOUR validation rules actually fire on a normal save.',
+    scenario:'A before-trigger accidentally set Amount to −50. Your validation rule “Amount must be ≥ 0” catches it HERE — not earlier.',
+    exam:'Re-run #1. Custom validation rules run here (after before-triggers). Layout rules are NOT repeated for UI saves.',kind:'trap'},
+  n6:{cat:'execute',num:'6',hook:'👀',title:'Duplicate rules',
+    analogy:'Reception’s “have we met before?” check, scanning the guest book for your face.',
+    scenario:'A duplicate rule matches on Email. It found a Lead who looks just like this new one.',
+    exam:'Duplicate rules run here, right before the save.',kind:'remember'},
+  d3:{cat:'decision',num:'?',hook:'🛑',title:'Block, or wave through?',question:'DUPLICATE FOUND, AND THE RULE’S ACTION IS BLOCK?',
+    analogy:'Is the bouncer set to “turn you away” — or just “jot it down and wave you in”?',
+    scenario:'Block action = the save fails. Allow action = it logs the dupe and lets you through.',
+    yesLabel:'BLOCK → the record is NOT saved. Stop.',noLabel:'Allow / no dupe → save the record (7)',
+    exam:'A Block action stops EVERYTHING — no save, no after-triggers, no workflow. Allow just warns.',kind:'trap'},
+  notsaved:{cat:'stop',num:'✕',hook:'⛔',title:'Bounced at the door',
+    analogy:'Turned away. Go home. The party goes on without you — nothing else runs.',
+    scenario:'A blocking duplicate rule rejected the insert.',
+    exam:'No save, no after-triggers, no workflow, no commit.',kind:'remember'},
+  n7:{cat:'commit',num:'7',hook:'✏️',title:'Saved — but in PENCIL',
+    analogy:'You are written into the guest book in PENCIL. You officially exist (you even get a name tag, your Id) — but it can still be fully erased.',
+    scenario:'The record now has an Id, so after-triggers can use it. But if anything later throws, the whole thing rubs out.',
+    exam:'Saved ≠ committed. The pen (permanent ink) comes at Step 19.',kind:'trap'},
+  n8:{cat:'execute',num:'8',hook:'🏷️',title:'After triggers',
+    analogy:'Now you have a name tag (your Id), so staff can seat you and link your plus-ones. But you are “set” — changing yourself now means filling out a new form (DML).',
+    scenario:'An after-insert trigger creates a related Task and stamps it with the new record’s Id.',
+    exam:'After-triggers see the Id; fields are read-only without DML.',kind:'remember'},
+  d4:{cat:'decision',num:'?',hook:'🪞',title:'Are you a reflection?',question:'IS THIS A RECURSIVE SAVE?',
+    analogy:'Are you the real guest walking in — or just a reflection caused by SOMEONE ELSE entering (a roll-up recalculating a parent)? Reflections skip the party games.',
+    scenario:'Saving a child makes its parent’s roll-up recalc → the parent re-saves. THAT parent save is recursive and skips 9–17.',
+    yesLabel:'YES → skip Steps 9–17, jump to sharing (18)',noLabel:'NO → on to assignment rules (9)',
+    exam:'Recursive saves SKIP 9–17: no assignment, auto-response, workflow, escalation, flows, entitlement, or roll-ups.',kind:'trap'},
+  n9:{cat:'execute',num:'9',hook:'🪑',title:'Assignment rules',
+    analogy:'The host decides which table (owner) you sit at.',
+    scenario:'A Lead assignment rule routes APAC leads to the Sydney queue.',
+    exam:'Leads and Cases only.',kind:'remember'},
+  n10:{cat:'execute',num:'10',hook:'✉️',title:'Auto-response rules',
+    analogy:'The “thanks for reaching out!” auto-text gets DRAFTED — not sent yet. It waits for the afterparty.',
+    scenario:'A Web-to-Lead auto-response email is queued for this new Lead.',
+    exam:'Email is only queued here; it actually sends post-commit (Step 20).',kind:'trap'},
+  n11:{cat:'execute',num:'11',hook:'📋',title:'Workflow rules',
+    analogy:'The old-school clipboard staff run their checklist. Legacy — but they are still on shift (and still on the exam).',
+    scenario:'A workflow rule sets a “Needs Review” checkbox via a field update.',
+    exam:'A workflow FIELD UPDATE here triggers the partial re-run (11A).',kind:'remember'},
+  d5:{cat:'decision',num:'?',hook:'✍️',title:'Did they scribble a change?',question:'WERE THERE ANY WORKFLOW FIELD UPDATES?',
+    analogy:'Did the clipboard staff scribble an edit on your form? If so, you go BACK through part of security.',
+    scenario:'The workflow set a field → the record changed → a partial re-save is needed.',
+    yesLabel:'YES → partial re-save (11A)',noLabel:'NO → on to escalation rules (12)',
+    exam:'Field updates cause re-run #2.',kind:'remember'},
+  n11a:{cat:'execute',num:'11A',hook:'🔁',title:'Workflow field-update re-run',is11A:true,
+    analogy:'Because they changed your form, you re-do the metal detector and your prep team works on you ONE more time — but you skip the long lines you already cleared.',
+    scenario:'A workflow field update fires your before-update AND after-update triggers a second time — even on an insert — exactly once.',
+    reRuns:['Updates the record again','Runs system validations again','Fires before-update AND after-update triggers one more time — insert or update, only once'],
+    notReRun:['Custom validation rules','Flows','Duplicate rules','Process Builder processes','Escalation rules'],
+    exam:'Re-run #2 — the famous trap. Before/after UPDATE triggers re-fire ONCE and validation re-runs, but flows, dupe rules, Process Builder & escalation do NOT.',kind:'trap'},
+  n12:{cat:'execute',num:'12',hook:'⏰',title:'Escalation rules',
+    analogy:'Case sitting too long? A manager gets paged.',
+    scenario:'A Case escalation rule reassigns and notifies after an SLA breach.',
+    exam:'Cases only.',kind:'remember'},
+  n13:{cat:'execute',num:'13',hook:'🎲',title:'Flows & processes',
+    analogy:'A whole room of helpers all start at once. You genuinely cannot predict who finishes first.',
+    scenario:'A Process Builder process, a flow it launches, and a flow launched by a workflow all run in this bucket — in no guaranteed order.',
+    exam:'Automation-order trap: NEVER build logic that depends on which flow or process runs first.',kind:'trap'},
+  n14:{cat:'execute',num:'14',hook:'🛎️',title:'After-save flows',
+    analogy:'The modern concierge handles your follow-ups — updating related guests, or even re-saving you.',
+    scenario:'An after-save record-triggered flow updates the related Account. (Updating another record kicks off ITS own save.)',
+    exam:'After-save flows replace many old workflow rules and after-trigger field updates.',kind:'remember'},
+  n15:{cat:'execute',num:'15',hook:'🎟️',title:'Entitlement rules',
+    analogy:'Your VIP wristband — and its expiry clock (milestones) — get applied.',
+    scenario:'An entitlement process attaches SLA milestones to a Case.',
+    exam:'A Service Cloud feature.',kind:'remember'},
+  d6:{cat:'decision',num:'?',hook:'📊',title:'Feed a scoreboard upstairs?',question:'DOES THE RECORD HAVE ROLL-UP SUMMARY FIELDS?',
+    analogy:'Do your numbers feed a scoreboard upstairs — a parent’s running total?',
+    scenario:'An Opportunity’s Amount rolls up into the Account’s total open pipeline.',
+    yesLabel:'YES → recalc parent (16) then grandparent (17)',noLabel:'NO → on to sharing rules (18)',
+    exam:'Only matters with roll-up summary fields or a cross-object workflow.',kind:'remember'},
+  n16:{cat:'calculate',num:'16',hook:'📈',title:'Roll-up on the PARENT',
+    analogy:'The parent’s scoreboard updates — and the PARENT now walks the WHOLE entry process itself. (That is the “reflection” from the recursive-save fork!)',
+    scenario:'Closing an Opportunity recalcs the Account total → the Account re-saves → a recursive save that skips 9–17.',
+    exam:'This is the #1 source of recursive saves.',kind:'trap'},
+  n17:{cat:'calculate',num:'17',hook:'🧬',title:'Roll-up on the GRANDPARENT',
+    analogy:'And if the parent feeds a grandparent’s scoreboard, that updates and re-saves too. Turtles all the way up.',
+    scenario:'The Account’s roll-up feeds a parent-Account (grandparent) total.',
+    exam:'The grandparent also goes through the save procedure.',kind:'remember'},
+  n18:{cat:'execute',num:'18',hook:'👁️',title:'Criteria-based sharing',
+    analogy:'Who is allowed to SEE you at the party gets recalculated from your details.',
+    scenario:'A criteria-based sharing rule grants the EMEA team access to records where Region = EMEA.',
+    exam:'Recalculated here, near the very end.',kind:'remember'},
+  n19:{cat:'commit',num:'19',hook:'🖊️',title:'COMMIT — now in PEN',
+    analogy:'The pencil is traced over in PEN. Permanent. No take-backs. Everything before this could have been erased; now it is real.',
+    scenario:'All DML commits. Up to this instant, an uncaught exception would have rolled the ENTIRE transaction back.',
+    exam:'Saved (Step 7) made you exist; COMMIT (Step 19) makes you permanent. Know this line cold.',kind:'trap'},
+  n20:{cat:'execute',num:'20',hook:'🎉',title:'Post-commit logic',
+    analogy:'The afterparty kicks off: emails actually SEND, and the async crew — @future methods, Queueable jobs — finally clocks in.',
+    scenario:'The welcome email goes out; a @future callout to an external system fires; async paths in record-triggered flows run.',
+    exam:'Commit-vs-post-commit trap: email and async Apex run ONLY after the commit (19). Roll back, and they never happen.',kind:'trap'},
+  end:{cat:'done',num:'✓',hook:'✅',title:'Done — the record lives',
+    analogy:'You are in the guest book in pen, seated, wristbanded, and the afterparty is running. The save is complete.',
+    scenario:'Transaction committed; async work hums along on its own.',
+    exam:'You just walked all 20 steps. Open the Airport Walkthrough to see each step in detail.',kind:'remember'}
+};
+
+const SHORT = {
+  start:'You hit Save', n1:'Load original', n2:'Load new values', d1:'UI or API?',
+  n2a:'Full validation', n2b:'FK + picklists', n2c:'Self-ref check', d2:'Line item / User?',
+  n2d:'Custom rules (early)', n3:'Before-save flows', n4:'Before triggers', n5:'Validate again',
+  n6:'Duplicate rules', d3:'Block dupe?', notsaved:'NOT saved', n7:'Saved (pencil)',
+  n8:'After triggers', d4:'Recursive?', n9:'Assignment', n10:'Auto-response', n11:'Workflow rules',
+  d5:'Field updates?', n11a:'Workflow re-run', n12:'Escalation', n13:'Flows & processes',
+  n14:'After-save flows', n15:'Entitlement', d6:'Roll-ups?', n16:'Roll-up parent',
+  n17:'Roll-up grandparent', n18:'Sharing rules', n19:'COMMIT (pen)', n20:'Post-commit', end:'Done'
+};
+
+const ROLLBACK = {
+  n3:{tone:'undo',to:'A blank page — before Step 1',text:'An uncaught fault in a before-save flow erases the ENTIRE save before the pencil even touches the guest book. No record, no Id, nothing is written — the user just sees the error and the whole transaction is gone.'},
+  n4:{tone:'undo',to:'A blank page — before Step 1',text:'Throw an unhandled exception in a before trigger (or call addError() on the record) and the whole transaction unwinds to before it began. The record is never created.'},
+  n8:{tone:'undo',to:'A blank page — the pencil gets erased',text:'The tricky one: the record was already “saved” in pencil at Step 7 and even has an Id. But an uncaught error in an after trigger RUBS OUT that pencil — the commit at Step 19 never happens, so the record vanishes. Saved ≠ safe.'},
+  n13:{tone:'undo',to:'A blank page — the pencil gets erased',text:'A flow or process that faults here rolls the whole transaction back past the pencil save. Every DML done since the user clicked Save is undone together — it is all one atomic transaction.'},
+  n14:{tone:'undo',to:'A blank page — the pencil gets erased',text:'An after-save flow fault unwinds everything — including records IT updated on OTHER objects in this transaction. All of it commits at Step 19, or none of it does.'},
+  n19:{tone:'ink',to:'Nowhere — the ink is dry',text:'The point of no return. Once committed, an error AFTER this line cannot roll the record back. There is no eraser for pen — everything before could be undone; nothing after can.'},
+  n20:{tone:'ink',to:'Only the async job — NOT the saved record',text:'Post-commit async (@future / Queueable) runs in its OWN brand-new transaction. If it fails, it rolls back only itself — the original record stays committed. The party already happened; a spilled drink at the afterparty doesn’t un-invite you.'}
+};
+
+const BADGE = {
+  n3:{t:'↩ erases',tone:'undo'}, n4:{t:'↩ erases',tone:'undo'},
+  n7:{t:'✏ erasable',tone:'pencil'}, n8:{t:'↩ erases',tone:'undo'},
+  n13:{t:'↩ erases',tone:'undo'}, n14:{t:'↩ erases',tone:'undo'},
+  n19:{t:'🖋 permanent',tone:'ink'}, n20:{t:'async only',tone:'ink'}
+};
+
+const LAYOUT = {
+  start:{x:24,y:130,w:176,h:92}, n1:{x:232,y:130,w:176,h:92}, n2:{x:440,y:130,w:176,h:92},
+  d1:{x:642,y:124,w:188,h:104,d:1}, n2a:{x:856,y:130,w:176,h:92}, d2:{x:1058,y:124,w:188,h:104,d:1},
+  n2d:{x:1272,y:130,w:176,h:92}, n3:{x:1480,y:130,w:176,h:92},
+  n2b:{x:660,y:262,w:160,h:74}, n2c:{x:900,y:262,w:160,h:74},
+  n4:{x:1480,y:400,w:176,h:92}, n5:{x:1272,y:400,w:176,h:92}, n6:{x:1064,y:400,w:176,h:92},
+  d3:{x:850,y:394,w:188,h:104,d:1}, n7:{x:648,y:400,w:176,h:92}, n8:{x:440,y:400,w:176,h:92},
+  d4:{x:226,y:394,w:188,h:104,d:1}, notsaved:{x:782,y:540,w:160,h:74},
+  n9:{x:24,y:670,w:176,h:92}, n10:{x:232,y:670,w:176,h:92}, n11:{x:440,y:670,w:176,h:92},
+  d5:{x:642,y:664,w:188,h:104,d:1}, n12:{x:856,y:670,w:176,h:92}, n13:{x:1064,y:670,w:176,h:92},
+  n14:{x:1272,y:670,w:176,h:92}, n15:{x:1480,y:670,w:176,h:92}, n11a:{x:642,y:800,w:176,h:84},
+  d6:{x:1474,y:934,w:188,h:104,d:1}, n16:{x:1272,y:940,w:176,h:92}, n17:{x:1064,y:940,w:176,h:92},
+  n18:{x:856,y:940,w:176,h:92}, n19:{x:648,y:940,w:176,h:92}, n20:{x:440,y:940,w:176,h:92},
+  end:{x:232,y:948,w:176,h:76}
+};
+
+const CONN = [
+  {f:'start',fs:'R',t:'n1',ts:'L',k:'n'},
+  {f:'n1',fs:'R',t:'n2',ts:'L',k:'n'},
+  {f:'n2',fs:'R',t:'d1',ts:'L',k:'n'},
+  {f:'d1',fs:'R',t:'n2a',ts:'L',k:'yes',lab:{t:'YES',x:843,y:162}},
+  {f:'d1',fs:'B',t:'n2b',ts:'T',k:'no',mids:[[736,246],[740,246]],lab:{t:'NO',x:716,y:244}},
+  {f:'n2a',fs:'R',t:'d2',ts:'L',k:'n'},
+  {f:'n2b',fs:'R',t:'n2c',ts:'L',k:'n'},
+  {f:'n2c',fs:'R',t:'d2',ts:'B',mids:[[1152,299]],k:'n'},
+  {f:'d2',fs:'R',t:'n2d',ts:'L',k:'yes',lab:{t:'YES',x:1052,y:162}},
+  {f:'d2',fs:'B',t:'n3',ts:'B',mids:[[1152,344],[1568,344]],k:'no',lab:{t:'NO',x:1208,y:336}},
+  {f:'n2d',fs:'R',t:'n3',ts:'L',k:'n'},
+  {f:'n3',fs:'B',t:'n4',ts:'T',k:'n'},
+  {f:'n4',fs:'L',t:'n5',ts:'R',k:'n'},
+  {f:'n5',fs:'L',t:'n6',ts:'R',k:'n'},
+  {f:'n6',fs:'L',t:'d3',ts:'R',k:'n'},
+  {f:'d3',fs:'L',t:'n7',ts:'R',k:'no',lab:{t:'NO',x:837,y:430}},
+  {f:'d3',fs:'B',t:'notsaved',ts:'T',mids:[[944,524],[862,524]],k:'stop',lab:{t:'YES · block',x:950,y:520}},
+  {f:'n7',fs:'L',t:'n8',ts:'R',k:'n'},
+  {f:'n8',fs:'L',t:'d4',ts:'R',k:'n'},
+  {f:'d4',fs:'B',t:'n9',ts:'T',mids:[[320,592],[112,592]],k:'no',lab:{t:'NO',x:300,y:574}},
+  {f:'d4',fs:'L',t:'n18',ts:'B',mids:[[8,446],[8,1078],[944,1078]],k:'skip',lab:{t:'recursive · skip 9–17',x:470,y:1064}},
+  {f:'n9',fs:'R',t:'n10',ts:'L',k:'n'},
+  {f:'n10',fs:'R',t:'n11',ts:'L',k:'n'},
+  {f:'n11',fs:'R',t:'d5',ts:'L',k:'n'},
+  {f:'d5',fs:'R',t:'n12',ts:'L',k:'no',lab:{t:'NO',x:843,y:702}},
+  {f:'d5',fs:'B',t:'n11a',ts:'T',mids:[[736,786],[730,786]],k:'yes',lab:{t:'YES',x:700,y:788}},
+  {f:'n11a',fs:'R',t:'n12',ts:'B',mids:[[944,842]],k:'n'},
+  {f:'n12',fs:'R',t:'n13',ts:'L',k:'n'},
+  {f:'n13',fs:'R',t:'n14',ts:'L',k:'n'},
+  {f:'n14',fs:'R',t:'n15',ts:'L',k:'n'},
+  {f:'n15',fs:'B',t:'d6',ts:'T',k:'n'},
+  {f:'d6',fs:'L',t:'n16',ts:'R',k:'yes',lab:{t:'YES',x:1461,y:970}},
+  {f:'n16',fs:'L',t:'n17',ts:'R',k:'n'},
+  {f:'n17',fs:'L',t:'n18',ts:'R',k:'n'},
+  {f:'d6',fs:'B',t:'n18',ts:'B',mids:[[1568,1098],[1000,1098]],k:'no',lab:{t:'NO',x:1320,y:1090}},
+  {f:'n18',fs:'L',t:'n19',ts:'R',k:'n'},
+  {f:'n19',fs:'L',t:'n20',ts:'R',k:'n'},
+  {f:'n20',fs:'L',t:'end',ts:'R',k:'n'}
+];
+
+const COLORS = {n:'#9aa3b2',yes:'#2fa37a',no:'#d64545',stop:'#b91c1c',skip:'#7c4ddb'};
+
+const SEQ = ['start','n1','n2','d1','n2a','n2b','n2c','d2','n2d','n3','n4','n5','n6','d3','notsaved','n7','n8','d4','n9','n10','n11','d5','n11a','n12','n13','n14','n15','d6','n16','n17','n18','n19','n20','end'];
+
+/* ---- State ---- */
+let openNode = null;
+
+/* ---- Helpers ---- */
+function hex(h, a) {
+  const n = h.replace('#','');
+  return `rgba(${parseInt(n.substr(0,2),16)},${parseInt(n.substr(2,2),16)},${parseInt(n.substr(4,2),16)},${a})`;
+}
+function anchor(id, side) {
+  const b = LAYOUT[id];
+  if(side==='R') return [b.x+b.w, b.y+b.h/2];
+  if(side==='L') return [b.x, b.y+b.h/2];
+  if(side==='T') return [b.x+b.w/2, b.y];
+  return [b.x+b.w/2, b.y+b.h];
+}
+function buildPath(pts) { return 'M '+pts.map(p=>p[0]+' '+p[1]).join(' L '); }
+function arrowPath(b, side) {
+  const [x,y]=b, s=8;
+  if(side==='L') return `M ${x} ${y} L ${x-s} ${y-5} L ${x-s} ${y+5} Z`;
+  if(side==='R') return `M ${x} ${y} L ${x+s} ${y-5} L ${x+s} ${y+5} Z`;
+  if(side==='T') return `M ${x} ${y} L ${x-5} ${y-s} L ${x+5} ${y-s} Z`;
+  return `M ${x} ${y} L ${x-5} ${y+s} L ${x+5} ${y+s} Z`;
+}
+
+/* ---- Fit ---- */
+function fit() {
+  const stage = document.getElementById('fc-stage');
+  if(!stage) return;
+  const avW = stage.clientWidth - 4, avH = stage.clientHeight - 4;
+  const scale = Math.min(avW/1680, avH/1140);
+  if(scale <= 0) return;
+  document.getElementById('fc-sizer').style.width  = Math.round(1680*scale)+'px';
+  document.getElementById('fc-sizer').style.height = Math.round(1140*scale)+'px';
+  document.getElementById('fc-canvas').style.transform = `scale(${scale})`;
+}
+
+/* ---- Build legend ---- */
+function renderLegend() {
+  const container = document.getElementById('fc-legend');
+  ['load','validate','execute','calculate','commit','decision','stop'].forEach(k => {
+    const cc = CATS[k];
+    const label = cc.label==='SAVE / COMMIT' ? 'Save/Commit'
+      : cc.label==='A FORK IN THE ROAD' ? 'Decision'
+      : cc.label==='BLOCKED' ? 'Blocked'
+      : cc.label.charAt(0)+cc.label.slice(1).toLowerCase();
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    const swatch = document.createElement('span');
+    swatch.className = 'legend-swatch';
+    swatch.style.background = cc.bg;
+    swatch.style.border = `2px solid ${cc.bar}`;
+    const lbl = document.createElement('span');
+    lbl.className = 'legend-label';
+    lbl.textContent = label;
+    item.appendChild(swatch);
+    item.appendChild(lbl);
+    container.appendChild(item);
+  });
+}
+
+/* ---- Build graph ---- */
+function renderGraph() {
+  const svg = document.getElementById('fc-svg');
+  const canvas = document.getElementById('fc-canvas');
+  svg.setAttribute('width','1680');
+  svg.setAttribute('height','1140');
+  svg.setAttribute('viewBox','0 0 1680 1140');
+
+  /* Connectors */
+  CONN.forEach(c => {
+    const a = anchor(c.f, c.fs), b = anchor(c.t, c.ts);
+    const pts = [a, ...(c.mids||[]), b];
+    const col = COLORS[c.k] || COLORS.n;
+    const dash = c.k==='skip' ? '8 6' : '0';
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', buildPath(pts));
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke', col);
+    path.setAttribute('stroke-width','2.5');
+    path.setAttribute('stroke-linejoin','round');
+    path.setAttribute('stroke-linecap','round');
+    if(dash !== '0') path.setAttribute('stroke-dasharray', dash);
+    svg.appendChild(path);
+
+    const arrow = document.createElementNS('http://www.w3.org/2000/svg','path');
+    arrow.setAttribute('d', arrowPath(b, c.ts));
+    arrow.setAttribute('fill', col);
+    svg.appendChild(arrow);
+
+    if(c.lab) {
+      const skip = c.k==='skip';
+      const lbl = document.createElement('div');
+      lbl.className = 'conn-label';
+      lbl.style.left = c.lab.x+'px';
+      lbl.style.top  = c.lab.y+'px';
+      lbl.style.background = skip ? '#fff' : col;
+      lbl.style.color = skip ? '#6b34d6' : '#fff';
+      if(skip) lbl.style.border = '1.5px dashed #9b6bf0';
+      lbl.textContent = c.lab.t;
+      canvas.appendChild(lbl);
+    }
+  });
+
+  /* Nodes */
+  Object.keys(LAYOUT).forEach(id => {
+    const b = LAYOUT[id];
+    const nd = N[id];
+    const cc = CATS[nd.cat];
+    const isD = !!b.d;
+    const bg = BADGE[id];
+
+    const el = document.createElement('div');
+    el.className = 'fc-node';
+    el.style.left   = b.x+'px';
+    el.style.top    = b.y+'px';
+    el.style.width  = b.w+'px';
+    el.style.height = b.h+'px';
+    el.addEventListener('click', () => openModal(id));
+
+    if(isD) {
+      const wrap = document.createElement('div');
+      wrap.className = 'fc-diamond-wrap';
+      const dia = document.createElement('div');
+      dia.className = 'fc-diamond';
+      dia.style.background = cc.bg;
+      const lbl = document.createElement('span');
+      lbl.className = 'fc-diamond-label';
+      lbl.textContent = SHORT[id] || nd.title;
+      dia.appendChild(lbl);
+      wrap.appendChild(dia);
+      el.appendChild(wrap);
+    } else {
+      const box = document.createElement('div');
+      box.className = 'fc-box';
+      box.style.background   = cc.bg;
+      box.style.borderColor  = cc.bar;
+
+      const topRow = document.createElement('div');
+      topRow.style.cssText = 'display:flex;align-items:center;gap:7px;';
+      const num = document.createElement('span');
+      num.className = 'fc-num';
+      num.style.background = cc.color;
+      num.style.fontSize = (''+nd.num).length > 2 ? '10px' : '12px';
+      num.textContent = nd.num;
+      topRow.appendChild(num);
+
+      if(bg) {
+        const pal = bg.tone==='undo'   ? ['#fbe9e9','#c0392b','#f0cccc']
+                  : bg.tone==='pencil' ? ['#fbf3da','#8a6d1f','#ecdca6']
+                  :                      ['#eceff4','#475569','#d3d9e2'];
+        const badge = document.createElement('span');
+        badge.className = 'fc-badge';
+        badge.style.background = pal[0];
+        badge.style.color      = pal[1];
+        badge.style.border     = `1px solid ${pal[2]}`;
+        badge.textContent = bg.t;
+        topRow.appendChild(badge);
+      }
+      box.appendChild(topRow);
+
+      const name = document.createElement('div');
+      name.className = 'fc-name';
+      name.textContent = SHORT[id] || nd.title;
+      box.appendChild(name);
+
+      el.appendChild(box);
+    }
+    canvas.appendChild(el);
+  });
+}
+
+/* ---- Modal ---- */
+function openModal(id) {
+  openNode = id;
+  const nd  = N[id];
+  const cat = CATS[nd.cat];
+  const isDec = nd.cat === 'decision';
+  const trap  = nd.kind === 'trap';
+
+  document.getElementById('modal-top-bar').style.background = cat.bar;
+
+  const hookEl = document.getElementById('modal-hook');
+  hookEl.textContent      = nd.hook;
+  hookEl.style.background = cat.bg;
+  hookEl.style.boxShadow  = `inset 0 0 0 1.5px ${hex(cat.bar, 0.4)}`;
+
+  const tagEl = document.getElementById('modal-cat-tag');
+  tagEl.textContent      = cat.label;
+  tagEl.style.color      = cat.color;
+  tagEl.style.background = cat.bg;
+
+  const stepLabel = nd.num && !isDec && nd.cat!=='browser' && nd.cat!=='done' && nd.cat!=='stop'
+    ? 'STEP '+nd.num
+    : isDec ? 'DECISION' : nd.cat==='browser' ? 'THE START' : nd.cat==='stop' ? 'DEAD END' : 'THE FINISH';
+  document.getElementById('modal-step-label').textContent = stepLabel;
+
+  document.getElementById('modal-title').textContent = nd.title;
+
+  const analogyBox = document.getElementById('modal-analogy');
+  analogyBox.style.background  = cat.bg;
+  analogyBox.style.border      = `1px solid ${hex(cat.bar, 0.35)}`;
+  document.getElementById('modal-analogy-label').style.color = cat.color;
+  document.getElementById('modal-analogy-text').textContent  = nd.analogy;
+
+  const decEl = document.getElementById('modal-decision');
+  if(isDec) {
+    decEl.style.display = 'block';
+    document.getElementById('modal-decision-q').textContent = nd.question;
+    document.getElementById('modal-yes-text').textContent   = nd.yesLabel;
+    document.getElementById('modal-no-text').textContent    = nd.noLabel;
+  } else {
+    decEl.style.display = 'none';
+  }
+
+  const el11a = document.getElementById('modal-11a');
+  if(nd.is11A) {
+    el11a.classList.add('vis');
+    document.getElementById('modal-reruns').innerHTML =
+      (nd.reRuns||[]).map(r=>`<li class="modal-11a-li"><span style="color:#34a878;font-weight:700">+</span><span>${r}</span></li>`).join('');
+    document.getElementById('modal-notruns').innerHTML =
+      (nd.notReRun||[]).map(x=>`<li class="modal-11a-li"><span style="color:#d08a3e;font-weight:700">−</span><span>${x}</span></li>`).join('');
+  } else {
+    el11a.classList.remove('vis');
+  }
+
+  document.getElementById('modal-scenario-text').textContent = nd.scenario;
+
+  const rb = ROLLBACK[id];
+  const rbEl = document.getElementById('modal-rollback');
+  if(rb) {
+    const ink = rb.tone === 'ink';
+    const accent = ink ? '#475569' : '#b3261e';
+    rbEl.style.display    = 'block';
+    rbEl.style.border     = `1.5px solid ${ink ? '#dadfe6' : '#f3cfcf'}`;
+    rbEl.style.background = ink ? '#f4f6f9' : '#fcf0f0';
+    rbEl.innerHTML = `
+      <div class="modal-rollback-head">
+        <span style="font-size:18px;line-height:1">${ink ? '🖊️' : '↩️'}</span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11px;letter-spacing:.11em;color:${accent}">
+          ${ink ? 'PAST THIS LINE — NO ROLLBACK' : 'IF IT FAILS HERE → ROLLS BACK TO'}
+        </span>
+      </div>
+      <div class="modal-rollback-title" style="color:${accent}">${rb.to}</div>
+      <div class="modal-rollback-text" style="color:${ink ? '#3f4a5e' : '#7a2b27'}">${rb.text}</div>`;
+  } else {
+    rbEl.style.display = 'none';
+  }
+
+  const examEl = document.getElementById('modal-exam');
+  examEl.style.borderLeftColor = trap ? '#e0934e' : '#3b7bf0';
+  examEl.style.background      = trap ? '#fdf3e8' : '#edf3fe';
+  const examLbl = document.getElementById('modal-exam-label');
+  examLbl.style.color    = trap ? '#b4521f' : '#2860c9';
+  examLbl.textContent    = trap ? '⚠️  EXAM TRAP' : '💡  REMEMBER';
+  const examTxt = document.getElementById('modal-exam-text');
+  examTxt.style.color  = trap ? '#7a3d14' : '#234a8f';
+  examTxt.textContent  = nd.exam;
+
+  updateNav();
+
+  document.getElementById('fc-backdrop').classList.add('open');
+  document.getElementById('fc-modal').scrollTop = 0;
+}
+
+function updateNav() {
+  const si = SEQ.indexOf(openNode);
+  const prevId = si > 0 ? SEQ[si-1] : null;
+  const nextId = si < SEQ.length-1 ? SEQ[si+1] : null;
+
+  const prevBtn = document.getElementById('modal-prev');
+  const nextBtn = document.getElementById('modal-next');
+  prevBtn.disabled = !prevId;
+  nextBtn.disabled = !nextId;
+  document.getElementById('prev-title').textContent = prevId ? (SHORT[prevId]||'') : '';
+  document.getElementById('next-title').textContent = nextId ? (SHORT[nextId]||'') : '';
+  document.getElementById('modal-pos').textContent  = `${si+1} / ${SEQ.length} · use ← → keys`;
+}
+
+function closeModal() {
+  openNode = null;
+  document.getElementById('fc-backdrop').classList.remove('open');
+}
+
+function navigate(delta) {
+  if(!openNode) return;
+  const j = SEQ.indexOf(openNode) + delta;
+  if(j < 0 || j >= SEQ.length) return;
+  openModal(SEQ[j]);
+}
+
+/* ---- Init ---- */
+document.addEventListener('DOMContentLoaded', () => {
+  renderLegend();
+  renderGraph();
+  fit();
+  window.addEventListener('resize', fit);
+
+  window.addEventListener('keydown', e => {
+    if(!openNode) return;
+    if(e.key==='Escape')      closeModal();
+    else if(e.key==='ArrowRight') navigate(1);
+    else if(e.key==='ArrowLeft')  navigate(-1);
+  });
+
+  document.getElementById('fc-backdrop').addEventListener('click', closeModal);
+  document.getElementById('fc-modal').addEventListener('click', e => e.stopPropagation());
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('modal-prev').addEventListener('click', () => navigate(-1));
+  document.getElementById('modal-next').addEventListener('click', () => navigate(1));
+});
+</script>
+</body>
+</html>
