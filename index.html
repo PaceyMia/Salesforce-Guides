@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --dark:#080C14;--card:#0F1520;--border:#1A2538;
     --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
     --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
   }
@@ -20,11 +20,26 @@
   .subtitle{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;max-width:560px}
   .subtitle strong{color:var(--light)}
 
-  .social-links{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:44px}
+  .social-links{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px}
   .social-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:9px 18px;border-radius:20px;text-decoration:none;border:1px solid var(--border);transition:opacity 0.2s}
   .social-link:hover{opacity:0.85}
   .social-link.linkedin{background:#00A1E018;color:var(--blue);border-color:#00A1E030}
   .social-link.youtube{background:#EC489918;color:var(--pink);border-color:#EC489930}
+
+  /* START HERE */
+  .start-here{position:relative;display:block;background:linear-gradient(135deg,#00A1E014,#F2652214);border:1.5px solid var(--blue);border-radius:14px;padding:22px 24px;text-decoration:none;color:inherit;margin-bottom:32px;transition:transform 0.2s,border-color 0.2s}
+  .start-here:hover{transform:translateY(-2px);border-color:var(--orange)}
+  .start-here-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);background:#00A1E01f;border:1px solid #00A1E040;padding:4px 10px;border-radius:20px;margin-bottom:12px}
+
+  /* FILTER BAR */
+  .filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;align-items:center}
+  .search-input{flex:1;min-width:160px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:9px 16px;color:var(--white);font-size:13px;font-family:'Inter',sans-serif}
+  .search-input::placeholder{color:var(--muted)}
+  .search-input:focus{outline:none;border-color:var(--blue)}
+  .filter-pills{display:flex;flex-wrap:wrap;gap:8px}
+  .filter-pill{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700;color:var(--light);cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'Inter',sans-serif}
+  .filter-pill:hover{border-color:var(--blue)}
+  .filter-pill.active{background:#00A1E018;border-color:var(--blue);color:var(--blue)}
 
   .guide-list{display:flex;flex-direction:column;gap:14px}
   .guide-card{display:block;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:22px 24px;text-decoration:none;color:inherit;transition:border-color 0.2s,transform 0.2s}
@@ -35,6 +50,12 @@
   .guide-desc{font-size:13px;color:var(--light);line-height:1.6;margin-bottom:12px}
   .guide-meta{display:flex;flex-wrap:wrap;gap:8px}
 
+  .card-type{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:8px}
+  .card-type.type-skill{color:var(--blue)}
+  .card-type.type-prompt{color:var(--purple)}
+  .card-type.type-built-in{color:var(--green)}
+  .card-type.type-guide{color:var(--muted)}
+
   .tag{display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;letter-spacing:0.5px}
   .tag-blue{background:#00A1E018;color:var(--blue);border:1px solid #00A1E030}
   .tag-orange{background:#F2652218;color:var(--orange);border:1px solid #F2652230}
@@ -42,6 +63,7 @@
   .tag-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
   .tag-pink{background:#EC489918;color:var(--pink);border:1px solid #EC489930}
 
+  .no-results{display:none;text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;border:1.5px dashed var(--border);border-radius:14px}
   .more-soon{border:1.5px dashed var(--border);border-radius:14px;padding:22px 24px;text-align:center;font-size:13px;color:var(--muted)}
 
   .footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
@@ -59,9 +81,36 @@
   <a class="social-link youtube" href="https://www.youtube.com/@paceyourself_" target="_blank" rel="noopener noreferrer">Watch Pace Yourself on YouTube ↗</a>
 </div>
 
-<div class="guide-list">
+<a class="start-here" href="guides/vscode-salesforce-claude-setup.html">
+  <div class="start-here-badge">⭐ Start here · most popular</div>
+  <div class="guide-card-top">
+    <div class="guide-title">VS Code + Salesforce + Claude in 45 minutes</div>
+    <div class="guide-arrow">→</div>
+  </div>
+  <div class="guide-desc">New here? Start with this one. Go from a brand new machine to a fully connected dev environment: install VS Code, the Salesforce CLI and extensions, connect your Developer Edition org, and get Claude Code running inside your project.</div>
+  <div class="guide-meta">
+    <span class="tag tag-blue">Setup</span>
+    <span class="tag tag-orange">Windows</span>
+    <span class="tag tag-purple">~45 min</span>
+    <span class="tag tag-amber">Dev Org</span>
+  </div>
+</a>
 
-  <a class="guide-card" href="guides/salesforce-build.html">
+<div class="filter-bar">
+  <input class="search-input" id="guideSearch" type="text" placeholder="Search guides…" aria-label="Search guides">
+  <div class="filter-pills" id="filterPills">
+    <button class="filter-pill active" type="button" data-filter="all">All</button>
+    <button class="filter-pill" type="button" data-filter="skill">⚡ Skills</button>
+    <button class="filter-pill" type="button" data-filter="prompt">💬 Prompts</button>
+    <button class="filter-pill" type="button" data-filter="built-in">⚙️ Built-in</button>
+    <button class="filter-pill" type="button" data-filter="guide">📘 Guides</button>
+  </div>
+</div>
+
+<div class="guide-list" id="guideList">
+
+  <a class="guide-card" href="guides/salesforce-build.html" data-type="skill">
+    <div class="card-type type-skill">⚡ Claude skill</div>
     <div class="guide-card-top">
       <div class="guide-title">Salesforce Build — Architecture Before Code</div>
       <div class="guide-arrow">→</div>
@@ -75,7 +124,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="guides/worktree-create.html">
+  <a class="guide-card" href="guides/worktree-create.html" data-type="skill">
+    <div class="card-type type-skill">⚡ Claude skill</div>
     <div class="guide-card-top">
       <div class="guide-title">Worktree Create — One Command, Five Things at Once</div>
       <div class="guide-arrow">→</div>
@@ -89,7 +139,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="guides/brand-skill.html">
+  <a class="guide-card" href="guides/brand-skill.html" data-type="skill">
+    <div class="card-type type-skill">⚡ Claude skill</div>
     <div class="guide-card-top">
       <div class="guide-title">Brand Skill — Your Design System, Baked In</div>
       <div class="guide-arrow">→</div>
@@ -103,7 +154,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="guides/sandbox-seed.html">
+  <a class="guide-card" href="guides/sandbox-seed.html" data-type="prompt">
+    <div class="card-type type-prompt">💬 Prompt</div>
     <div class="guide-card-top">
       <div class="guide-title">Sandbox Seed — Realistic Test Data on Demand</div>
       <div class="guide-arrow">→</div>
@@ -117,7 +169,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="guides/code-review.html">
+  <a class="guide-card" href="guides/code-review.html" data-type="built-in">
+    <div class="card-type type-built-in">⚙️ Built-in feature</div>
     <div class="guide-card-top">
       <div class="guide-title">Code Review — Two Lenses on Your Work</div>
       <div class="guide-arrow">→</div>
@@ -131,21 +184,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="guides/vscode-salesforce-claude-setup.html">
-    <div class="guide-card-top">
-      <div class="guide-title">VS Code + Salesforce + Claude in 45 minutes</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">Go from a brand new machine to a fully connected dev environment: install VS Code, the Salesforce CLI and extensions, connect your Developer Edition org, and get Claude Code running inside your project.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Setup</span>
-      <span class="tag tag-orange">Windows</span>
-      <span class="tag tag-purple">~45 min</span>
-      <span class="tag tag-amber">Dev Org</span>
-    </div>
-  </a>
-
-  <a class="guide-card" href="guides/confetti-lwc-install.html">
+  <a class="guide-card" href="guides/confetti-lwc-install.html" data-type="guide">
+    <div class="card-type type-guide">📘 Guide</div>
     <div class="guide-card-top">
       <div class="guide-title">Install the Confetti LWC from GitHub</div>
       <div class="guide-arrow">→</div>
@@ -159,7 +199,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="salesforce/order-of-execution.html">
+  <a class="guide-card" href="salesforce/order-of-execution.html" data-type="guide">
+    <div class="card-type type-guide">📘 Guide</div>
     <div class="guide-card-top">
       <div class="guide-title">Salesforce Order of Execution — The Airport Walkthrough</div>
       <div class="guide-arrow">→</div>
@@ -173,7 +214,8 @@
     </div>
   </a>
 
-  <a class="guide-card" href="salesforce/order-of-execution-map.html">
+  <a class="guide-card" href="salesforce/order-of-execution-map.html" data-type="guide">
+    <div class="card-type type-guide">📘 Guide</div>
     <div class="guide-card-top">
       <div class="guide-title">Order of Execution — Overhead Map</div>
       <div class="guide-arrow">→</div>
@@ -187,14 +229,53 @@
     </div>
   </a>
 
-  <div class="more-soon">More guides coming soon ✨</div>
+  <div class="more-soon" id="moreSoon">More guides coming soon ✨</div>
 
 </div>
+
+<div class="no-results" id="noResults">No guides match that search. Try a different term or clear the filter.</div>
 
 <div class="footer">
   <strong>Mia</strong><br>
   Public guides for Salesforce admins — free to use, share, and learn from.
 </div>
+
+<script>
+(function(){
+  const search = document.getElementById('guideSearch');
+  const pills = document.querySelectorAll('.filter-pill');
+  const cards = document.querySelectorAll('#guideList .guide-card');
+  const moreSoon = document.getElementById('moreSoon');
+  const noResults = document.getElementById('noResults');
+  let activeType = 'all';
+
+  function applyFilters(){
+    const query = search.value.trim().toLowerCase();
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const matchesType = activeType === 'all' || card.dataset.type === activeType;
+      const matchesQuery = query === '' || card.textContent.toLowerCase().includes(query);
+      const show = matchesType && matchesQuery;
+      card.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
+    });
+    const filtering = activeType !== 'all' || query !== '';
+    moreSoon.style.display = filtering ? 'none' : '';
+    noResults.style.display = (filtering && visibleCount === 0) ? '' : 'none';
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeType = pill.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  search.addEventListener('input', applyFilters);
+})();
+</script>
 
 </body>
 </html>
