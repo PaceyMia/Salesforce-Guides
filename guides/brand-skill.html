@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Skill · A Claude Code Skill · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --red:#EF4444;--teal:#14B8A6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+  /* HEADER */
+  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
+  h1 span{color:var(--blue)}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+  .subtitle strong{color:var(--light)}
+
+  /* PROGRESS NAV */
+  .phase-nav{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .phase-nav-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.5px;border-right:1px solid var(--border);cursor:default;transition:background 0.2s}
+  .phase-nav-item:last-child{border-right:none}
+  .phase-nav-item.p1{color:var(--blue);background:#00A1E010}
+  .phase-nav-item.p2{color:var(--orange);background:#F2652210}
+  .phase-nav-item.p3{color:var(--purple);background:#8B5CF610}
+  .phase-nav-item.p4{color:var(--green);background:#22C55E10}
+  .phase-nav-item.p5{color:var(--amber);background:#F59E0B10}
+  .phase-num{display:block;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:2px}
+
+  /* PHASE HEADERS */
+  .phase{margin-bottom:40px}
+  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
+  .phase-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:2px}
+  .phase-desc{font-size:12px;color:var(--muted)}
+
+  /* STEP CARDS */
+  .step{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .step-header{display:flex;align-items:flex-start;gap:13px;padding:15px 16px}
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .step-content{flex:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
+  .step-body{font-size:13px;line-height:1.75;color:var(--light)}
+  .step-body p{margin-bottom:8px}
+  .step-body p:last-child{margin-bottom:0}
+
+  /* CODE BLOCKS */
+  .cmd-block{background:#060A10;border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7DD3FC;position:relative;overflow-x:auto}
+  .cmd-block .cmd-label{font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase}
+  .cmd-line{display:block;line-height:1.8}
+  .cmd-line::before{content:'> ';color:var(--muted)}
+
+  /* CALLOUT BOXES */
+  .callout{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13px;line-height:1.65}
+  .callout-tip{background:#00A1E010;border:1px solid #00A1E033;color:var(--light)}
+  .callout-warn{background:#F59E0B10;border:1px solid #F59E0B33;color:var(--light)}
+  .callout-success{background:#22C55E10;border:1px solid #22C55E33;color:var(--light)}
+  .callout-danger{background:#EF444410;border:1px solid #EF444433;color:var(--light)}
+  .callout-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .callout-tip .callout-label{color:var(--blue)}
+  .callout-warn .callout-label{color:var(--amber)}
+  .callout-success .callout-label{color:var(--green)}
+  .callout-danger .callout-label{color:var(--red)}
+
+  /* DOWNLOAD BUTTONS */
+  .dl-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#080C14;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:6px 6px 6px 0;border:none;cursor:pointer;transition:opacity 0.2s}
+  .dl-btn:hover{opacity:0.88}
+  .dl-btn.orange{background:var(--orange)}
+  .dl-btn.purple{background:var(--purple);color:white}
+  .dl-btn.green{background:var(--green)}
+
+  /* WHAT YOU'LL SEE SCREENSHOTS */
+  .ui-mock{background:#060A10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px}
+  .ui-mock-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block}
+  .ui-mock-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5}
+  .ui-mock-item:last-child{border-bottom:none}
+  .ui-mock-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+  /* TROUBLESHOOT */
+  .trouble-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:5px}
+  .trouble-a{font-size:12.5px;color:var(--light);line-height:1.65}
+
+  /* CHECKLIST */
+  .checklist{list-style:none;padding:0}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:13px;color:var(--light);border-bottom:1px solid var(--border)}
+  .checklist li:last-child{border-bottom:none}
+  .check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px}
+  .check-done .check-box{background:var(--green);border-color:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;color:#080C14;font-weight:700}
+
+  /* FINAL SUCCESS */
+  .success-banner{background:linear-gradient(135deg,#22C55E12,#00A1E012);border:1.5px solid var(--green);border-radius:14px;padding:22px 24px;margin-top:40px;text-align:center}
+  .success-banner h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
+  .success-banner p{font-size:13px;color:var(--light);line-height:1.65}
+
+  /* FOOTER */
+  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
+  .footer strong{color:var(--light)}
+
+  /* INLINE HIGHLIGHTS */
+  code{background:#0A1628;border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#7DD3FC}
+  .highlight-orange{color:var(--orange);font-weight:600}
+  .highlight-blue{color:var(--blue);font-weight:600}
+  .highlight-green{color:var(--green);font-weight:600}
+
+  /* TIME ESTIMATES */
+  .time-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:0.5px;margin-left:6px;vertical-align:middle}
+  .time-blue{background:#00A1E018;color:var(--blue);border:1px solid #00A1E030}
+  .time-orange{background:#F2652218;color:var(--orange);border:1px solid #F2652230}
+  .time-purple{background:#8B5CF618;color:var(--purple);border:1px solid #8B5CF630}
+  .time-green{background:#22C55E18;color:var(--green);border:1px solid #22C55E30}
+  .time-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
+
+
+  /* COPY BLOCKS */
+  .skill-block{position:relative;background:#060A10;border:1px solid var(--border);border-radius:10px;margin:14px 0}
+  .skill-block .sb-head{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border)}
+  .skill-block .sb-name{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;color:var(--muted);font-family:'Inter',sans-serif}
+  .copy-btn{background:var(--blue);color:#080C14;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:0.5px;transition:opacity .2s}
+  .copy-btn:hover{opacity:.85}
+  .copy-btn.copied{background:var(--green)}
+  .skill-block pre{margin:0;padding:14px 16px;max-height:380px;overflow:auto;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.6;color:#9FD8F5;white-space:pre;tab-size:2}
+  .ph-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+  .ph-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+  .ph-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5;vertical-align:top}
+  .ph-table td code{white-space:nowrap}
+  .section-h{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin:34px 0 6px;letter-spacing:-0.3px}
+  .section-sub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+  .doclink{display:inline-block;font-size:12.5px;color:var(--blue);text-decoration:none;border:1px solid #00A1E033;background:#00A1E010;border-radius:7px;padding:7px 12px;margin:5px 6px 5px 0;font-weight:600}
+  .doclink:hover{background:#00A1E01f}
+
+</style>
+</head>
+<body>
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+<div class="doc-tag">Claude Code Skill · LWC Brand &amp; Standards</div>
+<h1>Brand Skill<br><span>your design system, baked in</span></h1>
+<p class="subtitle">A Claude Code skill that loads your org's brand and engineering conventions before Claude builds an LWC — so what comes out looks like your org and follows your standards, not generic SLDS. Fill in your palette and schema once; the conventions work for any org.</p>
+
+<div class="callout callout-tip">
+  <span class="callout-label">What this fixes</span>
+  Ask Claude to build an LWC cold and you get default Salesforce blue and stock components. This skill front-loads your brand tokens, your sharing model, your permission-set rule, and your four-state handling — so the first version already looks and behaves like it belongs in your org.
+</div>
+
+<div class="section-h">Fill these in once</div>
+<table class="ph-table">
+  <tr><th>Placeholder</th><th>What it is</th></tr>
+  <tr><td><code>[ORG_NAME]</code></td><td>Your organisation name</td></tr>
+  <tr><td><code>[NAMESPACE]</code></td><td>Your custom object/field prefix, or none</td></tr>
+  <tr><td><code>[DEV_SANDBOX]</code> / <code>[FULL_SANDBOX]</code></td><td>Your sandbox CLI aliases</td></tr>
+  <tr><td><code>[PREFIX]</code></td><td>Your LWC component naming prefix</td></tr>
+  <tr><td><code>[API_VERSION]</code></td><td>Your org's metadata/LWC API version</td></tr>
+  <tr><td><code>[BRAND_TOKENS]</code> / <code>[BRAND_FONT]</code></td><td>Your palette CSS variables and brand font</td></tr>
+  <tr><td>Schema Reference</td><td>Your object/field dictionary — replace the example format</td></tr>
+</table>
+
+<div class="section-h">The skill</div>
+<p class="section-sub">Save as <code>brand-lwc.md</code>, fill in the brand and schema sections, and invoke before any LWC build.</p>
+<div class="skill-block"><div class="sb-head"><span class="sb-name">brand-lwc.md</span><button class="copy-btn" onclick="copySkill(this)">Copy</button></div><pre># Salesforce LWC Builder — Brand &amp; Standards Skill
+
+&gt; Reusable template. Replace every [PLACEHOLDER] with your own org&#x27;s details — the big ones are
+&gt; the Brand Tokens block and the Schema Reference. Everything else (sharing patterns, error handling,
+&gt; permission-set rule, test standards, four-state handling) is good practice for any org as-is.
+
+You are building a Lightning Web Component for [ORG_NAME]. Apply everything below before writing a
+single line of code.
+
+## Org context — fill in once
+- Namespace: [NAMESPACE] prefix on custom objects/fields, or none (e.g. acme__ or blank)
+- Sandboxes: [DEV_SANDBOX] (dev) -&gt; [FULL_SANDBOX] (full copy) -&gt; Production via your release process
+- CLI: Salesforce CLI (sf) authenticated to your sandboxes. Always deploy to [DEV_SANDBOX] first.
+
+## Naming conventions — adjust to your team&#x27;s
+- LWC folder/component: [PREFIX] + camelCase (e.g. acctEventInvitations)
+- Apex controller: PascalCase ([Feature]Controller)
+- Apex test class: controller name + Test
+- Permission set: descriptive + _LWC suffix ([Feature]_LWC)
+- Metadata/LWC API version: [API_VERSION] (match your org&#x27;s existing classes)
+
+## Brand &amp; visual standards — fill in your own
+Always use your org&#x27;s brand. Never ship default Salesforce blue / stock SLDS styling for component shells.
+
+Replace this block with your real palette and font:
+```css
+:host {
+    --brand-primary:   [#HEXCODE];   /* dominant brand colour */
+    --brand-primary-d: [#HEXCODE];
+    --brand-accent:    [#HEXCODE];   /* use sparingly for highlights */
+    --text-dark:       [#HEXCODE];
+    --text-mid:        [#HEXCODE];
+    --border:          [#HEXCODE];
+    --radius:          10px;
+    --shadow:          0 4px 16px rgba(0,0,0,0.12);
+}
+/* Font: &#x27;[BRAND_FONT]&#x27;, &#x27;Salesforce Sans&#x27;, sans-serif
+   NB: a custom web font only loads in an LWC via a static resource — confirm yours is set up,
+   or fall back to a system stack. */
+```
+
+Component conventions that hold for any brand:
+- Component shell: use a custom div wrapper, NOT &lt;lightning-card&gt;. Full visual control, clearly
+  separates your component from surrounding Salesforce chrome.
+- Tables: custom HTML &lt;table&gt;, NOT &lt;lightning-datatable&gt;. You control rows, hover, borders, badges.
+- Status badges: inline &lt;span&gt; pills. Keep one colour per status, consistent across components.
+- Components should look modern — rounded corners, soft shadows, smooth hover. People compare
+  against SaaS UI, not classic Salesforce.
+
+## Apex standards
+### Sharing model
+Choose deliberately and document why.
+- Use `with sharing` by default — it respects record-level security.
+- Use `without sharing` ONLY when a display component must show contextual data that the running
+  user&#x27;s profile can&#x27;t reach through sharing, AND the data is safe for anyone who can open the
+  record to see. Document the reason in a comment. Never reach for it just to make an error go away.
+
+### Error handling
+Wrap the method body in try/catch and throw AuraHandledException:
+```apex
+@AuraEnabled(cacheable=true)
+public static List&lt;MyRow&gt; getData(Id recordId) {
+    try {
+        // query logic
+        return rows;
+    } catch (Exception e) {
+        throw new AuraHandledException(&#x27;Error loading data: &#x27; + e.getMessage());
+    }
+}
+```
+
+### Inner classes
+Return typed inner classes from @AuraEnabled methods — never raw SObject lists:
+```apex
+public class MyRow {
+    @AuraEnabled public String fieldOne;
+    @AuraEnabled public Date fieldTwo;
+}
+```
+
+## Permission sets — mandatory for every LWC
+Every LWC with an Apex controller needs a dedicated permission set granting class access — most
+profiles don&#x27;t grant it by default. Create [Feature]_LWC.permissionset-meta.xml granting the
+controller&#x27;s Apex class, and deploy it alongside the component. Assign it before testing as a
+non-admin user.
+
+## LWC patterns
+### Wire adapters
+- @wire(getRecord, { recordId: &#x27;$recordId&#x27;, fields: FIELDS }) for record fields shown in the
+  component — auto-refreshes when the record is saved on the page.
+- @wire(MyApexMethod, { param: &#x27;$recordId&#x27; }) for Apex data.
+- Import displayed record fields into the LWC so it reacts to inline edits.
+
+### State handling — handle all four, always
+1. Loading (until the wire resolves)
+2. Error (wire returns an error)
+3. Data with results
+4. Empty (wire returns an empty array)
+Empty states should be compact and specific — plain wording about why nothing is shown.
+
+## Schema reference — replace with your own
+Document the objects this skill will touch so Claude stops guessing field names. Example format:
+```
+[OBJECT]__c
+    [Lookup_Field]__c  -&gt; [Parent Object]
+    [Date_Field]__c    -&gt; Date
+    [Status_Field]__c  -&gt; Picklist
+```
+Note any quirks: fields where the API name differs from the label, values stored as text to avoid
+conversion, status-priority rules. A stale schema reference is worse than none.
+
+## Test class standards
+- Minimum coverage 75% for production; aim higher.
+- Cover: happy path, alternative logic paths, boundary conditions, empty results return [] not null,
+  null/missing optional fields, data isolation, edge cases.
+- Use System.runAs() with a standard-user profile to confirm no exceptions for non-admins.
+- Use Assert.areEqual()/Assert.isNotNull(), not the deprecated System.assertEquals.
+
+## Checklist before every deploy
+- [ ] Sharing model chosen deliberately and documented
+- [ ] Try/catch wrapping the method body
+- [ ] Permission set created and included in the deploy
+- [ ] Test class present, all passing, meaningful coverage
+- [ ] All four states handled; empty state compact and specific
+- [ ] Brand tokens used, not default SLDS blue
+- [ ] No &lt;lightning-card&gt; or &lt;lightning-datatable&gt; — custom markup
+</pre></div>
+
+<div class="callout callout-warn">
+  <span class="callout-label">A font note that trips everyone up</span>
+  A custom web font won't load inside an LWC just by naming it in CSS — it needs to be set up as a static resource in the org, or it silently falls back. Confirm yours is wired up before you rely on it, or keep a system-font fallback in the stack.
+</div>
+
+<div class="footer"><strong>Mia</strong><br>A reusable skill — drop in your brand and schema, then build on-brand. Part of the 30 Days of Claude series.<br><br>⚠️ Review anything an AI tool generates before it touches a real org, keep your target org on a dev sandbox, and get business approval before using any AI workflow against production.</div>
+<script>
+function copySkill(btn){
+  const pre = btn.closest('.skill-block').querySelector('pre');
+  const text = pre.innerText;
+  const done = () => { btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},1600); };
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done)); }
+  else { fallback(text,done); }
+}
+function fallback(text,done){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');done();}catch(e){}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
