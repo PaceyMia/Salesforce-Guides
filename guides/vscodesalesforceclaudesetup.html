@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VS Code + Salesforce Setup Guide · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --red:#EF4444;--teal:#14B8A6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+  /* HEADER */
+  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
+  h1 span{color:var(--blue)}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+  .subtitle strong{color:var(--light)}
+
+  /* PROGRESS NAV */
+  .phase-nav{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .phase-nav-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.5px;border-right:1px solid var(--border);cursor:default;transition:background 0.2s}
+  .phase-nav-item:last-child{border-right:none}
+  .phase-nav-item.p1{color:var(--blue);background:#00A1E010}
+  .phase-nav-item.p2{color:var(--orange);background:#F2652210}
+  .phase-nav-item.p3{color:var(--purple);background:#8B5CF610}
+  .phase-nav-item.p4{color:var(--green);background:#22C55E10}
+  .phase-nav-item.p5{color:var(--amber);background:#F59E0B10}
+  .phase-num{display:block;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:2px}
+
+  /* PHASE HEADERS */
+  .phase{margin-bottom:40px}
+  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
+  .phase-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:2px}
+  .phase-desc{font-size:12px;color:var(--muted)}
+
+  /* STEP CARDS */
+  .step{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .step-header{display:flex;align-items:flex-start;gap:13px;padding:15px 16px}
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .step-content{flex:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
+  .step-body{font-size:13px;line-height:1.75;color:var(--light)}
+  .step-body p{margin-bottom:8px}
+  .step-body p:last-child{margin-bottom:0}
+
+  /* CODE BLOCKS */
+  .cmd-block{background:#060A10;border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7DD3FC;position:relative;overflow-x:auto}
+  .cmd-block .cmd-label{font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase}
+  .cmd-line{display:block;line-height:1.8}
+  .cmd-line::before{content:'> ';color:var(--muted)}
+
+  /* CALLOUT BOXES */
+  .callout{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13px;line-height:1.65}
+  .callout-tip{background:#00A1E010;border:1px solid #00A1E033;color:var(--light)}
+  .callout-warn{background:#F59E0B10;border:1px solid #F59E0B33;color:var(--light)}
+  .callout-success{background:#22C55E10;border:1px solid #22C55E33;color:var(--light)}
+  .callout-danger{background:#EF444410;border:1px solid #EF444433;color:var(--light)}
+  .callout-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .callout-tip .callout-label{color:var(--blue)}
+  .callout-warn .callout-label{color:var(--amber)}
+  .callout-success .callout-label{color:var(--green)}
+  .callout-danger .callout-label{color:var(--red)}
+
+  /* DOWNLOAD BUTTONS */
+  .dl-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#080C14;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:6px 6px 6px 0;border:none;cursor:pointer;transition:opacity 0.2s}
+  .dl-btn:hover{opacity:0.88}
+  .dl-btn.orange{background:var(--orange)}
+  .dl-btn.purple{background:var(--purple);color:white}
+  .dl-btn.green{background:var(--green)}
+
+  /* WHAT YOU'LL SEE SCREENSHOTS */
+  .ui-mock{background:#060A10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px}
+  .ui-mock-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block}
+  .ui-mock-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5}
+  .ui-mock-item:last-child{border-bottom:none}
+  .ui-mock-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+  /* TROUBLESHOOT */
+  .trouble-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:5px}
+  .trouble-a{font-size:12.5px;color:var(--light);line-height:1.65}
+
+  /* CHECKLIST */
+  .checklist{list-style:none;padding:0}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:13px;color:var(--light);border-bottom:1px solid var(--border)}
+  .checklist li:last-child{border-bottom:none}
+  .check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px}
+  .check-done .check-box{background:var(--green);border-color:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;color:#080C14;font-weight:700}
+
+  /* FINAL SUCCESS */
+  .success-banner{background:linear-gradient(135deg,#22C55E12,#00A1E012);border:1.5px solid var(--green);border-radius:14px;padding:22px 24px;margin-top:40px;text-align:center}
+  .success-banner h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
+  .success-banner p{font-size:13px;color:var(--light);line-height:1.65}
+
+  /* FOOTER */
+  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
+  .footer strong{color:var(--light)}
+
+  /* INLINE HIGHLIGHTS */
+  code{background:#0A1628;border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#7DD3FC}
+  .highlight-orange{color:var(--orange);font-weight:600}
+  .highlight-blue{color:var(--blue);font-weight:600}
+  .highlight-green{color:var(--green);font-weight:600}
+
+  /* TIME ESTIMATES */
+  .time-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:0.5px;margin-left:6px;vertical-align:middle}
+  .time-blue{background:#00A1E018;color:var(--blue);border:1px solid #00A1E030}
+  .time-orange{background:#F2652218;color:var(--orange);border:1px solid #F2652230}
+  .time-purple{background:#8B5CF618;color:var(--purple);border:1px solid #8B5CF630}
+  .time-green{background:#22C55E18;color:var(--green);border:1px solid #22C55E30}
+  .time-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
+
+  /* ENGAGE: SHARE + REACTIONS */
+  .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
+  .engage-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .share-buttons{display:flex;flex-wrap:wrap;gap:10px}
+  .share-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--light);text-decoration:none;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color 0.2s,opacity 0.2s}
+  .share-btn:hover{opacity:0.85}
+  .share-btn.native{border-color:var(--blue);color:var(--blue);background:#00A1E014}
+  .share-btn.native.copied{border-color:var(--green);color:var(--green);background:#22C55E14}
+  .share-btn.x{color:var(--white)}
+  .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
+  .giscus-wrap{margin-top:22px}
+</style>
+</head>
+<body>
+
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+<div class="doc-tag">Admin Setup Guide · Windows · Dev Org</div>
+<h1>VS Code + Salesforce +<br><span>Claude in 45 minutes</span></h1>
+<p class="subtitle">A plain-English guide for <strong>Salesforce admins</strong> who have never opened a terminal.<br>Starting from absolute zero — no VS Code, no Salesforce CLI, nothing.</p>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <div class="phase-nav-item p1"><span class="phase-num">1</span>Install<br>VS Code</div>
+  <div class="phase-nav-item p2"><span class="phase-num">2</span>Salesforce<br>CLI</div>
+  <div class="phase-nav-item p3"><span class="phase-num">3</span>Extensions</div>
+  <div class="phase-nav-item p4"><span class="phase-num">4</span>Connect<br>Your Org</div>
+  <div class="phase-nav-item p5"><span class="phase-num">5</span>Claude<br>Code</div>
+</div>
+
+<!-- ═══ PHASE 1 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#00A1E018;color:var(--blue)">1</div>
+    <div>
+      <div class="phase-title">Install VS Code</div>
+      <div class="phase-desc">The code editor. Free. From Microsoft. <span class="time-tag time-blue">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">1</div>
+      <div class="step-content">
+        <div class="step-title">Download VS Code</div>
+        <div class="step-body">
+          <p>Go to <strong>code.visualstudio.com</strong> — it will auto-detect Windows and show you the download button. Click the big blue <strong>Download for Windows</strong> button.</p>
+          <a class="dl-btn" href="https://code.visualstudio.com/download">code.visualstudio.com/download ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">2</div>
+      <div class="step-content">
+        <div class="step-title">Run the installer</div>
+        <div class="step-body">
+          <p>Open the downloaded file (it'll be something like <code>VSCodeUserSetup-x64-1.xx.x.exe</code>). Click through the installer — all defaults are fine.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">✓ One setting to check</span>
+            On the "Select Additional Tasks" screen, tick <strong>"Add to PATH"</strong> if it's not already ticked. This lets you open VS Code from the terminal later.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">3</div>
+      <div class="step-content">
+        <div class="step-title">Open VS Code</div>
+        <div class="step-body">
+          <p>Launch it from Start menu or desktop. You should see a welcome screen with a dark sidebar on the left. That's it — VS Code is installed.</p>
+          <div class="callout callout-warn">
+            <span class="callout-label">⚠ First-time popup</span>
+            Windows may ask "Do you trust the authors of files in this folder?" — click <strong>Yes, I trust the authors</strong>. You'll see this every time you open a new project folder.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 2 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F2652218;color:var(--orange)">2</div>
+    <div>
+      <div class="phase-title">Install Salesforce CLI</div>
+      <div class="phase-desc">The tool that lets VS Code talk to your Salesforce org. <span class="time-tag time-orange">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">What is the Salesforce CLI?</span>
+    Think of it like a remote control for your org that lives in your computer. The VS Code extensions use it behind the scenes to push and pull metadata, run deployments, and authenticate. You don't need to memorise commands — the extensions give you buttons for most things.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">1</div>
+      <div class="step-content">
+        <div class="step-title">Download the Salesforce CLI</div>
+        <div class="step-body">
+          <p>Go to the Salesforce CLI download page and get the Windows installer (<code>.exe</code> file).</p>
+          <a class="dl-btn orange" href="https://developer.salesforce.com/tools/salesforcecli">developer.salesforce.com/tools/salesforcecli ↗</a>
+          <p style="margin-top:10px">Look for <strong>Download for Windows</strong>. Run the installer — click through all defaults.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">2</div>
+      <div class="step-content">
+        <div class="step-title">Verify it installed correctly</div>
+        <div class="step-body">
+          <div class="callout callout-warn">
+            <span class="callout-label">Do this before testing</span>
+            <strong>Close VS Code completely and reopen it</strong> before running the command below. The CLI installer updates your system PATH and VS Code won't pick it up until it restarts. Don't just close the terminal tab — close the whole application.
+          </div>
+          <p>Once VS Code is back open, go to <strong>Terminal → New Terminal</strong>. A panel will open at the bottom. Type:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Terminal</span>
+            <span class="cmd-line">sf --version</span>
+          </div>
+          <p>You should see something like <code>@salesforce/cli/2.xx.xx win32-x64</code>. If you see that — you're good.</p>
+          <div class="callout callout-danger">
+            <span class="callout-label">Still says 'sf is not recognised' after reopening?</span>
+            Do a full Windows restart — not just VS Code. Sometimes the PATH update needs a full system restart to take effect. After rebooting, open VS Code and try the command again.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 3 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#8B5CF618;color:var(--purple)">3</div>
+    <div>
+      <div class="phase-title">Install the Salesforce Extensions</div>
+      <div class="phase-desc">The VS Code plugins that give you Salesforce superpowers. <span class="time-tag time-purple">~3 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">1</div>
+      <div class="step-content">
+        <div class="step-title">Open Extensions panel</div>
+        <div class="step-body">
+          <p>In VS Code, click the <strong>Extensions icon</strong> in the left sidebar (it looks like four squares, one slightly offset). Or press <code>Ctrl + Shift + X</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">2</div>
+      <div class="step-content">
+        <div class="step-title">Search and install the Salesforce Extension Pack</div>
+        <div class="step-body">
+          <p>In the search box at the top, type exactly: <code>Salesforce Extension Pack</code></p>
+          <p>The first result should be by <strong>Salesforce</strong> (blue tick, millions of installs). Click <strong>Install</strong>.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">What this installs</span>
+            One click installs everything: Apex language support, Lightning Web Components support, Salesforce CLI integration, SOQL query runner, and more. You don't need to install them individually.
+          </div>
+          <div class="callout callout-danger">
+            <span class="callout-label">⚠ Do NOT install "Salesforce Extension Pack (Expanded)"</span>
+            In the search results you'll also see <strong>Salesforce Extension Pack (Expanded)</strong> — do not install this. It conflicts with the standard pack and will cause errors. You only need the plain <strong>Salesforce Extension Pack</strong>.
+          </div>
+          <div class="ui-mock">
+            <span class="ui-mock-label">What you'll see in the extensions panel</span>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">SF</div><span><strong>Salesforce Extension Pack</strong> — Salesforce · ★ 4.5 · Installing...</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#8B5CF620;color:var(--purple)">AP</div><span>Salesforce Apex Language Server (installs automatically)</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">LW</div><span>Lightning Web Components (installs automatically)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">3</div>
+      <div class="step-content">
+        <div class="step-title">Reload VS Code when prompted</div>
+        <div class="step-body">
+          <p>After install, VS Code will show a <strong>Reload Required</strong> button. Click it. The extensions activate on restart.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 4 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
+    <div>
+      <div class="phase-title">Create a Project and Connect Your Dev Org</div>
+      <div class="phase-desc">The part where VS Code actually knows about your Salesforce org. <span class="time-tag time-green">~10 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-warn" style="margin-bottom:16px">
+    <span class="callout-label">Before you start</span>
+    You need a folder on your computer to store your project. Create one now — something like <code>C:\Users\YourName\Documents\salesforce-dev</code>. Don't use a OneDrive or cloud-synced folder for this — it can cause permission issues.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">1</div>
+      <div class="step-content">
+        <div class="step-title">Open your project folder in VS Code</div>
+        <div class="step-body">
+          <p>Go to <strong>File → Open Folder</strong> and navigate to the folder you just created. Click <strong>Select Folder</strong>. VS Code will reload with that folder open in the sidebar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">2</div>
+      <div class="step-content">
+        <div class="step-title">Create a new SFDX project</div>
+        <div class="step-body">
+          <p>Press <code>Ctrl + Shift + P</code> to open the Command Palette. This is the most important keyboard shortcut in VS Code — it lets you search for any command.</p>
+          <p>Type: <code>SFDX: Create Project with Manifest</code> and press Enter.</p>
+          <div class="ui-mock">
+            <span class="ui-mock-label">Command palette — what to type</span>
+            <div class="ui-mock-item" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#7DD3FC">
+              > SFDX: Create Project with Manifest
+            </div>
+          </div>
+          <p style="margin-top:10px">It will ask for a project name — call it something like <code>dev-org-project</code>. Press Enter. Choose your folder when prompted. VS Code will create the project structure automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">3</div>
+      <div class="step-content">
+        <div class="step-title">Authorise (connect) your Developer Edition org</div>
+        <div class="step-body">
+          <p>Press <code>Ctrl + Shift + P</code> again. Type: <code>SFDX: Authorize an Org</code> and press Enter.</p>
+          <p>It will ask: <strong>What type of org?</strong> — choose <strong>Production</strong> (Developer Edition orgs use the production login URL).</p>
+          <p>It will ask for an alias — type something easy like <code>mydevorg</code>.</p>
+          <p>Your browser will open automatically and take you to the Salesforce login page. <strong>Log in with your Developer Edition credentials.</strong> Click Allow when asked for permissions.</p>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ Success looks like this</span>
+            VS Code terminal will show: <code>Successfully authorized [youremail@example.com] with org ID 00D...</code> and the bottom status bar of VS Code will show your org name.
+          </div>
+          <div class="callout callout-tip">
+            <span class="callout-label">The status bar shortcut</span>
+            Look at the very bottom of VS Code. You'll see your org name there. Click it any time to switch orgs or check which org you're connected to.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">4</div>
+      <div class="step-content">
+        <div class="step-title">Pull metadata from your org (optional but useful)</div>
+        <div class="step-body">
+          <p>To get a local copy of your org's metadata — LWCs, Apex classes, flows — right-click on the <code>manifest/package.xml</code> file in your sidebar and select <strong>SFDX: Retrieve Source in Manifest from Org</strong>.</p>
+          <div class="callout callout-warn">
+            <span class="callout-label">⚠ Dev org only — don't do this on a real org without guidance</span>
+            This pulls your org's metadata to your local machine. For a Developer Edition org it's fine. For a production or sandbox org, make sure you know what you're doing first.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 5 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
+    <div>
+      <div class="phase-title">Install Claude Code</div>
+      <div class="phase-desc">The part where Claude lives inside VS Code. No terminal required. <span class="time-tag time-amber">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">What is Claude Code?</span>
+    Claude Code is a version of Claude that runs inside VS Code and can see your actual project files. Ask it about your org's metadata, get it to help you build or fix components, or diagnose errors — all with the context of your real project sitting right there. You need a Claude Pro subscription (or higher) to use it.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">1</div>
+      <div class="step-content">
+        <div class="step-title">Install the Claude Code extension from the Extensions panel</div>
+        <div class="step-body">
+          <p>Press <code>Ctrl + Shift + X</code> to open the Extensions panel. In the search box, type: <code>Claude Code</code></p>
+          <p>Look for the extension by <strong>Anthropic</strong> and click <strong>Install</strong>.</p>
+          <div class="ui-mock">
+            <span class="ui-mock-label">What you're looking for in the Extensions panel</span>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F59E0B20;color:var(--amber)">✳</div><span><strong>Claude Code</strong> — Anthropic · The extension that puts Claude inside VS Code</span></div>
+          </div>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ That's it — no terminal commands needed</span>
+            Installing the extension this way handles everything automatically in the background. You don't need to run any PowerShell commands or touch the terminal.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">2</div>
+      <div class="step-content">
+        <div class="step-title">Sign in with your Claude account</div>
+        <div class="step-body">
+          <p>After the extension installs, a sign-in prompt will appear. Click <strong>Sign in to Claude</strong>. Your browser will open — log in with the same Claude account you use at claude.ai.</p>
+          <p>Click <strong>Allow</strong> when asked for permissions, then return to VS Code.</p>
+          <div class="callout callout-warn">
+            <span class="callout-label">You need a paid Claude plan</span>
+            Claude Code is included with Claude Pro ($20/month), Max, Team, and Enterprise. It is not available on the free plan.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">3</div>
+      <div class="step-content">
+        <div class="step-title">Open Claude Code and test it</div>
+        <div class="step-body">
+          <p>Press <code>Ctrl + Esc</code> to open the Claude Code panel. You'll see a chat input box appear — this is Claude, running with access to your project files.</p>
+          <p>Type this to test it:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Claude Code prompt</span>
+            <span class="cmd-line">What files are in this project?</span>
+          </div>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ How to know it's working</span>
+            Claude should list your actual Salesforce project folders — force-app, manifest, lwc etc. If it does that, it's reading your real project. That's the difference between this and the regular Claude chat window.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BONUS: CONFETTI LWC TEASER -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#EC489918;color:var(--pink)">🎉</div>
+    <div>
+      <div class="phase-title">Bonus: Install a real component from GitHub</div>
+      <div class="phase-desc">Put your new setup to work straight away.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <span class="callout-label">Try it now you're set up</span>
+    Now that VS Code, your org, and Claude Code are all connected, the fastest way to see it all working together is to install something real. The <strong>Confetti LWC</strong> guide walks through grabbing a component from GitHub, having Claude deploy it to your org, and dragging it onto a record page — paste a folder path, approve a few prompts, drag-and-drop to finish.
+    <div style="margin-top:10px"><a href="confetti-lwc-install.html" style="color:var(--pink);font-weight:600">→ Install the Confetti LWC from GitHub</a></div>
+  </div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#EF444418;color:var(--red)">?</div>
+    <div>
+      <div class="phase-title">Common problems</div>
+      <div class="phase-desc">Things that catch people out the first time. All tested on Windows.</div>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Terminal says 'sf is not recognised' after installing the Salesforce CLI</div>
+    <div class="trouble-a"><strong>Close VS Code completely and reopen it</strong> — don't just close the terminal tab, close the whole application. Open a new terminal and try again. If it still fails, do a full Windows restart. The CLI installer updates your system PATH and Windows sometimes needs a full reboot to pick it up.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">The browser opened for org auth but nothing happened in VS Code</div>
+    <div class="trouble-a">Check that you clicked <strong>Allow</strong> on the Salesforce permissions screen in the browser. VS Code waits for that confirmation before proceeding. If you closed the browser window before clicking Allow, run the authorise command again from the Command Palette (<code>Ctrl+Shift+P</code> → SFDX: Authorize an Org).</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Claude Code extension installed but Ctrl+Esc doesn't open anything</div>
+    <div class="trouble-a">Try <code>Ctrl+Shift+P</code> and search for "Claude Code" to find the open panel command manually. If nothing appears, reload VS Code — go to <code>Ctrl+Shift+P</code> → "Reload Window". If you're still not signed in, the panel will prompt you to log in first.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Claude Code asks me to sign in every time I open VS Code</div>
+    <div class="trouble-a">This can happen if VS Code doesn't have permission to store credentials. Try signing in again — it's quick. If it keeps happening, check that you're running VS Code as your normal user (not as Administrator), as credential storage behaves differently in elevated mode.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Deployment failed — 'This component is not available for this page type'</div>
+    <div class="trouble-a">Open your <code>js-meta.xml</code> file and check the <code>&lt;targets&gt;</code> section. It needs to include <code>lightning__AppPage</code> or <code>lightning__RecordPage</code> depending on where you want to place it. Ask Claude Code to fix the meta file for you — paste the error and it will diagnose it against your actual file.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Deployment failed — API version error</div>
+    <div class="trouble-a">The API version in your <code>js-meta.xml</code> needs to match your org's current API version. Find yours in Salesforce Setup → Apex Classes — the version shown there is what to use. Ask Claude Code to update your meta.xml with the right version.</div>
+  </div>
+</div>
+
+<!-- SUCCESS BANNER -->
+<div class="success-banner">
+  <h2>You're set up. Now go build something.</h2>
+  <p>VS Code is running. Your dev org is connected. Claude Code is open in the sidebar.<br>Drop your LWC files in the right folder, right-click → Deploy, watch it go live.</p>
+</div>
+
+<div class="engage-section">
+  <span class="engage-label">Found this useful?</span>
+  <div class="share-buttons">
+    <button class="share-btn native" type="button" id="nativeShareBtn">🔗 Share this page</button>
+    <a class="share-btn x" id="shareXBtn" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">𝕏 Share on X</a>
+    <a class="share-btn linkedin" id="shareLinkedInBtn" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer">in Share on LinkedIn</a>
+  </div>
+  <div class="giscus-wrap">
+    <!-- To enable: visit giscus.app, enable Discussions on this repo, install the giscus app, then fill in data-repo-id and data-category-id below -->
+    <script src="https://giscus.app/client.js"
+      data-repo="PaceyMia/Salesforce-Guides"
+      data-repo-id="REPLACE_WITH_REPO_ID"
+      data-category="Announcements"
+      data-category-id="REPLACE_WITH_CATEGORY_ID"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Mia</strong><br>
+  Built for Salesforce admins starting from zero. All steps tested on Windows.<br>
+  <br>
+  ⚠️ This guide is for connecting to a <strong>Developer Edition org only</strong>. Do not connect to a production or sandbox org without understanding what you're deploying and getting appropriate approval first.
+</div>
+
+<script>
+(function(){
+  var shareUrl = location.href;
+  var shareTitle = document.title;
+  var xBtn = document.getElementById('shareXBtn');
+  var liBtn = document.getElementById('shareLinkedInBtn');
+  var nativeBtn = document.getElementById('nativeShareBtn');
+  if (xBtn) xBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(shareUrl);
+  if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+  if (nativeBtn) {
+    nativeBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: shareTitle, url: shareUrl }).catch(function(){});
+        return;
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          var original = nativeBtn.textContent;
+          nativeBtn.textContent = '✓ Link copied';
+          nativeBtn.classList.add('copied');
+          setTimeout(function(){ nativeBtn.textContent = original; nativeBtn.classList.remove('copied'); }, 1800);
+        });
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
