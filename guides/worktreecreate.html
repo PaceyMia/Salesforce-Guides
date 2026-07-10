@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worktree Create · A Claude Code Skill · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --red:#EF4444;--teal:#14B8A6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+  /* HEADER */
+  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
+  h1 span{color:var(--blue)}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+  .subtitle strong{color:var(--light)}
+
+  /* PROGRESS NAV */
+  .phase-nav{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .phase-nav-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.5px;border-right:1px solid var(--border);cursor:default;transition:background 0.2s}
+  .phase-nav-item:last-child{border-right:none}
+  .phase-nav-item.p1{color:var(--blue);background:#00A1E010}
+  .phase-nav-item.p2{color:var(--orange);background:#F2652210}
+  .phase-nav-item.p3{color:var(--purple);background:#8B5CF610}
+  .phase-nav-item.p4{color:var(--green);background:#22C55E10}
+  .phase-nav-item.p5{color:var(--amber);background:#F59E0B10}
+  .phase-num{display:block;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:2px}
+
+  /* PHASE HEADERS */
+  .phase{margin-bottom:40px}
+  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
+  .phase-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:2px}
+  .phase-desc{font-size:12px;color:var(--muted)}
+
+  /* STEP CARDS */
+  .step{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .step-header{display:flex;align-items:flex-start;gap:13px;padding:15px 16px}
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .step-content{flex:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
+  .step-body{font-size:13px;line-height:1.75;color:var(--light)}
+  .step-body p{margin-bottom:8px}
+  .step-body p:last-child{margin-bottom:0}
+
+  /* CODE BLOCKS */
+  .cmd-block{background:#060A10;border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7DD3FC;position:relative;overflow-x:auto}
+  .cmd-block .cmd-label{font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase}
+  .cmd-line{display:block;line-height:1.8}
+  .cmd-line::before{content:'> ';color:var(--muted)}
+
+  /* CALLOUT BOXES */
+  .callout{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13px;line-height:1.65}
+  .callout-tip{background:#00A1E010;border:1px solid #00A1E033;color:var(--light)}
+  .callout-warn{background:#F59E0B10;border:1px solid #F59E0B33;color:var(--light)}
+  .callout-success{background:#22C55E10;border:1px solid #22C55E33;color:var(--light)}
+  .callout-danger{background:#EF444410;border:1px solid #EF444433;color:var(--light)}
+  .callout-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .callout-tip .callout-label{color:var(--blue)}
+  .callout-warn .callout-label{color:var(--amber)}
+  .callout-success .callout-label{color:var(--green)}
+  .callout-danger .callout-label{color:var(--red)}
+
+  /* DOWNLOAD BUTTONS */
+  .dl-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#080C14;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:6px 6px 6px 0;border:none;cursor:pointer;transition:opacity 0.2s}
+  .dl-btn:hover{opacity:0.88}
+  .dl-btn.orange{background:var(--orange)}
+  .dl-btn.purple{background:var(--purple);color:white}
+  .dl-btn.green{background:var(--green)}
+
+  /* WHAT YOU'LL SEE SCREENSHOTS */
+  .ui-mock{background:#060A10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px}
+  .ui-mock-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block}
+  .ui-mock-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5}
+  .ui-mock-item:last-child{border-bottom:none}
+  .ui-mock-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+  /* TROUBLESHOOT */
+  .trouble-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:5px}
+  .trouble-a{font-size:12.5px;color:var(--light);line-height:1.65}
+
+  /* CHECKLIST */
+  .checklist{list-style:none;padding:0}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;padding:6px 0;font-size:13px;color:var(--light);border-bottom:1px solid var(--border)}
+  .checklist li:last-child{border-bottom:none}
+  .check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px}
+  .check-done .check-box{background:var(--green);border-color:var(--green);display:flex;align-items:center;justify-content:center;font-size:10px;color:#080C14;font-weight:700}
+
+  /* FINAL SUCCESS */
+  .success-banner{background:linear-gradient(135deg,#22C55E12,#00A1E012);border:1.5px solid var(--green);border-radius:14px;padding:22px 24px;margin-top:40px;text-align:center}
+  .success-banner h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
+  .success-banner p{font-size:13px;color:var(--light);line-height:1.65}
+
+  /* FOOTER */
+  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
+  .footer strong{color:var(--light)}
+
+  /* INLINE HIGHLIGHTS */
+  code{background:#0A1628;border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#7DD3FC}
+  .highlight-orange{color:var(--orange);font-weight:600}
+  .highlight-blue{color:var(--blue);font-weight:600}
+  .highlight-green{color:var(--green);font-weight:600}
+
+  /* TIME ESTIMATES */
+  .time-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:0.5px;margin-left:6px;vertical-align:middle}
+  .time-blue{background:#00A1E018;color:var(--blue);border:1px solid #00A1E030}
+  .time-orange{background:#F2652218;color:var(--orange);border:1px solid #F2652230}
+  .time-purple{background:#8B5CF618;color:var(--purple);border:1px solid #8B5CF630}
+  .time-green{background:#22C55E18;color:var(--green);border:1px solid #22C55E30}
+  .time-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
+
+
+  /* COPY BLOCKS (skill files) */
+  .skill-block{position:relative;background:#060A10;border:1px solid var(--border);border-radius:10px;margin:14px 0}
+  .skill-block .sb-head{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border)}
+  .skill-block .sb-name{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;color:var(--muted);font-family:'Inter',sans-serif}
+  .copy-btn{background:var(--blue);color:#080C14;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:0.5px;transition:opacity .2s}
+  .copy-btn:hover{opacity:.85}
+  .copy-btn.copied{background:var(--green)}
+  .skill-block pre{margin:0;padding:14px 16px;max-height:360px;overflow:auto;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.6;color:#9FD8F5;white-space:pre;tab-size:2}
+  .ph-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+  .ph-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase}
+  .ph-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5;vertical-align:top}
+  .ph-table td code{white-space:nowrap}
+  .section-h{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin:34px 0 6px;letter-spacing:-0.3px}
+  .section-sub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+
+  /* ENGAGE: SHARE + REACTIONS */
+  .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
+  .engage-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .share-buttons{display:flex;flex-wrap:wrap;gap:10px}
+  .share-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--light);text-decoration:none;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color 0.2s,opacity 0.2s}
+  .share-btn:hover{opacity:0.85}
+  .share-btn.native{border-color:var(--blue);color:var(--blue);background:#00A1E014}
+  .share-btn.native.copied{border-color:var(--green);color:var(--green);background:#22C55E14}
+  .share-btn.x{color:var(--white)}
+  .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
+  .giscus-wrap{margin-top:22px}
+</style>
+</head>
+<body>
+
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+
+<div class="doc-tag">Claude Code Skill · Git Worktrees · Reusable</div>
+<h1>Worktree Create<br><span>one command, five things at once</span></h1>
+<p class="subtitle">A reusable Claude Code skill for <strong>Salesforce admins</strong> who never get to work on one thing at a time. It spins up an isolated worktree on a correctly-named branch, then closes the loop with a clean pull request — and updates your project tracker for you.</p>
+
+<div class="callout callout-tip">
+  <span class="callout-label">What's a worktree?</span>
+  A branch makes you switch — stash what you're doing, check out the other thing, lose your place. A worktree gives every task its own folder, its own branch, checked out at the same time. You jump between them like browser tabs. No stashing, no switching.
+</div>
+
+<div class="section-h">Fill these in once</div>
+<p class="section-sub">This skill is a template. Replace every <code>[PLACEHOLDER]</code> with your own org's details the first time, then save it. Nothing here is locked to any one org.</p>
+<table class="ph-table">
+  <tr><th>Placeholder</th><th>What it is</th></tr>
+  <tr><td><code>[HOME_REPO]</code></td><td>Your main repo folder — your "home base", kept on the default branch</td></tr>
+  <tr><td><code>[DEFAULT_BRANCH]</code></td><td>The branch your home base stays on (<code>main</code> or <code>master</code>)</td></tr>
+  <tr><td><code>[BASE_BRANCH]</code></td><td>The branch you raise PRs against — never <code>main</code> if you run a pipeline</td></tr>
+  <tr><td><code>[DEV_SANDBOX_ALIAS]</code></td><td>Your personal dev sandbox CLI alias</td></tr>
+  <tr><td><code>[SANDBOX_URL_PATTERN]</code></td><td>Your org's My Domain sandbox login URL</td></tr>
+  <tr><td><code>[USERNAME]</code></td><td>Your machine username (used in the memory path)</td></tr>
+  <tr><td><code>[REPO_PARENT_DIR]</code></td><td>The folder your repos sit under</td></tr>
+  <tr><td><code>[PM_TOOL]</code></td><td>Your project management tool (ClickUp, Jira, Azure DevOps)</td></tr>
+  <tr><td><code>[BRANCH_PREFIXES]</code></td><td>Your team's own branch-prefix list</td></tr>
+</table>
+
+<div class="section-h">Skill 1 · Start the work</div>
+<p class="section-sub">Save as <code>sf-branch-start.md</code> in your commands folder. Invoke with <code>/project:sf-branch-start</code> at the start of every task.</p>
+<div class="skill-block">
+  <div class="sb-head"><span class="sb-name">sf-branch-start.md</span><button class="copy-btn" onclick="copySkill(this)">Copy</button></div>
+  <pre># Branch Setup — Start New Work (Worktree Version)
+
+&gt; Before you use this: this is a reusable template. Every [PLACEHOLDER] below is something
+&gt; you (or Claude) fill in with your own org&#x27;s details the first time you set it up.
+&gt; Replace every placeholder, then save it to your commands folder.
+
+Invoke at the very start of every new piece of Salesforce work, before touching the sandbox.
+This skill creates a fresh, isolated folder (a worktree) for your new task, on a correctly-named
+branch, synced from your remote, with your dev sandbox set as that folder&#x27;s default org. It pauses
+at every command and waits for your OK before running anything.
+
+## Placeholders to fill in once
+- [HOME_REPO]            Your main repo folder, kept on the default branch (e.g. myorg-sf)
+- [DEFAULT_BRANCH]       The branch your home base stays on (main or master)
+- [BASE_BRANCH]          The branch you raise PRs against — never main if you have a pipeline
+- [DEV_SANDBOX_ALIAS]    Your personal dev sandbox CLI alias
+- [SANDBOX_URL_PATTERN]  Your org&#x27;s My Domain sandbox URL (https://myorg--&lt;name&gt;.sandbox.my.salesforce.com)
+- [USERNAME]             Your machine username (for the memory path)
+- [REPO_PARENT_DIR]      The folder your repos sit under (e.g. Documents\VSCode)
+- [PM_TOOL]              Your project management tool (ClickUp, Jira, Azure DevOps)
+- [BRANCH_PREFIXES]      Your team&#x27;s own branch-prefix list (replace the example in Step 0b)
+
+## How to use
+Paste this into Claude at the start of every new task:
+
+    /project:sf-branch-start
+
+Claude asks four questions first, then proposes your branch name, worktree folder name, commit
+message and PR description for you to confirm before running a single command.
+
+## Step 0 — Collect context (ask these four, one at a time)
+Q1. In one sentence, what are you about to build or fix in the dev sandbox?
+Q2. Is it a NEW feature or a FIX for something broken?
+Q3. Which Salesforce object(s) does it touch? (or &quot;none&quot;)
+Q4. Is there a [PM_TOOL] ticket number? (paste it, or &quot;no ticket&quot;)
+Wait for all four before moving on.
+
+## Step 0b — Draft four artefacts (confirm before any command)
+Branch name: &lt;prefix&gt;/&lt;short-kebab-description&gt;, lowercase, dashes inside, max 4 words after the slash.
+Pick the prefix from your team&#x27;s list. [BRANCH_PREFIXES] — replace this with your own. Example starter set:
+  feat  generic new feature
+  fix   bug fix to something already in production
+  lwc   Lightning Web Components
+  flow  Flow automation
+  data  reporting and data components
+  api   REST API / external integrations
+Worktree folder name: the branch name with the slash replaced by a dash.
+Commit message: max 70 chars, present-tense imperative.
+PR title + description: title = commit message; description = What changed / Why / How to test.
+
+## Step 0c — Seed the new worktree&#x27;s memory (no &quot;go&quot; needed)
+Each VS Code window runs its own Claude session. Seed it so the new window knows the PR details and
+context without re-explaining. Memory dir:
+  C:\Users\[USERNAME]\.claude\projects\c--Users-[USERNAME]-&lt;encoded-folder-path&gt;\memory\
+Write project_pr_context.md (branch, ticket, PR title, why, how to test), copy any relevant memory
+files from the current session, then write MEMORY.md indexing them.
+
+## Step 1 — Sync the latest (no disruption)
+From inside [HOME_REPO]:
+    git fetch origin
+Fetch never changes open files, so it is safe even mid-build in another window.
+
+## Step 2 — Create the worktree (new folder + new branch)
+From inside [HOME_REPO]:
+    git worktree add -b &lt;branch-name&gt; ../&lt;folder-name&gt; origin/[DEFAULT_BRANCH]
+If git says the branch is already checked out elsewhere: STOP, don&#x27;t use --force, ask.
+
+## Step 3 — Set the target org and open
+    sf org list
+Ask which alias is the personal dev sandbox ([DEV_SANDBOX_ALIAS]) — never UAT/staging/prod. Then:
+    cd ../&lt;folder-name&gt;; sf config set target-org &lt;alias&gt;; code .
+If the sandbox isn&#x27;t listed, log in first:
+    sf org login web --alias &lt;alias&gt; --instance-url [SANDBOX_URL_PATTERN]
+
+## Safety rules — never break these
+- Never git push --force, git reset --hard, or anything destructive.
+- Never deploy directly to UAT or production — the pipeline does that after merge to [BASE_BRANCH].
+- Never set the target org to UAT/staging/prod — always the personal dev sandbox.
+- Never create a worktree inside [HOME_REPO] — they go beside it (the ../ handles this).
+- A branch lives in only one worktree at a time. That&#x27;s protective, not an error.
+- If a command fails, STOP, translate the error to plain English, suggest one safe recovery.
+- Merge conflict? STOP and escalate — don&#x27;t auto-resolve.
+</pre>
+</div>
+
+<div class="section-h">Skill 2 · Finish &amp; raise the PR</div>
+<p class="section-sub">Save as <code>sf-branch-pr.md</code>. Invoke with <code>/project:sf-branch-pr</code> once your sandbox changes are done.</p>
+<div class="skill-block">
+  <div class="sb-head"><span class="sb-name">sf-branch-pr.md</span><button class="copy-btn" onclick="copySkill(this)">Copy</button></div>
+  <pre># Branch PR — Finish Work and Raise a Pull Request (Worktree Version)
+
+Invoke after you&#x27;ve finished changes in the dev sandbox and are ready to commit and raise a PR.
+This skill reviews what changed, stages the right files, commits, pushes, raises a PR, then tidies
+up the worktree. It pauses at every command and waits for your OK.
+
+Run every command from inside the task&#x27;s own worktree folder — not your [HOME_REPO] home base.
+
+## How to use
+From the worktree window:
+    /project:sf-branch-pr
+
+## Step 8 — Review what changed
+    git status
+    git diff --stat
+Flag anything unexpected: profile diffs, timestamp-only XML changes, ID-only changes, files from a
+component you didn&#x27;t mention. For each, ask: keep or discard? Discard with:
+    git checkout -- &lt;filename&gt;
+Don&#x27;t continue until the file list looks right.
+
+## Step 9 — Stage the files
+    git add .
+(or stage specific files). Wait for &quot;go&quot;.
+
+## Step 10 — Commit with a descriptive message
+Max 70 chars, present-tense imperative, specific (not &quot;fix&quot; or &quot;updates&quot;).
+    git commit -m &quot;&lt;message&gt;&quot;
+
+## Step 11 — Push the branch
+First push:  git push -u origin HEAD
+Later:       git push
+Copy the URL git prints — you&#x27;ll use it in Step 12.
+
+## Step 12 — Open a pull request
+Base branch is always [BASE_BRANCH]. Never raise a PR against [DEFAULT_BRANCH].
+    gh pr create --base [BASE_BRANCH] --title &quot;&lt;message&gt;&quot; --body &quot;&lt;description&gt;&quot;
+PR description = What changed / Why / How to test. Paste the [PM_TOOL] ticket if there is one.
+
+### After the PR — update [PM_TOOL] (no &quot;go&quot; needed)
+If there&#x27;s a ticket: look it up, add a comment &quot;PR opened: &lt;URL&gt; — &lt;title&gt;&quot;, set status to In Review.
+If the [PM_TOOL] connector isn&#x27;t available, tell the user and continue — it&#x27;s a convenience, not a blocker.
+
+## Step 13 — Request review and wait for merge
+Add a reviewer on the PR page. After merge, the pipeline deploys onward automatically.
+When you can see the PR is merged, type &quot;merged&quot; and continue to Step 14.
+
+## Step 14 — Tidy up the worktree (after merge only)
+From your home base ([HOME_REPO]), not the worktree itself:
+    git worktree remove ../&lt;folder-name&gt;
+    git branch -d &lt;branch-name&gt;
+If git refuses because of uncommitted changes, that&#x27;s a safety feature. STOP, don&#x27;t use --force,
+check git status and decide with the user.
+
+## Safety rules — never break these
+- Never push --force, reset --hard, or remove a worktree with --force.
+- Never deploy directly to UAT or production.
+- Never run Step 14 until the PR is actually merged.
+- Run git worktree remove from the home base, never from inside the folder being removed.
+- Merge conflict? STOP and escalate.
+</pre>
+</div>
+
+<div class="section-h">Where to save it</div>
+<table class="ph-table">
+  <tr><th>Scope</th><th>Location</th><th>Invoke with</th></tr>
+  <tr><td>This project only</td><td><code>.claude/commands/</code> in the repo</td><td><code>/project:sf-branch-start</code></td></tr>
+  <tr><td>Every project</td><td><code>~/.claude/commands/</code> (global)</td><td><code>/sf-branch-start</code></td></tr>
+</table>
+
+<div class="callout callout-warn">
+  <span class="callout-label">Before you run it on real work</span>
+  These commands act on your repo and your org. Read each step before you approve it, keep your target org set to your dev sandbox, and get your org's sign-off before pointing any AI workflow at production metadata.
+</div>
+
+<div class="success-banner">
+  <h2>That's the loop, start to finish.</h2>
+  <p>One command opens an isolated worktree. One more reviews, commits, pushes, raises the PR, and updates your tracker. You stop fighting git and start working on as many things as your day actually demands.</p>
+</div>
+
+<div class="engage-section">
+  <span class="engage-label">Found this useful?</span>
+  <div class="share-buttons">
+    <button class="share-btn native" type="button" id="nativeShareBtn">🔗 Share this page</button>
+    <a class="share-btn x" id="shareXBtn" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">𝕏 Share on X</a>
+    <a class="share-btn linkedin" id="shareLinkedInBtn" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer">in Share on LinkedIn</a>
+  </div>
+  <div class="giscus-wrap">
+    <!-- To enable: visit giscus.app, enable Discussions on this repo, install the giscus app, then fill in data-repo-id and data-category-id below -->
+    <script src="https://giscus.app/client.js"
+      data-repo="PaceyMia/Salesforce-Guides"
+      data-repo-id="REPLACE_WITH_REPO_ID"
+      data-category="Announcements"
+      data-category-id="REPLACE_WITH_CATEGORY_ID"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Mia</strong><br>
+  A reusable Claude Code skill — fill in the placeholders and make it yours. Part of the 30 Days of Claude series.<br>
+  <br>
+  ⚠️ These commands run real git and Salesforce CLI operations. Always review each step before approving, keep your target org on a dev sandbox, and get business approval before using any AI workflow against production.
+</div>
+
+<script>
+function copySkill(btn){
+  const pre = btn.closest('.skill-block').querySelector('pre');
+  const text = pre.innerText;
+  const done = () => { btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},1600); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallback(text,done));
+  } else { fallback(text,done); }
+}
+function fallback(text,done){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');done();}catch(e){}
+  document.body.removeChild(ta);
+}
+</script>
+
+<script>
+(function(){
+  var shareUrl = location.href;
+  var shareTitle = document.title;
+  var xBtn = document.getElementById('shareXBtn');
+  var liBtn = document.getElementById('shareLinkedInBtn');
+  var nativeBtn = document.getElementById('nativeShareBtn');
+  if (xBtn) xBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(shareUrl);
+  if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+  if (nativeBtn) {
+    nativeBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: shareTitle, url: shareUrl }).catch(function(){});
+        return;
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          var original = nativeBtn.textContent;
+          nativeBtn.textContent = '✓ Link copied';
+          nativeBtn.classList.add('copied');
+          setTimeout(function(){ nativeBtn.textContent = original; nativeBtn.classList.remove('copied'); }, 1800);
+        });
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
