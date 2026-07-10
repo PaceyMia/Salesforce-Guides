@@ -138,6 +138,17 @@
   .video-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;background:#060A10}
   .video-wrap video{width:100%;display:block}
 
+  /* ENGAGE: SHARE + REACTIONS */
+  .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
+  .engage-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .share-buttons{display:flex;flex-wrap:wrap;gap:10px}
+  .share-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--light);text-decoration:none;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color 0.2s,opacity 0.2s}
+  .share-btn:hover{opacity:0.85}
+  .share-btn.native{border-color:var(--blue);color:var(--blue);background:#00A1E014}
+  .share-btn.native.copied{border-color:var(--green);color:var(--green);background:#22C55E14}
+  .share-btn.x{color:var(--white)}
+  .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
+  .giscus-wrap{margin-top:22px}
 </style>
 </head>
 <body>
@@ -203,6 +214,34 @@ Do not assume my field names. Ask me anything you need, then show me the plan be
   The prompt ends by telling Claude to confirm your schema and show the plan first. Keep that line. It's the checkpoint that stops a wrong-shaped load — and it doubles as the moment to make sure you're comfortable sharing your object structure with an AI tool.
 </div>
 
+<div class="engage-section">
+  <span class="engage-label">Found this useful?</span>
+  <div class="share-buttons">
+    <button class="share-btn native" type="button" id="nativeShareBtn">🔗 Share this page</button>
+    <a class="share-btn x" id="shareXBtn" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">𝕏 Share on X</a>
+    <a class="share-btn linkedin" id="shareLinkedInBtn" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer">in Share on LinkedIn</a>
+  </div>
+  <div class="giscus-wrap">
+    <!-- To enable: visit giscus.app, enable Discussions on this repo, install the giscus app, then fill in data-repo-id and data-category-id below -->
+    <script src="https://giscus.app/client.js"
+      data-repo="PaceyMia/Salesforce-Guides"
+      data-repo-id="REPLACE_WITH_REPO_ID"
+      data-category="Announcements"
+      data-category-id="REPLACE_WITH_CATEGORY_ID"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</div>
+
 <div class="footer">
   <strong>Mia</strong><br>
   A reusable prompt — fill it in and run it against a dev sandbox. Part of the 30 Days of Claude series.<br>
@@ -223,6 +262,33 @@ function fallback(text,done){
   try{document.execCommand('copy');done();}catch(e){}
   document.body.removeChild(ta);
 }
+</script>
+<script>
+(function(){
+  var shareUrl = location.href;
+  var shareTitle = document.title;
+  var xBtn = document.getElementById('shareXBtn');
+  var liBtn = document.getElementById('shareLinkedInBtn');
+  var nativeBtn = document.getElementById('nativeShareBtn');
+  if (xBtn) xBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(shareUrl);
+  if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+  if (nativeBtn) {
+    nativeBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: shareTitle, url: shareUrl }).catch(function(){});
+        return;
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          var original = nativeBtn.textContent;
+          nativeBtn.textContent = '✓ Link copied';
+          nativeBtn.classList.add('copied');
+          setTimeout(function(){ nativeBtn.textContent = original; nativeBtn.classList.remove('copied'); }, 1800);
+        });
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>
