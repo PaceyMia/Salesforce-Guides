@@ -13,7 +13,7 @@
 <a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
 <div class="doc-tag">Admin Setup Guide · MCP · Custom Servers</div>
 <h1>Custom MCP Servers<br><span>expose your own Apex, Flows & REST to Claude</span></h1>
-<p class="subtitle">The standard hosted MCP servers only give Claude generic CRUD. This guide covers building your <strong>own</strong> MCP server — bundling your Apex actions, Flows, and REST endpoints (plus any standard tools you want alongside them) under a single URL Claude can call.<br>Companion to the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">Salesforce MCP Server → Claude Code guide</a> — do that one first if you haven't, since custom servers reuse the same permission set and External Client App.</p>
+<p class="subtitle">The standard hosted MCP servers only give Claude generic CRUD. This guide covers building your <strong>own</strong> MCP server — bundling your Apex actions, Flows, and REST endpoints (plus any standard tools you want alongside them) under a single URL Claude can call.<br>Companion to the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">Salesforce MCP Server → Claude guide</a> — do that one first if you haven't, since custom servers reuse the same permission set and External Client App.</p>
 
 <div class="callout callout-danger" style="margin-bottom:28px">
   <span class="callout-label">⚠ Before you start</span>
@@ -134,7 +134,7 @@
 
   <div class="callout callout-tip" style="margin-bottom:16px">
     <span class="callout-label">Why bother?</span>
-    Without this, Claude needs two separate MCP connections — one for your custom tools, one for basic record lookups. Bundling a few standard tools in means one connection covers both, which is one less thing to configure on the Claude Code / Claude chat side.
+    Without this, Claude needs two separate MCP connections — one for your custom tools, one for basic record lookups. Bundling a few standard tools in means one connection covers both, which is one less connector to configure on the Claude side.
   </div>
 
   <div class="step">
@@ -221,9 +221,9 @@
     <div class="step-header">
       <div class="step-num" style="background:#F59E0B18;color:var(--amber)">2</div>
       <div class="step-content">
-        <div class="step-title">Connect it to Claude Code or Claude</div>
+        <div class="step-title">Connect it to Claude</div>
         <div class="step-body">
-          <p>Same process as the companion guide — just swap in this server's URL instead of a standard one. For Claude Code: <code>claude mcp add</code> with this Server URL and your existing Consumer Key (Phase 5 of that guide). For the Claude chat app: paste this URL into your custom connector's Server URL field instead (Phase 6 of that guide).</p>
+          <p>Same process as the companion guide's Phase 5 — just swap in this server's URL instead of a standard one. Open your existing connector (or add a new one) in Claude's Connectors screen, paste this Server URL in, and use your existing Consumer Key from Phase 4 as the OAuth Client ID.</p>
           <div class="callout callout-success">
             <span class="callout-label">✓ How to know it's working</span>
             Ask Claude to use one of your custom tools by describing what it does — e.g. <em>"Check the account health for Arroyo Medical Group"</em> or <em>"Create a sync meeting for that account."</em> Then go verify it in your org: the health score or the new Task under Open Activities should actually be there, not just described back to you.
@@ -268,12 +268,12 @@
 <!-- SUCCESS BANNER -->
 <div class="success-banner">
   <h2>Your custom server is live and Claude can use your own logic.</h2>
-  <p>Your Apex actions and Flows are exposed as real tools, the running user has access to what's behind them, and Claude Code (or Claude's chat app) can call your business logic — not just generic CRUD.<br>Start with read-only or low-risk tools, then add anything that writes once you trust the flow.</p>
+  <p>Your Apex actions and Flows are exposed as real tools, the running user has access to what's behind them, and Claude can call your business logic — not just generic CRUD.<br>Start with read-only or low-risk tools, then add anything that writes once you trust the flow.</p>
 </div>
 
 <div class="callout callout-tip" style="margin-top:24px">
   <span class="callout-label">Where this came from</span>
-  Based on the "Create a Custom MCP Server" exercise from Salesforce's <a href="https://developer.salesforce.com/workshops/headless-360-workshop" style="color:var(--light)">Headless 360 Workshop</a> — I ran this as part of a session for Sydney last week, alongside the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">companion Claude Code / Claude chat setup guide</a>.
+  Based on the "Create a Custom MCP Server" exercise from Salesforce's <a href="https://developer.salesforce.com/workshops/headless-360-workshop" style="color:var(--light)">Headless 360 Workshop</a> — I ran this as part of a session for Sydney last week, alongside the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">companion Claude setup guide</a>.
 </div>
 
 <div class="engage-section">

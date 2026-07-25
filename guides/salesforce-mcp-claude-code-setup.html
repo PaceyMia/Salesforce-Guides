@@ -3,32 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salesforce MCP Server + Claude Code Setup Guide · Mia's Admin Playbook</title>
+<title>Salesforce MCP Server + Claude Setup Guide · Mia's Admin Playbook</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../assets/style.css">
-<meta name="description" content="Connect Claude Code directly to your Salesforce org over MCP -- enable the service, scope a permission set, and wire it up step by step.">
+<meta name="description" content="Connect Claude directly to your Salesforce org over MCP -- no terminal, no code. Enable the service, scope a permission set, and connect through Claude's Connectors screen.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Salesforce MCP Server + Claude Code Setup Guide · Mia's Admin Playbook">
-<meta property="og:description" content="Connect Claude Code directly to your Salesforce org over MCP -- enable the service, scope a permission set, and wire it up step by step.">
+<meta property="og:title" content="Salesforce MCP Server + Claude Setup Guide · Mia's Admin Playbook">
+<meta property="og:description" content="Connect Claude directly to your Salesforce org over MCP -- no terminal, no code. Enable the service, scope a permission set, and connect through Claude's Connectors screen.">
 <meta property="og:url" content="https://paceymia.github.io/Salesforce-Guides/guides/salesforce-mcp-claude-code-setup.html">
 <meta property="og:site_name" content="Mia's Salesforce Guides">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Salesforce MCP Server + Claude Code Setup Guide · Mia's Admin Playbook">
-<meta name="twitter:description" content="Connect Claude Code directly to your Salesforce org over MCP -- enable the service, scope a permission set, and wire it up step by step.">
+<meta name="twitter:title" content="Salesforce MCP Server + Claude Setup Guide · Mia's Admin Playbook">
+<meta name="twitter:description" content="Connect Claude directly to your Salesforce org over MCP -- no terminal, no code. Enable the service, scope a permission set, and connect through Claude's Connectors screen.">
 </head>
 <body>
 
 <a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
-<div class="doc-tag">Admin Setup Guide · MCP · Claude Code</div>
-<h1>Salesforce MCP Server →<br><span>Claude Code, Step by Step</span></h1>
-<p class="subtitle">A plain-English guide to connecting <strong>Claude Code</strong> (the CLI/IDE agent) directly to your Salesforce org over <strong>MCP</strong> — no browser, no clicking around Setup to find records. Ask in natural language, Claude reads and writes real data through Salesforce's own hosted MCP server.<br>Based on Salesforce's <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop — I ran this session for Sydney last week.</p>
+<div class="doc-tag">Admin Setup Guide · MCP · Claude Connectors</div>
+<h1>Salesforce MCP Server →<br><span>Claude, No Terminal Required</span></h1>
+<p class="subtitle">A plain-English guide for <strong>Salesforce admins</strong> to connect Claude directly to your org over <strong>MCP</strong> — no terminal, no code, just clicking through Setup and Claude's Connectors screen. Ask in natural language, Claude reads and writes real data through Salesforce's own hosted MCP server.<br>Based on Salesforce's <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop — I ran this session for Sydney last week.</p>
 <div class="last-updated">Updated Jul 25, 2026</div>
+
+<a class="yt-card" href="https://youtu.be/gvDhoKSU0Vo" target="_blank" rel="noopener noreferrer" style="margin-bottom:28px">
+  <img class="yt-thumb" src="https://img.youtube.com/vi/gvDhoKSU0Vo/hqdefault.jpg" alt="Connect Claude to Salesforce with MCP Server (Step by Step) — video thumbnail" loading="lazy">
+  <div class="yt-body">
+    <div class="yt-title">📺 Watch this guide in action: "Connect Claude to Salesforce with MCP Server (Step by Step)"</div>
+    <div class="yt-meta">Pace Yourself on YouTube · recorded from this exact Sydney session</div>
+  </div>
+</a>
 
 <div class="callout callout-danger" style="margin-bottom:28px">
   <span class="callout-label">⚠ Before you start</span>
   Do this in a <strong>Developer Edition org or a Sandbox</strong> — never your production org. The permission set and connected app you'll create can create, update, and delete records once authorised. Get comfortable here first.<br><br>
-  No org yet? Sign up free at <a href="https://developer.salesforce.com/free-trials" style="color:var(--light)">developer.salesforce.com/free-trials</a>. You'll also need a Claude account — <a href="https://claude.ai" style="color:var(--light)">Claude Code</a> installed if you're following Phases 1–5, or just the chat app at <a href="https://claude.ai" style="color:var(--light)">claude.ai</a> if you're going straight for the optional Phase 6 instead.
+  No org yet? Sign up free at <a href="https://developer.salesforce.com/free-trials" style="color:var(--light)">developer.salesforce.com/free-trials</a>. You'll also need a Claude account at <a href="https://claude.ai" style="color:var(--light)">claude.ai</a> — nothing to install, everything below happens in a browser.
 </div>
 
 <!-- PHASE NAV -->
@@ -37,8 +45,7 @@
   <a class="phase-nav-item p2" href="#phase-2"><span class="phase-num">2</span>Permission<br>Set</a>
   <a class="phase-nav-item p3" href="#phase-3"><span class="phase-num">3</span>Activate<br>Server</a>
   <a class="phase-nav-item p4" href="#phase-4"><span class="phase-num">4</span>External<br>Client App</a>
-  <a class="phase-nav-item p5" href="#phase-5"><span class="phase-num">5</span>Connect<br>Claude Code</a>
-  <a class="phase-nav-item p6" href="#phase-6"><span class="phase-num">6</span>Claude<br>Chat App</a>
+  <a class="phase-nav-item p5" href="#phase-5"><span class="phase-num">5</span>Connect<br>Claude</a>
 </div>
 
 <!-- ═══ PHASE 1 ═══ -->
@@ -106,7 +113,7 @@
           <p>On the permission set you just created, click <strong>System Permissions</strong>. Click <strong>Edit</strong>, tick <strong>API Enabled</strong>, then <strong>Save</strong>.</p>
           <div class="callout callout-tip">
             <span class="callout-label">Why this matters</span>
-            <code>API Enabled</code> is what lets a user authenticated through this permission set access any Salesforce API — including the MCP endpoint Claude Code will be calling.
+            <code>API Enabled</code> is what lets a user authenticated through this permission set access any Salesforce API — including the MCP endpoint Claude will be calling.
           </div>
         </div>
       </div>
@@ -119,7 +126,7 @@
       <div class="step-content">
         <div class="step-title">Assign the permission set to yourself</div>
         <div class="step-body">
-          <p>On the permission set, click <strong>Manage Assignments → Add Assignment</strong>. Check your own user (and any other approved admins who'll use Claude Code against this org), click <strong>Next → Assign → Done</strong>.</p>
+          <p>On the permission set, click <strong>Manage Assignments → Add Assignment</strong>. Check your own user (and any other approved admins who'll use Claude against this org), click <strong>Next → Assign → Done</strong>.</p>
         </div>
       </div>
     </div>
@@ -159,7 +166,7 @@
       <div class="step-content">
         <div class="step-title">Find the server in the API Catalog</div>
         <div class="step-body">
-          <p>In Setup Quick Find, search <code>MCP Servers</code> and open it (it sits under <strong>API Catalog</strong>). Click <strong>Salesforce Servers</strong>, then open the server you want (e.g. <code>sobject-all</code>).</p>
+          <p>In Setup Quick Find, search <code>MCP Servers</code> and open it (it sits under <strong>API Catalog</strong>). Click <strong>Salesforce Servers</strong>, then open the server you want (e.g. <code>sobject-reads</code>).</p>
         </div>
       </div>
     </div>
@@ -174,13 +181,13 @@
           <p>Click <strong>Activate</strong>. The URL you'll actually connect Claude to isn't something you copy from the page — it's a fixed pattern built from the "Server name in URL" column above. Production orgs (including Developer Edition) and sandbox/scratch orgs use different roots:</p>
           <div class="cmd-block">
             <span class="cmd-label">Production orgs (incl. Developer Edition)</span>
-            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/platform/sobject-all</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/platform/sobject-reads</span>
           </div>
           <div class="cmd-block">
             <span class="cmd-label">Sandbox or scratch orgs</span>
-            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-all</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-reads</span>
           </div>
-          <p>Swap <code>platform/sobject-all</code> for whichever server you activated. You'll use this same URL in both Phase 5 (Claude Code) and Phase 6 (Claude chat app) — paste it into a notes file for now.</p>
+          <p>Swap <code>platform/sobject-reads</code> for whichever server you activated. You'll paste this into Claude's Connectors screen in Phase 5 — keep it handy in a notes file for now.</p>
         </div>
       </div>
     </div>
@@ -193,13 +200,13 @@
     <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
     <div>
       <div class="phase-title">Create an External Client App (the OAuth front door)</div>
-      <div class="phase-desc">This is what Claude Code authenticates against — it's how Salesforce knows to trust the connection. <span class="time-tag time-green">~10 min</span></div>
+      <div class="phase-desc">This is what Claude authenticates against — it's how Salesforce knows to trust the connection. <span class="time-tag time-green">~10 min</span></div>
     </div>
   </div>
 
   <div class="callout callout-tip" style="margin-bottom:16px">
     <span class="callout-label">Why an External Client App?</span>
-    Claude Code is a "headless" agent — it never opens the Salesforce UI. Instead it authenticates with OAuth 2.0 against an External Client App (ECA), which then restricts what it can do based on the permission set, profile and IP ranges you assign to it. Same security model as any other connected app, just built for agents instead of browsers.
+    Claude authenticates with OAuth 2.0 against an External Client App (ECA), which then restricts what it can do based on the permission set, profile and IP ranges you assign to it. Same security model as any other connected app — you're not handing Claude a login, you're handing it a tightly scoped OAuth grant.
   </div>
 
   <div class="step">
@@ -208,7 +215,7 @@
       <div class="step-content">
         <div class="step-title">Enable PKCE at the org level</div>
         <div class="step-body">
-          <p>Setup Quick Find → <code>OAuth and OpenID Connect Settings</code>. Enable <strong>PKCE</strong> (Proof Key for Code Exchange) if it isn't already on. This lets Claude Code authenticate securely as a public client, without needing to hard-code a secret.</p>
+          <p>Setup Quick Find → <code>OAuth and OpenID Connect Settings</code>. Enable <strong>PKCE</strong> (Proof Key for Code Exchange) if it isn't already on. This lets Claude authenticate securely as a public client, without Salesforce needing to hand out a long-lived secret.</p>
         </div>
       </div>
     </div>
@@ -221,7 +228,7 @@
         <div class="step-title">Create the External Client App</div>
         <div class="step-body">
           <p>Setup Quick Find → <strong>External Client App Manager</strong> → <strong>New External Client App</strong>.</p>
-          <p>Name it something recognisable, e.g. <code>Claude Code MCP App</code>. Fill in a contact email and distribution state (<em>Local</em> is fine for a dev org).</p>
+          <p>Name it something recognisable, e.g. <code>Claude MCP App</code>. Fill in a contact email and distribution state (<em>Local</em> is fine for a dev org).</p>
         </div>
       </div>
     </div>
@@ -233,14 +240,14 @@
       <div class="step-content">
         <div class="step-title">Enable OAuth and set the callback URL</div>
         <div class="step-body">
-          <p>Tick <strong>Enable OAuth</strong>. For the <strong>Callback URL</strong>, use a fixed localhost port — Claude Code listens on your machine for the OAuth redirect, it isn't a hosted web app like claude.ai:</p>
+          <p>Tick <strong>Enable OAuth</strong>. For the <strong>Callback URL</strong>, use Claude's own fixed redirect address — this isn't something you choose, it's the exact URL Claude's servers listen on:</p>
           <div class="cmd-block">
             <span class="cmd-label">Callback URL</span>
-            <span class="cmd-line">http://localhost:8080/callback</span>
+            <span class="cmd-line">https://claude.ai/api/mcp/auth_callback</span>
           </div>
           <div class="callout callout-warn">
-            <span class="callout-label">⚠ Remember this port number</span>
-            Whatever port you enter here (8080 is just a suggestion — pick any free port) has to match the <code>--callback-port</code> you'll pass to <code>claude mcp add</code> in Phase 5. A mismatch is the single most common reason this OAuth flow fails.
+            <span class="callout-label">⚠ Type this exactly</span>
+            One typo here and the OAuth flow will fail silently or bounce to an error page right after login. Copy-paste it rather than typing it out.
           </div>
         </div>
       </div>
@@ -255,7 +262,7 @@
         <div class="step-body">
           <p>Add these two scopes:</p>
           <div class="ui-mock">
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">♻</div><span><strong>Perform requests at any time</strong> (<code>refresh_token</code>, <code>offline_access</code>) — so Claude Code doesn't need you to re-authenticate every session</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">♻</div><span><strong>Perform requests at any time</strong> (<code>refresh_token</code>, <code>offline_access</code>) — so Claude doesn't need you to re-authenticate every session</span></div>
             <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">MCP</div><span><strong>Access Salesforce hosted MCP servers</strong> (<code>mcp_api</code>) — the scope that actually grants MCP access</span></div>
           </div>
           <p>Click <strong>Create</strong>.</p>
@@ -277,7 +284,7 @@
             <div class="ui-mock-item"><span>✓ <strong>Require PKCE</strong> — check this</span></div>
             <div class="ui-mock-item"><span>✓ <strong>Issue JSON Web Token (JWT)</strong> — check this</span></div>
           </div>
-          <p>This combination lets Claude Code authenticate as a secure public client using PKCE, without a long-lived client secret sitting on your machine.</p>
+          <p>This combination lets Claude authenticate as a secure public client using PKCE, with no client secret sitting anywhere for someone to leak.</p>
         </div>
       </div>
     </div>
@@ -307,7 +314,7 @@
         <div class="step-title">Copy the Consumer Key</div>
         <div class="step-body">
           <p>Go to the <strong>Settings</strong> tab → <strong>App Settings → Consumer Key and Secret</strong>. Verify with the code sent to your email, then copy the <strong>Consumer Key</strong>.</p>
-          <p>You won't need the Consumer Secret — with "Require secret" unchecked and PKCE required, Claude Code authenticates without one.</p>
+          <p>You won't need the Consumer Secret — with "Require secret" unchecked and PKCE required, Claude authenticates without one.</p>
         </div>
       </div>
     </div>
@@ -319,8 +326,8 @@
   <div class="phase-header">
     <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
     <div>
-      <div class="phase-title">Connect Claude Code</div>
-      <div class="phase-desc">This is where it all comes together — three commands. <span class="time-tag time-amber">~5 min</span></div>
+      <div class="phase-title">Connect Claude — No Terminal Needed</div>
+      <div class="phase-desc">Everything from here happens by clicking around Claude's own settings screen. <span class="time-tag time-amber">~5 min</span></div>
     </div>
   </div>
 
@@ -328,20 +335,10 @@
     <div class="step-header">
       <div class="step-num" style="background:#F59E0B18;color:var(--amber)">1</div>
       <div class="step-content">
-        <div class="step-title">Add the MCP server</div>
+        <div class="step-title">Open Connectors and start a custom connector</div>
         <div class="step-body">
-          <p>Open a terminal in your project folder and run:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Terminal</span>
-            <span class="cmd-line">claude mcp add --scope project --transport http \</span>
-            <span class="cmd-line">  --callback-port 8080 --client-id YOUR_CONSUMER_KEY \</span>
-            <span class="cmd-line">  salesforce https://api.salesforce.com/platform/mcp/v1/platform/sobject-all</span>
-          </div>
-          <p>Swap in the <strong>Server URL</strong> from Phase 3 and the <strong>Consumer Key</strong> from Phase 4. Make sure <code>--callback-port</code> matches the port you set in the Callback URL.</p>
-          <div class="callout callout-tip">
-            <span class="callout-label">Which --scope should I use?</span>
-            <code>--scope project</code> writes the server into <code>.mcp.json</code> at your project root, so it's easy to share with teammates (minus their own auth token). Use <code>--scope user</code> instead if you want this server available across every project on your machine, not just this folder.
-          </div>
+          <p>In Claude, click <strong>Customize</strong> in the left sidebar, then click <strong>Connectors</strong> and the <strong>+</strong> button. Click <strong>Add custom connector</strong>.</p>
+          <p>Name it something recognisable — e.g. <code>Salesforce SObject Read</code> — and give it a description like <em>"Read Salesforce records through Headless 360."</em></p>
         </div>
       </div>
     </div>
@@ -351,19 +348,9 @@
     <div class="step-header">
       <div class="step-num" style="background:#F59E0B18;color:var(--amber)">2</div>
       <div class="step-content">
-        <div class="step-title">Authenticate</div>
+        <div class="step-title">Paste in the Server URL</div>
         <div class="step-body">
-          <p>Start Claude Code (<code>claude</code>) and run the slash command:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Inside a Claude Code session</span>
-            <span class="cmd-line">/mcp</span>
-          </div>
-          <p>Select <strong>salesforce</strong> from the list, press Enter, and choose <strong>Authenticate</strong>. Your browser opens to the Salesforce login screen — log in and click <strong>Allow</strong>. Back in Claude Code, the server's status flips to <strong>✓ Connected</strong>.</p>
-          <p>Prefer doing it outside a session? This works too:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Terminal</span>
-            <span class="cmd-line">claude mcp login salesforce</span>
-          </div>
+          <p>Use the URL you built in Phase 3 for the server you activated — no changes needed, paste it straight in.</p>
         </div>
       </div>
     </div>
@@ -373,120 +360,13 @@
     <div class="step-header">
       <div class="step-num" style="background:#F59E0B18;color:var(--amber)">3</div>
       <div class="step-content">
-        <div class="step-title">Verify and test it</div>
-        <div class="step-body">
-          <p>Check the connection from the shell any time:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Terminal</span>
-            <span class="cmd-line">claude mcp list</span>
-          </div>
-          <p>Then, inside Claude Code, just ask it something about your org:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Claude Code prompt</span>
-            <span class="cmd-line">Query the 5 most recently created Accounts in my org</span>
-          </div>
-          <div class="callout callout-success">
-            <span class="callout-label">✓ How to know it's working</span>
-            Claude should call the MCP tool and come back with real records from your org — actual Account names and dates, not a generic answer. That's the "headless" connection: no browser tab, no clicking through Setup, just natural language against live data.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">★</div>
-      <div class="step-content">
-        <div class="step-title">What .mcp.json looks like when you're done</div>
-        <div class="step-body">
-          <p>For reference, this is roughly what <code>claude mcp add</code> writes to <code>.mcp.json</code> in your project root:</p>
-          <div class="cmd-block json">
-            <span class="cmd-label">.mcp.json</span>
-{
-  "mcpServers": {
-    "salesforce": {
-      "type": "http",
-      "url": "https://api.salesforce.com/platform/mcp/v1/platform/sobject-all",
-      "oauth": {
-        "clientId": "YOUR_CONSUMER_KEY",
-        "callbackPort": 8080
-      }
-    }
-  }
-}
-          </div>
-          <p>Your OAuth token itself is stored securely outside this file (system keychain / credentials store) — never committed to git.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ PHASE 6 ═══ -->
-<div class="phase" id="phase-6">
-  <div class="phase-header">
-    <div class="phase-badge" style="background:#14B8A618;color:var(--teal)">6</div>
-    <div>
-      <div class="phase-title">Optional: Connect Claude (the Chat App) Instead</div>
-      <div class="phase-desc">Prefer talking to Claude in the browser over the CLI? Same MCP server, same External Client App — just a different front door. <span class="time-tag time-teal">~5 min</span></div>
-    </div>
-  </div>
-
-  <div class="callout callout-tip" style="margin-bottom:16px">
-    <span class="callout-label">Why this works so well</span>
-    Since Anthropic authored the original MCP specification, Claude (the chat app at claude.ai) has strong native support for the protocol — it's a solid option for quick developer testing, not just Claude Code. Everything below reuses the permission set from Phase 2 and the External Client App from Phase 4, so if you've already done those, this is a five-minute add-on.
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#14B8A618;color:var(--teal)">1</div>
-      <div class="step-content">
-        <div class="step-title">Open Connectors and start a custom connector</div>
-        <div class="step-body">
-          <p>In Claude, click <strong>Customize</strong> in the left sidebar, then click <strong>Connectors</strong> and the <strong>+</strong> button. Click <strong>Add custom connector</strong>.</p>
-          <p>Give it a name (e.g. <code>Salesforce MCP</code>) and an optional description.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#14B8A618;color:var(--teal)">2</div>
-      <div class="step-content">
-        <div class="step-title">Enter the server URL</div>
-        <div class="step-body">
-          <p>Use the same URL you built in Phase 3 — substitute the "Server name in URL" value from that table into the format for your org type:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">All production orgs</span>
-            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/SERVER-NAME</span>
-          </div>
-          <div class="cmd-block">
-            <span class="cmd-label">Sandbox or scratch orgs</span>
-            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/SERVER-NAME</span>
-          </div>
-          <p>For example, to use the <code>platform/sobject-all</code> server in a scratch org:</p>
-          <div class="cmd-block">
-            <span class="cmd-label">Example</span>
-            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-all</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#14B8A618;color:var(--teal)">3</div>
-      <div class="step-content">
         <div class="step-title">Add the Consumer Key and connect</div>
         <div class="step-body">
           <p>Open <strong>Advanced settings</strong> and paste the <strong>Consumer Key</strong> you copied in Phase 4 into <strong>OAuth Client ID</strong>. Click <strong>Add</strong>.</p>
-          <p>Click <strong>Connect</strong> next to the connector you just created. Claude redirects to the org containing the External Client App from Phase 4 — if you're already logged in there, the user challenge is skipped and Claude gets its access token straight away.</p>
+          <p>Click <strong>Connect</strong> next to the connector you just created. Claude redirects you to Salesforce to log in — if you're already logged in, this step is skipped and Claude gets its access token straight away. Click <strong>Allow</strong>, and you're back in Claude with the connector showing <strong>Connected</strong>.</p>
           <div class="callout callout-success">
             <span class="callout-label">✓ Optional: fine-tune tool permissions</span>
-            Once the connector authenticates, click <strong>Configure</strong> next to it to see the tools exposed by that MCP server and adjust which ones Claude is allowed to use.
+            Once connected, click <strong>Configure</strong> next to the connector to see every tool that server exposes and switch off anything you don't want Claude to have access to.
           </div>
         </div>
       </div>
@@ -495,11 +375,19 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#14B8A618;color:var(--teal)">4</div>
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">4</div>
       <div class="step-content">
         <div class="step-title">Test it</div>
         <div class="step-body">
-          <p>Start a new chat and ask Claude something about your org, the same way you tested Claude Code in Phase 5 — for example, <em>"Query the 5 most recently created Accounts in my org."</em> A real answer with actual record names and dates means the connector is live.</p>
+          <p>Start a new chat and ask something real about your org:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Claude prompt</span>
+            <span class="cmd-line">List the first 10 Account records you can access in Salesforce</span>
+          </div>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ How to know it's working</span>
+            Claude should call the MCP tool and come back with real records from your org — actual Account names, not a generic answer. No terminal, no code, just the one login redirect and then natural language against live data.
+          </div>
         </div>
       </div>
     </div>
@@ -507,7 +395,7 @@
 </div>
 
 <!-- TROUBLESHOOTING -->
-<div class="phase" id="phase-7">
+<div class="phase" id="phase-6">
   <div class="phase-header">
     <div class="phase-badge" style="background:#EF444418;color:var(--red)">?</div>
     <div>
@@ -517,23 +405,23 @@
   </div>
 
   <div class="trouble-item">
-    <div class="trouble-q">Browser opens for OAuth but the redirect fails / "connection refused"</div>
-    <div class="trouble-a">Almost always a port mismatch. The <code>--callback-port</code> you passed to <code>claude mcp add</code> must exactly match the port in the Callback URL on your External Client App (e.g. both <code>8080</code>). If they don't match, remove the server (<code>claude mcp remove salesforce</code>) and re-add it with the correct port — or update the Callback URL in Salesforce to match. If the browser shows an error page after you log in, copy the full URL from the address bar and paste it back into the prompt Claude Code shows — it can recover the auth code from that.</div>
+    <div class="trouble-q">OAuth redirect fails or bounces to an error page after I log in</div>
+    <div class="trouble-a">Almost always a Callback URL mismatch. Go back to the External Client App from Phase 4 and confirm the Callback URL is <em>exactly</em> <code>https://claude.ai/api/mcp/auth_callback</code> — no trailing slash, no typo. Fix it, save, then click <strong>Connect</strong> again from Claude's Connectors screen.</div>
   </div>
 
   <div class="trouble-item">
-    <div class="trouble-q"><code>/mcp</code> shows "Needs authentication" even after I logged in</div>
-    <div class="trouble-a">Run <code>/mcp</code> again and re-select <strong>Authenticate</strong> — refresh tokens occasionally expire or get revoked (e.g. if you edited the ECA's policies afterwards). You don't need to remove and re-add the server, just re-authenticate.</div>
+    <div class="trouble-q">The connector shows "Needs authentication" or won't finish connecting</div>
+    <div class="trouble-a">Click <strong>Connect</strong> again — refresh tokens occasionally expire or get revoked (e.g. if you edited the ECA's policies afterwards). You don't need to delete and re-add the connector, just re-authenticate.</div>
   </div>
 
   <div class="trouble-item">
-    <div class="trouble-q">Tools list is empty even though the server shows Connected</div>
-    <div class="trouble-a">Check that the permission set (<code>MCP Client User</code>) is actually assigned to the user you authenticated as, and that it's listed in the ECA's <strong>Selected Permission Set</strong>. A connected-but-toolless server almost always means the authenticated user doesn't have access to that server's underlying permission set.</div>
+    <div class="trouble-q">Tools list is empty even though the connector shows Connected</div>
+    <div class="trouble-a">Check that the permission set (<code>MCP Client User</code>) is actually assigned to the user you authenticated as, and that it's listed in the ECA's <strong>Selected Permission Set</strong>. A connected-but-toolless connector almost always means the authenticated user doesn't have access to that server's underlying permission set.</div>
   </div>
 
   <div class="trouble-item">
     <div class="trouble-q">Claude says it can't reach the tool / times out</div>
-    <div class="trouble-a">Double-check the Server URL from Phase 3 was built correctly (right server name, right <code>sandbox/</code> prefix for non-production orgs) and the standard server is still <strong>Activated</strong> in Setup → MCP Servers. Also confirm your org's IP restrictions on the ECA are set to <strong>Relax IP Restrictions</strong> — a strict IP range will silently block requests coming from your machine.</div>
+    <div class="trouble-a">Double-check the Server URL from Phase 3 was built correctly (right server name, right <code>sandbox/</code> prefix for non-production orgs) and the standard server is still <strong>Activated</strong> in Setup → MCP Servers. Also confirm your org's IP restrictions on the ECA are set to <strong>Relax IP Restrictions</strong> — a strict IP range will silently block requests coming from Claude's servers.</div>
   </div>
 
   <div class="trouble-item">
@@ -545,12 +433,12 @@
 <!-- SUCCESS BANNER -->
 <div class="success-banner">
   <h2>You're connected. Claude can now talk to your org.</h2>
-  <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude Code (and/or the Claude chat app, if you did Phase 6) has a live connection to Salesforce.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
+  <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude has a live connection to Salesforce through its Connector — no terminal, no code, ever.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
 </div>
 
 <div class="callout callout-tip" style="margin-top:24px">
   <span class="callout-label">Want to go further?</span>
-  This guide mirrors Salesforce's own <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop, with a few extra Claude Code and Claude chat app details filled in. Ready to expose your own Apex and Flows instead of just the standard tools? See the <a href="salesforce-custom-mcp-servers.html" style="color:var(--light)">Custom MCP Servers guide</a> — it picks up right where this one leaves off.
+  This guide mirrors Salesforce's own <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop end to end. Ready to expose your own Apex and Flows instead of just the standard tools? See the <a href="salesforce-custom-mcp-servers.html" style="color:var(--light)">Custom MCP Servers guide</a> — it picks up right where this one leaves off.
 </div>
 
 <div class="engage-section">
