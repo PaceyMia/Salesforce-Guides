@@ -31,6 +31,7 @@
   .phase-nav-item.p3{color:var(--purple);background:#8B5CF610}
   .phase-nav-item.p4{color:var(--green);background:#22C55E10}
   .phase-nav-item.p5{color:var(--amber);background:#F59E0B10}
+  .phase-nav-item.p6{color:var(--teal);background:#14B8A610}
   .phase-num{display:block;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:2px}
 
   /* PHASE HEADERS */
@@ -118,6 +119,7 @@
   .time-purple{background:#8B5CF618;color:var(--purple);border:1px solid #8B5CF630}
   .time-green{background:#22C55E18;color:var(--green);border:1px solid #22C55E30}
   .time-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
+  .time-teal{background:#14B8A618;color:var(--teal);border:1px solid #14B8A630}
 
   /* ENGAGE: SHARE + REACTIONS */
   .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
@@ -142,7 +144,7 @@
 <div class="callout callout-danger" style="margin-bottom:28px">
   <span class="callout-label">⚠ Before you start</span>
   Do this in a <strong>Developer Edition org or a Sandbox</strong> — never your production org. The permission set and connected app you'll create can create, update, and delete records once authorised. Get comfortable here first.<br><br>
-  No org yet? Sign up free at <a href="https://developer.salesforce.com/free-trials" style="color:var(--light)">developer.salesforce.com/free-trials</a>. You'll also need <a href="https://claude.ai" style="color:var(--light)">Claude Code</a> installed and signed in with a Claude account.
+  No org yet? Sign up free at <a href="https://developer.salesforce.com/free-trials" style="color:var(--light)">developer.salesforce.com/free-trials</a>. You'll also need a Claude account — <a href="https://claude.ai" style="color:var(--light)">Claude Code</a> installed if you're following Phases 1–5, or just the chat app at <a href="https://claude.ai" style="color:var(--light)">claude.ai</a> if you're going straight for the optional Phase 6 instead.
 </div>
 
 <!-- PHASE NAV -->
@@ -152,6 +154,7 @@
   <div class="phase-nav-item p3"><span class="phase-num">3</span>Activate<br>Server</div>
   <div class="phase-nav-item p4"><span class="phase-num">4</span>External<br>Client App</div>
   <div class="phase-nav-item p5"><span class="phase-num">5</span>Connect<br>Claude Code</div>
+  <div class="phase-nav-item p6"><span class="phase-num">6</span>Claude<br>Chat App</div>
 </div>
 
 <!-- ═══ PHASE 1 ═══ -->
@@ -531,6 +534,89 @@
   </div>
 </div>
 
+<!-- ═══ PHASE 6 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#14B8A618;color:var(--teal)">6</div>
+    <div>
+      <div class="phase-title">Optional: Connect Claude (the Chat App) Instead</div>
+      <div class="phase-desc">Prefer talking to Claude in the browser over the CLI? Same MCP server, same External Client App — just a different front door. <span class="time-tag time-teal">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">Why this works so well</span>
+    Since Anthropic authored the original MCP specification, Claude (the chat app at claude.ai) has strong native support for the protocol — it's a solid option for quick developer testing, not just Claude Code. Everything below reuses the permission set from Phase 2 and the External Client App from Phase 4, so if you've already done those, this is a five-minute add-on.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">1</div>
+      <div class="step-content">
+        <div class="step-title">Open Connectors and start a custom connector</div>
+        <div class="step-body">
+          <p>In Claude, click <strong>Customize</strong> in the left sidebar, then click <strong>Connectors</strong> and the <strong>+</strong> button. Click <strong>Add custom connector</strong>.</p>
+          <p>Give it a name (e.g. <code>Salesforce MCP</code>) and an optional description.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">2</div>
+      <div class="step-content">
+        <div class="step-title">Enter the server URL</div>
+        <div class="step-body">
+          <p>Substitute the server name from Phase 3 into the format for your org type:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">All production orgs</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/SERVER-NAME</span>
+          </div>
+          <div class="cmd-block">
+            <span class="cmd-label">Sandbox or scratch orgs</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/SERVER-NAME</span>
+          </div>
+          <p>For example, to use the <code>platform/sobject-all</code> server in a scratch org:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Example</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-all</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">3</div>
+      <div class="step-content">
+        <div class="step-title">Add the Consumer Key and connect</div>
+        <div class="step-body">
+          <p>Open <strong>Advanced settings</strong> and paste the <strong>Consumer Key</strong> you copied in Phase 4 into <strong>OAuth Client ID</strong>. Click <strong>Add</strong>.</p>
+          <p>Click <strong>Connect</strong> next to the connector you just created. Claude redirects to the org containing the External Client App from Phase 4 — if you're already logged in there, the user challenge is skipped and Claude gets its access token straight away.</p>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ Optional: fine-tune tool permissions</span>
+            Once the connector authenticates, click <strong>Configure</strong> next to it to see the tools exposed by that MCP server and adjust which ones Claude is allowed to use.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">4</div>
+      <div class="step-content">
+        <div class="step-title">Test it</div>
+        <div class="step-body">
+          <p>Start a new chat and ask Claude something about your org, the same way you tested Claude Code in Phase 5 — for example, <em>"Query the 5 most recently created Accounts in my org."</em> A real answer with actual record names and dates means the connector is live.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TROUBLESHOOTING -->
 <div class="phase">
   <div class="phase-header">
@@ -569,8 +655,8 @@
 
 <!-- SUCCESS BANNER -->
 <div class="success-banner">
-  <h2>You're connected. Claude Code can now talk to your org.</h2>
-  <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude Code has a live connection to Salesforce.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
+  <h2>You're connected. Claude can now talk to your org.</h2>
+  <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude Code (and/or the Claude chat app, if you did Phase 6) has a live connection to Salesforce.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
 </div>
 
 <div class="engage-section">
