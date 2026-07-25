@@ -277,12 +277,16 @@
       <div class="step-content">
         <div class="step-title">Lock down the security settings</div>
         <div class="step-body">
-          <p>Open the app you just created → <strong>Edit App Policy</strong>. Under <strong>Security</strong>:</p>
+          <p>Open the app you just created → <strong>Edit App Policy</strong>. Under <strong>Security</strong> you'll see four checkboxes — two come off, two go on:</p>
           <div class="ui-mock">
-            <div class="ui-mock-item"><span>✗ <strong>Require secret for Web Server Flow</strong> — leave unchecked</span></div>
-            <div class="ui-mock-item"><span>✗ <strong>Require secret for Refresh Token Flow</strong> — leave unchecked</span></div>
-            <div class="ui-mock-item"><span>✓ <strong>Require PKCE</strong> — check this</span></div>
-            <div class="ui-mock-item"><span>✓ <strong>Issue JSON Web Token (JWT)</strong> — check this</span></div>
+            <span class="ui-mock-label">Uncheck these</span>
+            <div class="ui-mock-item"><span>✗ <strong>Require secret for Web Server Flow</strong></span></div>
+            <div class="ui-mock-item"><span>✗ <strong>Require secret for Refresh Token Flow</strong></span></div>
+          </div>
+          <div class="ui-mock" style="margin-top:8px">
+            <span class="ui-mock-label">Check these</span>
+            <div class="ui-mock-item"><span>✓ <strong>Require Proof Key for Code Exchange (PKCE) extension for Supported Authorization Flows</strong></span></div>
+            <div class="ui-mock-item"><span>✓ <strong>Issue JSON Web Token (JWT)-based access tokens for named users</strong></span></div>
           </div>
           <p>This combination lets Claude authenticate as a secure public client using PKCE, with no client secret sitting anywhere for someone to leak.</p>
         </div>
