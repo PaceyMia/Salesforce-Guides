@@ -213,18 +213,6 @@
     <div class="step-header">
       <div class="step-num" style="background:#22C55E18;color:var(--green)">1</div>
       <div class="step-content">
-        <div class="step-title">Enable PKCE at the org level</div>
-        <div class="step-body">
-          <p>Setup Quick Find → <code>OAuth and OpenID Connect Settings</code>. Enable <strong>PKCE</strong> (Proof Key for Code Exchange) if it isn't already on. This lets Claude authenticate securely as a public client, without Salesforce needing to hand out a long-lived secret.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">2</div>
-      <div class="step-content">
         <div class="step-title">Create the External Client App</div>
         <div class="step-body">
           <p>Setup Quick Find → <strong>External Client App Manager</strong> → <strong>New External Client App</strong>.</p>
@@ -236,7 +224,7 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">3</div>
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">2</div>
       <div class="step-content">
         <div class="step-title">Enable OAuth and set the callback URL</div>
         <div class="step-body">
@@ -256,7 +244,7 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">4</div>
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">3</div>
       <div class="step-content">
         <div class="step-title">Add the OAuth scopes</div>
         <div class="step-body">
@@ -273,7 +261,7 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">5</div>
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">4</div>
       <div class="step-content">
         <div class="step-title">Lock down the security settings</div>
         <div class="step-body">
@@ -296,7 +284,7 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">6</div>
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">5</div>
       <div class="step-content">
         <div class="step-title">Restrict who's allowed to use it</div>
         <div class="step-body">
@@ -313,12 +301,12 @@
 
   <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background:#22C55E18;color:var(--green)">7</div>
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">6</div>
       <div class="step-content">
         <div class="step-title">Copy the Consumer Key</div>
         <div class="step-body">
           <p>Go to the <strong>Settings</strong> tab → <strong>App Settings → Consumer Key and Secret</strong>. Verify with the code sent to your email, then copy the <strong>Consumer Key</strong>.</p>
-          <p>You won't need the Consumer Secret — with "Require secret" unchecked and PKCE required, Claude authenticates without one.</p>
+          <p>You won't need the Consumer Secret — with "Require secret" left unchecked and PKCE required on this app (Step 4), Claude authenticates without one.</p>
         </div>
       </div>
     </div>
