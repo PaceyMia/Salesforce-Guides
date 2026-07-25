@@ -139,7 +139,7 @@
 <a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
 <div class="doc-tag">Admin Setup Guide · MCP · Claude Code</div>
 <h1>Salesforce MCP Server →<br><span>Claude Code, Step by Step</span></h1>
-<p class="subtitle">A plain-English guide to connecting <strong>Claude Code</strong> (the CLI/IDE agent) directly to your Salesforce org over <strong>MCP</strong> — no browser, no clicking around Setup to find records. Ask in natural language, Claude reads and writes real data through Salesforce's own hosted MCP server.<br>Based on the Salesforce Headless 360 workshop (SF Admin Group, San Francisco).</p>
+<p class="subtitle">A plain-English guide to connecting <strong>Claude Code</strong> (the CLI/IDE agent) directly to your Salesforce org over <strong>MCP</strong> — no browser, no clicking around Setup to find records. Ask in natural language, Claude reads and writes real data through Salesforce's own hosted MCP server.<br>Based on Salesforce's <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop — I ran this session for Sydney last week.</p>
 
 <div class="callout callout-danger" style="margin-bottom:28px">
   <span class="callout-label">⚠ Before you start</span>
@@ -659,6 +659,11 @@
   <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude Code (and/or the Claude chat app, if you did Phase 6) has a live connection to Salesforce.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
 </div>
 
+<div class="callout callout-tip" style="margin-top:24px">
+  <span class="callout-label">Want to go further?</span>
+  This guide mirrors Salesforce's own <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop, with a few extra Claude Code and Claude chat app details filled in. From here, Salesforce's follow-on Headless 360 Workshop covers building custom MCP servers, the Headless 360 Playground, and Agentforce Vibes — worth a look once you're comfortable with the basics above.
+</div>
+
 <div class="engage-section">
   <span class="engage-label">Found this useful?</span>
   <div class="share-buttons">
@@ -688,7 +693,7 @@
 
 <div class="footer">
   <strong>Mia</strong><br>
-  Based on the Salesforce Headless 360 workshop, San Francisco Salesforce Admin Group.<br>
+  Adapted from Salesforce's <a href="https://developer.salesforce.com/workshops/try-headless-360/overview" style="color:var(--light)">Try Headless 360</a> workshop — I ran this session for Sydney last week.<br>
   <br>
   ⚠️ This guide is for connecting to a <strong>Developer Edition or Sandbox org only</strong>. Never point the permission set or client app you build here at production without a full security review.
 </div>
