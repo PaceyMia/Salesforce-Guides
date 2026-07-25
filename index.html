@@ -56,155 +56,183 @@
 
 <div class="guide-list" id="guideList">
 
-  <a class="guide-card" href="guides/salesforce-build.html" data-type="skill">
-    <div class="card-type type-skill">⚡ Claude skill</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Salesforce Build — Architecture Before Code</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">A Claude Code skill that runs an architecture phase before writing a single file — maps the objects, picks low-code-first, and bakes in the security patterns and deploy-blockers that cost hours. Fill in your brand and schema, then build.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Skill</span>
-      <span class="tag tag-orange">Build</span>
-      <span class="tag tag-purple">Architecture</span>
-      <span class="tag tag-amber">Reusable</span>
-    </div>
-  </a>
+  <div class="guide-section" data-section="skill">
+    <div class="guide-section-head"><span class="guide-section-title">⚡ Skills</span><span class="guide-section-count"></span></div>
+    <div class="guide-section-cards">
 
-  <a class="guide-card" href="guides/worktree-create.html" data-type="skill">
-    <div class="card-type type-skill">⚡ Claude skill</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Worktree Create — One Command, Five Things at Once</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">A Claude Code skill that spins up an isolated git worktree on a correctly-named branch, then closes the loop with a clean pull request and a tracker update. For admins who never get to work on one thing at a time.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Skill</span>
-      <span class="tag tag-orange">Git</span>
-      <span class="tag tag-purple">Workflow</span>
-      <span class="tag tag-amber">Reusable</span>
-    </div>
-  </a>
+      <a class="guide-card" href="guides/salesforce-build.html" data-type="skill">
+        <div class="card-type type-skill">⚡ Claude skill</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Salesforce Build — Architecture Before Code</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">A Claude Code skill that runs an architecture phase before writing a single file — maps the objects, picks low-code-first, and bakes in the security patterns and deploy-blockers that cost hours. Fill in your brand and schema, then build.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Skill</span>
+          <span class="tag tag-orange">Build</span>
+          <span class="tag tag-purple">Architecture</span>
+          <span class="tag tag-amber">Reusable</span>
+        </div>
+      </a>
 
-  <a class="guide-card" href="guides/brand-skill.html" data-type="skill">
-    <div class="card-type type-skill">⚡ Claude skill</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Brand Skill — Your Design System, Baked In</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">A Claude Code skill that loads your org's brand and LWC conventions before Claude builds — so the first version already looks like your org and follows your standards, not generic SLDS. Fill in your palette and schema once.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Skill</span>
-      <span class="tag tag-purple">LWC</span>
-      <span class="tag tag-orange">Brand</span>
-      <span class="tag tag-amber">Reusable</span>
-    </div>
-  </a>
+      <a class="guide-card" href="guides/worktree-create.html" data-type="skill">
+        <div class="card-type type-skill">⚡ Claude skill</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Worktree Create — One Command, Five Things at Once</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">A Claude Code skill that spins up an isolated git worktree on a correctly-named branch, then closes the loop with a clean pull request and a tracker update. For admins who never get to work on one thing at a time.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Skill</span>
+          <span class="tag tag-orange">Git</span>
+          <span class="tag tag-purple">Workflow</span>
+          <span class="tag tag-amber">Reusable</span>
+        </div>
+      </a>
 
-  <a class="guide-card" href="guides/sandbox-seed.html" data-type="prompt">
-    <div class="card-type type-prompt">💬 Prompt</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Sandbox Seed — Realistic Test Data on Demand</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">The hardest part of testing is never the feature — it's getting enough realistic records into the sandbox to see it work. A fill-in prompt that seeds fake data across every state, with relationships resolved, safely.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Prompt</span>
-      <span class="tag tag-orange">Testing</span>
-      <span class="tag tag-purple">Data</span>
-      <span class="tag tag-amber">Reusable</span>
-    </div>
-  </a>
+      <a class="guide-card" href="guides/brand-skill.html" data-type="skill">
+        <div class="card-type type-skill">⚡ Claude skill</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Brand Skill — Your Design System, Baked In</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">A Claude Code skill that loads your org's brand and LWC conventions before Claude builds — so the first version already looks like your org and follows your standards, not generic SLDS. Fill in your palette and schema once.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Skill</span>
+          <span class="tag tag-purple">LWC</span>
+          <span class="tag tag-orange">Brand</span>
+          <span class="tag tag-amber">Reusable</span>
+        </div>
+      </a>
 
-  <a class="guide-card" href="guides/code-review.html" data-type="built-in">
-    <div class="card-type type-built-in">⚙️ Built-in feature</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Code Review — Two Lenses on Your Work</div>
-      <div class="guide-arrow">→</div>
     </div>
-    <div class="guide-desc">Claude reviews its own work two ways: Salesforce engineering correctness, and how a user actually experiences it. The review engine is built into Claude Code — what's yours is the lens. Two steering prompts, plus the real docs.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Built-in</span>
-      <span class="tag tag-orange">Review</span>
-      <span class="tag tag-purple">Quality</span>
-      <span class="tag tag-amber">Accessibility</span>
-    </div>
-  </a>
+  </div>
 
-  <a class="guide-card" href="guides/salesforce-mcp-claude-code-setup.html" data-type="guide">
-    <div class="card-type type-guide">📘 Guide</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Salesforce MCP Server → Claude Code, Step by Step</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">Connect Claude Code — or the Claude chat app — directly to your Salesforce org over MCP. Enable the MCP service, scope a permission set, activate a standard hosted server, create the OAuth External Client App, then wire it up with three <code>claude mcp</code> commands or a custom connector.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">MCP</span>
-      <span class="tag tag-orange">Claude Code</span>
-      <span class="tag tag-purple">~30 min</span>
-      <span class="tag tag-amber">Dev Org</span>
-    </div>
-  </a>
+  <div class="guide-section" data-section="prompt">
+    <div class="guide-section-head"><span class="guide-section-title">💬 Prompts</span><span class="guide-section-count"></span></div>
+    <div class="guide-section-cards">
 
-  <a class="guide-card" href="guides/salesforce-custom-mcp-servers.html" data-type="guide">
-    <div class="card-type type-guide">📘 Guide</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Custom MCP Servers in Salesforce</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">Go beyond the standard hosted servers — bundle your own Apex actions, Flows, and REST endpoints into a custom MCP server Claude can call, with the same permission-set and OAuth building blocks as the Claude Code guide.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">MCP</span>
-      <span class="tag tag-pink">Apex &amp; Flow</span>
-      <span class="tag tag-purple">~25 min</span>
-      <span class="tag tag-amber">Dev Org</span>
-    </div>
-  </a>
+      <a class="guide-card" href="guides/sandbox-seed.html" data-type="prompt">
+        <div class="card-type type-prompt">💬 Prompt</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Sandbox Seed — Realistic Test Data on Demand</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">The hardest part of testing is never the feature — it's getting enough realistic records into the sandbox to see it work. A fill-in prompt that seeds fake data across every state, with relationships resolved, safely.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Prompt</span>
+          <span class="tag tag-orange">Testing</span>
+          <span class="tag tag-purple">Data</span>
+          <span class="tag tag-amber">Reusable</span>
+        </div>
+      </a>
 
-  <a class="guide-card" href="guides/confetti-lwc-install.html" data-type="guide">
-    <div class="card-type type-guide">📘 Guide</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Install the Confetti LWC from GitHub</div>
-      <div class="guide-arrow">→</div>
     </div>
-    <div class="guide-desc">Grab a Lightning Web Component from a GitHub repo and get it live on a record page — no git knowledge needed. Paste a folder path, let Claude Code deploy it to your org, then drag-and-drop to finish.</div>
-    <div class="guide-meta">
-      <span class="tag tag-pink">Bonus</span>
-      <span class="tag tag-purple">LWC</span>
-      <span class="tag tag-amber">~10 min</span>
-      <span class="tag tag-blue">Dev Org</span>
-    </div>
-  </a>
+  </div>
 
-  <a class="guide-card" href="salesforce/order-of-execution.html" data-type="guide">
-    <div class="card-type type-guide">📘 Guide</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Salesforce Order of Execution — The Airport Walkthrough</div>
-      <div class="guide-arrow">→</div>
-    </div>
-    <div class="guide-desc">Every record save is a passenger going through the terminal. Walk all 20 steps in sequence — with what fires, what can go wrong, and a debugging checklist for the conflicts admins hit most.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Admin</span>
-      <span class="tag tag-orange">Automation</span>
-      <span class="tag tag-amber">PD1</span>
-      <span class="tag tag-purple">Reference</span>
-    </div>
-  </a>
+  <div class="guide-section" data-section="built-in">
+    <div class="guide-section-head"><span class="guide-section-title">⚙️ Built-in</span><span class="guide-section-count"></span></div>
+    <div class="guide-section-cards">
 
-  <a class="guide-card" href="salesforce/order-of-execution-map.html" data-type="guide">
-    <div class="card-type type-guide">📘 Guide</div>
-    <div class="guide-card-top">
-      <div class="guide-title">Order of Execution — Overhead Map</div>
-      <div class="guide-arrow">→</div>
+      <a class="guide-card" href="guides/code-review.html" data-type="built-in">
+        <div class="card-type type-built-in">⚙️ Built-in feature</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Code Review — Two Lenses on Your Work</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Claude reviews its own work two ways: Salesforce engineering correctness, and how a user actually experiences it. The review engine is built into Claude Code — what's yours is the lens. Two steering prompts, plus the real docs.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Built-in</span>
+          <span class="tag tag-orange">Review</span>
+          <span class="tag tag-purple">Quality</span>
+          <span class="tag tag-amber">Accessibility</span>
+        </div>
+      </a>
+
     </div>
-    <div class="guide-desc">Interactive flowchart of all 20 steps — click any node to get the full story, analogy, and exam trap. See every branch: where a duplicate rule blocks the save, where a recursive save skips 9 steps, and where workflow field updates loop back through triggers.</div>
-    <div class="guide-meta">
-      <span class="tag tag-blue">Admin</span>
-      <span class="tag tag-orange">Interactive</span>
-      <span class="tag tag-amber">PD1</span>
-      <span class="tag tag-purple">Visual</span>
+  </div>
+
+  <div class="guide-section" data-section="guide">
+    <div class="guide-section-head"><span class="guide-section-title">📘 Guides</span><span class="guide-section-count"></span></div>
+    <div class="guide-section-cards">
+
+      <a class="guide-card" href="guides/salesforce-mcp-claude-code-setup.html" data-type="guide">
+        <div class="card-type type-guide">📘 Guide</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Salesforce MCP Server → Claude Code, Step by Step</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Connect Claude Code — or the Claude chat app — directly to your Salesforce org over MCP. Enable the MCP service, scope a permission set, activate a standard hosted server, create the OAuth External Client App, then wire it up with three <code>claude mcp</code> commands or a custom connector.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">MCP</span>
+          <span class="tag tag-orange">Claude Code</span>
+          <span class="tag tag-purple">~30 min</span>
+          <span class="tag tag-amber">Dev Org</span>
+        </div>
+      </a>
+
+      <a class="guide-card" href="guides/salesforce-custom-mcp-servers.html" data-type="guide">
+        <div class="card-type type-guide">📘 Guide</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Custom MCP Servers in Salesforce</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Go beyond the standard hosted servers — bundle your own Apex actions, Flows, and REST endpoints into a custom MCP server Claude can call, with the same permission-set and OAuth building blocks as the Claude Code guide.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">MCP</span>
+          <span class="tag tag-pink">Apex &amp; Flow</span>
+          <span class="tag tag-purple">~25 min</span>
+          <span class="tag tag-amber">Dev Org</span>
+        </div>
+      </a>
+
+      <a class="guide-card" href="guides/confetti-lwc-install.html" data-type="guide">
+        <div class="card-type type-guide">📘 Guide</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Install the Confetti LWC from GitHub</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Grab a Lightning Web Component from a GitHub repo and get it live on a record page — no git knowledge needed. Paste a folder path, let Claude Code deploy it to your org, then drag-and-drop to finish.</div>
+        <div class="guide-meta">
+          <span class="tag tag-pink">Bonus</span>
+          <span class="tag tag-purple">LWC</span>
+          <span class="tag tag-amber">~10 min</span>
+          <span class="tag tag-blue">Dev Org</span>
+        </div>
+      </a>
+
+      <a class="guide-card" href="salesforce/order-of-execution.html" data-type="guide">
+        <div class="card-type type-guide">📘 Guide</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Salesforce Order of Execution — The Airport Walkthrough</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Every record save is a passenger going through the terminal. Walk all 20 steps in sequence — with what fires, what can go wrong, and a debugging checklist for the conflicts admins hit most.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Admin</span>
+          <span class="tag tag-orange">Automation</span>
+          <span class="tag tag-amber">PD1</span>
+          <span class="tag tag-purple">Reference</span>
+        </div>
+      </a>
+
+      <a class="guide-card" href="salesforce/order-of-execution-map.html" data-type="guide">
+        <div class="card-type type-guide">📘 Guide</div>
+        <div class="guide-card-top">
+          <div class="guide-title">Order of Execution — Overhead Map</div>
+          <div class="guide-arrow">→</div>
+        </div>
+        <div class="guide-desc">Interactive flowchart of all 20 steps — click any node to get the full story, analogy, and exam trap. See every branch: where a duplicate rule blocks the save, where a recursive save skips 9 steps, and where workflow field updates loop back through triggers.</div>
+        <div class="guide-meta">
+          <span class="tag tag-blue">Admin</span>
+          <span class="tag tag-orange">Interactive</span>
+          <span class="tag tag-amber">PD1</span>
+          <span class="tag tag-purple">Visual</span>
+        </div>
+      </a>
+
     </div>
-  </a>
+  </div>
 
   <div class="more-soon" id="moreSoon">More guides coming soon ✨</div>
 
@@ -254,26 +282,61 @@
 
 <script>
 (function(){
+  const CAP = 4; // cards shown per section before "show more"
   const search = document.getElementById('guideSearch');
   const pills = document.querySelectorAll('.filter-pill');
-  const cards = document.querySelectorAll('#guideList .guide-card');
+  const sections = document.querySelectorAll('.guide-section');
   const moreSoon = document.getElementById('moreSoon');
   const noResults = document.getElementById('noResults');
   let activeType = 'all';
 
+  sections.forEach(section => {
+    const cards = Array.from(section.querySelectorAll('.guide-card'));
+    const countEl = section.querySelector('.guide-section-count');
+    if (countEl) countEl.textContent = cards.length;
+
+    if (cards.length > CAP) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'show-more-btn';
+      btn.textContent = 'Show ' + (cards.length - CAP) + ' more';
+      btn.addEventListener('click', () => {
+        section.classList.add('expanded');
+        applyFilters();
+      });
+      section.querySelector('.guide-section-cards').insertAdjacentElement('afterend', btn);
+    }
+  });
+
   function applyFilters(){
     const query = search.value.trim().toLowerCase();
-    let visibleCount = 0;
-    cards.forEach(card => {
-      const matchesType = activeType === 'all' || card.dataset.type === activeType;
-      const matchesQuery = query === '' || card.textContent.toLowerCase().includes(query);
-      const show = matchesType && matchesQuery;
-      card.style.display = show ? '' : 'none';
-      if (show) visibleCount++;
-    });
     const filtering = activeType !== 'all' || query !== '';
+    let totalVisible = 0;
+
+    sections.forEach(section => {
+      const type = section.dataset.section;
+      const typeMatches = activeType === 'all' || activeType === type;
+      const cards = Array.from(section.querySelectorAll('.guide-card'));
+      const showMoreBtn = section.querySelector('.show-more-btn');
+      const uncapped = filtering || section.classList.contains('expanded');
+      let sectionVisible = 0;
+
+      cards.forEach((card, i) => {
+        const queryMatches = query === '' || card.textContent.toLowerCase().includes(query);
+        const show = typeMatches && queryMatches && (uncapped || i < CAP);
+        card.style.display = show ? '' : 'none';
+        if (show) sectionVisible++;
+      });
+
+      section.style.display = sectionVisible > 0 ? '' : 'none';
+      if (showMoreBtn) {
+        showMoreBtn.style.display = (typeMatches && !uncapped) ? '' : 'none';
+      }
+      totalVisible += sectionVisible;
+    });
+
     moreSoon.style.display = filtering ? 'none' : '';
-    noResults.style.display = (filtering && visibleCount === 0) ? '' : 'none';
+    noResults.style.display = (filtering && totalVisible === 0) ? '' : 'none';
   }
 
   pills.forEach(pill => {
@@ -286,6 +349,7 @@
   });
 
   search.addEventListener('input', applyFilters);
+  applyFilters();
 })();
 </script>
 
@@ -332,7 +396,7 @@
   fetch('data/youtube.json')
     .then(function(r){ return r.ok ? r.json() : null; })
     .then(function(data){
-      var videos = data && data.videos ? data.videos : [];
+      var videos = (data && data.videos ? data.videos : []).slice(0, 4);
       if (!videos.length) {
         grid.innerHTML = '<div class="yt-empty">No videos loaded yet — check back soon.</div>';
         return;
@@ -340,10 +404,10 @@
       grid.innerHTML = videos.map(function(v){
         var guide = matchGuide(v.title || '');
         var relatedHtml = guide
-          ? '<a class="yt-related" href="' + guide.href + '">🔗 Related guide: ' + escapeHtml(guide.title) + '</a>'
+          ? '<a class="yt-related" href="' + guide.href + '">🔗 ' + escapeHtml(guide.title) + '</a>'
           : '';
         return '<div class="yt-card">'
-          + '<a href="' + v.url + '" target="_blank" rel="noopener noreferrer" style="display:flex;gap:14px;flex:1;text-decoration:none;color:inherit;min-width:0">'
+          + '<a class="yt-link" href="' + v.url + '" target="_blank" rel="noopener noreferrer">'
           + '<img class="yt-thumb" src="' + v.thumbnail + '" alt="" loading="lazy">'
           + '<div class="yt-body">'
           + '<div class="yt-title">' + escapeHtml(v.title) + '</div>'
