@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce MCP Server + Claude Code Setup Guide · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
+    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --red:#EF4444;--teal:#14B8A6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
+
+  /* HEADER */
+  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--blue),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
+  h1 span{color:var(--blue)}
+  .subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
+  .subtitle strong{color:var(--light)}
+
+  /* PROGRESS NAV */
+  .phase-nav{display:flex;gap:0;margin-bottom:36px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .phase-nav-item{flex:1;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.5px;border-right:1px solid var(--border);cursor:default;transition:background 0.2s}
+  .phase-nav-item:last-child{border-right:none}
+  .phase-nav-item.p1{color:var(--blue);background:#00A1E010}
+  .phase-nav-item.p2{color:var(--orange);background:#F2652210}
+  .phase-nav-item.p3{color:var(--purple);background:#8B5CF610}
+  .phase-nav-item.p4{color:var(--green);background:#22C55E10}
+  .phase-nav-item.p5{color:var(--amber);background:#F59E0B10}
+  .phase-nav-item.p6{color:var(--teal);background:#14B8A610}
+  .phase-num{display:block;font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:2px}
+
+  /* PHASE HEADERS */
+  .phase{margin-bottom:40px}
+  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
+  .phase-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:2px}
+  .phase-desc{font-size:12px;color:var(--muted)}
+
+  /* STEP CARDS */
+  .step{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  .step-header{display:flex;align-items:flex-start;gap:13px;padding:15px 16px}
+  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+  .step-content{flex:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
+  .step-body{font-size:13px;line-height:1.75;color:var(--light)}
+  .step-body p{margin-bottom:8px}
+  .step-body p:last-child{margin-bottom:0}
+
+  /* CODE BLOCKS */
+  .cmd-block{background:#060A10;border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7DD3FC;position:relative;overflow-x:auto}
+  .cmd-block .cmd-label{font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase}
+  .cmd-line{display:block;line-height:1.8}
+  .cmd-line::before{content:'> ';color:var(--muted)}
+  .cmd-block.json .cmd-line::before{content:''}
+  .cmd-block.json{white-space:pre;color:#A5D6FF}
+
+  /* CALLOUT BOXES */
+  .callout{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13px;line-height:1.65}
+  .callout-tip{background:#00A1E010;border:1px solid #00A1E033;color:var(--light)}
+  .callout-warn{background:#F59E0B10;border:1px solid #F59E0B33;color:var(--light)}
+  .callout-success{background:#22C55E10;border:1px solid #22C55E33;color:var(--light)}
+  .callout-danger{background:#EF444410;border:1px solid #EF444433;color:var(--light)}
+  .callout-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .callout-tip .callout-label{color:var(--blue)}
+  .callout-warn .callout-label{color:var(--amber)}
+  .callout-success .callout-label{color:var(--green)}
+  .callout-danger .callout-label{color:var(--red)}
+
+  /* DOWNLOAD BUTTONS */
+  .dl-btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#080C14;padding:10px 18px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:6px 6px 6px 0;border:none;cursor:pointer;transition:opacity 0.2s}
+  .dl-btn:hover{opacity:0.88}
+  .dl-btn.orange{background:var(--orange)}
+  .dl-btn.purple{background:var(--purple);color:white}
+  .dl-btn.green{background:var(--green)}
+
+  /* WHAT YOU'LL SEE SCREENSHOTS */
+  .ui-mock{background:#060A10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px}
+  .ui-mock-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block}
+  .ui-mock-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5}
+  .ui-mock-item:last-child{border-bottom:none}
+  .ui-mock-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+
+  /* TABLE */
+  .mcp-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+  .mcp-table th{text-align:left;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border)}
+  .mcp-table td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--light);vertical-align:top}
+  .mcp-table tr:last-child td{border-bottom:none}
+  .mcp-table code{white-space:nowrap}
+
+  /* TROUBLESHOOT */
+  .trouble-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+  .trouble-q{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:5px}
+  .trouble-a{font-size:12.5px;color:var(--light);line-height:1.65}
+
+  /* FINAL SUCCESS */
+  .success-banner{background:linear-gradient(135deg,#22C55E12,#00A1E012);border:1.5px solid var(--green);border-radius:14px;padding:22px 24px;margin-top:40px;text-align:center}
+  .success-banner h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--green);margin-bottom:8px}
+  .success-banner p{font-size:13px;color:var(--light);line-height:1.65}
+
+  /* FOOTER */
+  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
+  .footer strong{color:var(--light)}
+
+  /* INLINE HIGHLIGHTS */
+  code{background:#0A1628;border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#7DD3FC}
+  .highlight-orange{color:var(--orange);font-weight:600}
+  .highlight-blue{color:var(--blue);font-weight:600}
+  .highlight-green{color:var(--green);font-weight:600}
+
+  /* TIME ESTIMATES */
+  .time-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;letter-spacing:0.5px;margin-left:6px;vertical-align:middle}
+  .time-blue{background:#00A1E018;color:var(--blue);border:1px solid #00A1E030}
+  .time-orange{background:#F2652218;color:var(--orange);border:1px solid #F2652230}
+  .time-purple{background:#8B5CF618;color:var(--purple);border:1px solid #8B5CF630}
+  .time-green{background:#22C55E18;color:var(--green);border:1px solid #22C55E30}
+  .time-amber{background:#F59E0B18;color:var(--amber);border:1px solid #F59E0B30}
+  .time-teal{background:#14B8A618;color:var(--teal);border:1px solid #14B8A630}
+
+  /* ENGAGE: SHARE + REACTIONS */
+  .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
+  .engage-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .share-buttons{display:flex;flex-wrap:wrap;gap:10px}
+  .share-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--light);text-decoration:none;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color 0.2s,opacity 0.2s}
+  .share-btn:hover{opacity:0.85}
+  .share-btn.native{border-color:var(--blue);color:var(--blue);background:#00A1E014}
+  .share-btn.native.copied{border-color:var(--green);color:var(--green);background:#22C55E14}
+  .share-btn.x{color:var(--white)}
+  .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
+  .giscus-wrap{margin-top:22px}
+</style>
+</head>
+<body>
+
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+<div class="doc-tag">Admin Setup Guide · MCP · Claude Code</div>
+<h1>Salesforce MCP Server →<br><span>Claude Code, Step by Step</span></h1>
+<p class="subtitle">A plain-English guide to connecting <strong>Claude Code</strong> (the CLI/IDE agent) directly to your Salesforce org over <strong>MCP</strong> — no browser, no clicking around Setup to find records. Ask in natural language, Claude reads and writes real data through Salesforce's own hosted MCP server.<br>Based on the Salesforce Headless 360 workshop (SF Admin Group, San Francisco).</p>
+
+<div class="callout callout-danger" style="margin-bottom:28px">
+  <span class="callout-label">⚠ Before you start</span>
+  Do this in a <strong>Developer Edition org or a Sandbox</strong> — never your production org. The permission set and connected app you'll create can create, update, and delete records once authorised. Get comfortable here first.<br><br>
+  No org yet? Sign up free at <a href="https://developer.salesforce.com/free-trials" style="color:var(--light)">developer.salesforce.com/free-trials</a>. You'll also need a Claude account — <a href="https://claude.ai" style="color:var(--light)">Claude Code</a> installed if you're following Phases 1–5, or just the chat app at <a href="https://claude.ai" style="color:var(--light)">claude.ai</a> if you're going straight for the optional Phase 6 instead.
+</div>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <div class="phase-nav-item p1"><span class="phase-num">1</span>Enable<br>MCP</div>
+  <div class="phase-nav-item p2"><span class="phase-num">2</span>Permission<br>Set</div>
+  <div class="phase-nav-item p3"><span class="phase-num">3</span>Activate<br>Server</div>
+  <div class="phase-nav-item p4"><span class="phase-num">4</span>External<br>Client App</div>
+  <div class="phase-nav-item p5"><span class="phase-num">5</span>Connect<br>Claude Code</div>
+  <div class="phase-nav-item p6"><span class="phase-num">6</span>Claude<br>Chat App</div>
+</div>
+
+<!-- ═══ PHASE 1 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#00A1E018;color:var(--blue)">1</div>
+    <div>
+      <div class="phase-title">Turn on the MCP Service in Salesforce</div>
+      <div class="phase-desc">One checkbox in Setup unlocks MCP for the whole org. <span class="time-tag time-blue">~2 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">What is MCP?</span>
+    Model Context Protocol is the open standard AI tools like Claude use to talk to live systems instead of guessing. Without it, Claude works from memory and generic training data. With it, Claude calls real tools against your real org — query records, create a case, update a field — and gets the truth back, in the moment it needs it.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">1</div>
+      <div class="step-content">
+        <div class="step-title">Enable the MCP Service (Beta)</div>
+        <div class="step-body">
+          <p>In Salesforce, click the gear icon → <strong>Setup</strong>. In Quick Find, search <code>User Interface</code> and open it.</p>
+          <p>Tick <strong>Enable MCP Service (Beta)</strong> under the Setup section, then click <strong>Save</strong>.</p>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ That's the org-wide switch</span>
+            Everything else in this guide — the permission set, the server activation, the connected app — only becomes available once this checkbox is on.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 2 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F2652218;color:var(--orange)">2</div>
+    <div>
+      <div class="phase-title">Create a Permission Set for the MCP Client</div>
+      <div class="phase-desc">Controls exactly what Claude is allowed to see and do in your org. <span class="time-tag time-orange">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">1</div>
+      <div class="step-content">
+        <div class="step-title">Create the permission set</div>
+        <div class="step-body">
+          <p>In Setup Quick Find, search <code>Permission Sets</code> and open it. Click <strong>New</strong>.</p>
+          <p>Label: <code>MCP Client User</code> (the API Name fills in automatically as <code>MCP_Client_User</code>). Description: <em>"Grant API access to the Salesforce hosted MCP servers."</em> Click <strong>Save</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">2</div>
+      <div class="step-content">
+        <div class="step-title">Turn on API Enabled</div>
+        <div class="step-body">
+          <p>On the permission set you just created, click <strong>System Permissions</strong>. Click <strong>Edit</strong>, tick <strong>API Enabled</strong>, then <strong>Save</strong>.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">Why this matters</span>
+            <code>API Enabled</code> is what lets a user authenticated through this permission set access any Salesforce API — including the MCP endpoint Claude Code will be calling.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">3</div>
+      <div class="step-content">
+        <div class="step-title">Assign the permission set to yourself</div>
+        <div class="step-body">
+          <p>On the permission set, click <strong>Manage Assignments → Add Assignment</strong>. Check your own user (and any other approved admins who'll use Claude Code against this org), click <strong>Next → Assign → Done</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 3 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#8B5CF618;color:var(--purple)">3</div>
+    <div>
+      <div class="phase-title">Activate a Standard MCP Server and Grab Its URL</div>
+      <div class="phase-desc">Salesforce ships several pre-built MCP servers — pick the one that matches how much access you want to hand over. <span class="time-tag time-purple">~3 min</span></div>
+    </div>
+  </div>
+
+  <div class="ui-mock" style="padding:0;overflow-x:auto">
+    <table class="mcp-table">
+      <tr><th>Standard server</th><th>What it exposes</th><th>Tools</th></tr>
+      <tr><td><code>sobject-all</code></td><td>Full CRUD — create, read, update, delete, query and search — across all objects</td><td>11 + 2 prompts</td></tr>
+      <tr><td><code>sobject-reads</code></td><td>Read and query only, no mutations</td><td>6</td></tr>
+      <tr><td><code>sobject-mutations</code></td><td>Create and update only, no delete</td><td>9</td></tr>
+      <tr><td><code>sobject-deletes</code></td><td>Delete operations only</td><td>8</td></tr>
+      <tr><td><code>salesforce-api-context</code></td><td>Lets Claude inspect your org's objects, fields and relationships without touching data</td><td>6</td></tr>
+    </table>
+  </div>
+
+  <div class="callout callout-warn" style="margin:12px 0 20px">
+    <span class="callout-label">⚠ Start narrow</span>
+    First time round, activate <code>sobject-reads</code> or <code>salesforce-api-context</code> — let Claude look before it can touch anything. Move to <code>sobject-all</code> once you trust the workflow.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">1</div>
+      <div class="step-content">
+        <div class="step-title">Find the server in the API Catalog</div>
+        <div class="step-body">
+          <p>In Setup Quick Find, search <code>MCP Servers</code> and open it (it sits under <strong>API Catalog</strong>). Click <strong>Salesforce Servers</strong>, then open the server you want (e.g. <code>sobject-all</code>).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">2</div>
+      <div class="step-content">
+        <div class="step-title">Activate it and copy the Server URL</div>
+        <div class="step-body">
+          <p>Click <strong>Activate</strong>. Once active, copy the <strong>Server URL</strong> shown on the Details tab — it looks like:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Server URL — copy this</span>
+            <span class="cmd-line">https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all</span>
+          </div>
+          <p>You'll paste this into Claude Code in Phase 5. Keep this tab open, or paste it into a notes file for now.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 4 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
+    <div>
+      <div class="phase-title">Create an External Client App (the OAuth front door)</div>
+      <div class="phase-desc">This is what Claude Code authenticates against — it's how Salesforce knows to trust the connection. <span class="time-tag time-green">~10 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">Why an External Client App?</span>
+    Claude Code is a "headless" agent — it never opens the Salesforce UI. Instead it authenticates with OAuth 2.0 against an External Client App (ECA), which then restricts what it can do based on the permission set, profile and IP ranges you assign to it. Same security model as any other connected app, just built for agents instead of browsers.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">1</div>
+      <div class="step-content">
+        <div class="step-title">Enable PKCE at the org level</div>
+        <div class="step-body">
+          <p>Setup Quick Find → <code>OAuth and OpenID Connect Settings</code>. Enable <strong>PKCE</strong> (Proof Key for Code Exchange) if it isn't already on. This lets Claude Code authenticate securely as a public client, without needing to hard-code a secret.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">2</div>
+      <div class="step-content">
+        <div class="step-title">Create the External Client App</div>
+        <div class="step-body">
+          <p>Setup Quick Find → <strong>External Client App Manager</strong> → <strong>New External Client App</strong>.</p>
+          <p>Name it something recognisable, e.g. <code>Claude Code MCP App</code>. Fill in a contact email and distribution state (<em>Local</em> is fine for a dev org).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">3</div>
+      <div class="step-content">
+        <div class="step-title">Enable OAuth and set the callback URL</div>
+        <div class="step-body">
+          <p>Tick <strong>Enable OAuth</strong>. For the <strong>Callback URL</strong>, use a fixed localhost port — Claude Code listens on your machine for the OAuth redirect, it isn't a hosted web app like claude.ai:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Callback URL</span>
+            <span class="cmd-line">http://localhost:8080/callback</span>
+          </div>
+          <div class="callout callout-warn">
+            <span class="callout-label">⚠ Remember this port number</span>
+            Whatever port you enter here (8080 is just a suggestion — pick any free port) has to match the <code>--callback-port</code> you'll pass to <code>claude mcp add</code> in Phase 5. A mismatch is the single most common reason this OAuth flow fails.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">4</div>
+      <div class="step-content">
+        <div class="step-title">Add the OAuth scopes</div>
+        <div class="step-body">
+          <p>Add these two scopes:</p>
+          <div class="ui-mock">
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">♻</div><span><strong>Perform requests at any time</strong> (<code>refresh_token</code>, <code>offline_access</code>) — so Claude Code doesn't need you to re-authenticate every session</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">MCP</div><span><strong>Access Salesforce hosted MCP servers</strong> (<code>mcp_api</code>) — the scope that actually grants MCP access</span></div>
+          </div>
+          <p>Click <strong>Create</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">5</div>
+      <div class="step-content">
+        <div class="step-title">Lock down the security settings</div>
+        <div class="step-body">
+          <p>Open the app you just created → <strong>Edit App Policy</strong>. Under <strong>Security</strong>:</p>
+          <div class="ui-mock">
+            <div class="ui-mock-item"><span>✗ <strong>Require secret for Web Server Flow</strong> — leave unchecked</span></div>
+            <div class="ui-mock-item"><span>✗ <strong>Require secret for Refresh Token Flow</strong> — leave unchecked</span></div>
+            <div class="ui-mock-item"><span>✓ <strong>Require PKCE</strong> — check this</span></div>
+            <div class="ui-mock-item"><span>✓ <strong>Issue JSON Web Token (JWT)</strong> — check this</span></div>
+          </div>
+          <p>This combination lets Claude Code authenticate as a secure public client using PKCE, without a long-lived client secret sitting on your machine.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">6</div>
+      <div class="step-content">
+        <div class="step-title">Restrict who's allowed to use it</div>
+        <div class="step-body">
+          <p>Still on the Policies tab, under <strong>Plugin Policies</strong>:</p>
+          <p>Set <strong>Permitted Users</strong> to <strong>Admin approved users are pre-authorized</strong>. Under <strong>Selected Permission Set</strong>, move <strong>MCP Client User</strong> (the one you made in Phase 2) into the Selected column. Set <strong>IP Relaxation</strong> to <strong>Relax IP Restrictions</strong>. Click <strong>Save</strong>.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">Why "admin approved" instead of "self-authorize"</span>
+            This means only users you've explicitly assigned the <code>MCP Client User</code> permission set to can ever authenticate through this app — not every user in the org.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">7</div>
+      <div class="step-content">
+        <div class="step-title">Copy the Consumer Key</div>
+        <div class="step-body">
+          <p>Go to the <strong>Settings</strong> tab → <strong>App Settings → Consumer Key and Secret</strong>. Verify with the code sent to your email, then copy the <strong>Consumer Key</strong>.</p>
+          <p>You won't need the Consumer Secret — with "Require secret" unchecked and PKCE required, Claude Code authenticates without one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 5 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
+    <div>
+      <div class="phase-title">Connect Claude Code</div>
+      <div class="phase-desc">This is where it all comes together — three commands. <span class="time-tag time-amber">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">1</div>
+      <div class="step-content">
+        <div class="step-title">Add the MCP server</div>
+        <div class="step-body">
+          <p>Open a terminal in your project folder and run:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Terminal</span>
+            <span class="cmd-line">claude mcp add --scope project --transport http \</span>
+            <span class="cmd-line">  --callback-port 8080 --client-id YOUR_CONSUMER_KEY \</span>
+            <span class="cmd-line">  salesforce https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all</span>
+          </div>
+          <p>Swap in the <strong>Server URL</strong> from Phase 3 and the <strong>Consumer Key</strong> from Phase 4. Make sure <code>--callback-port</code> matches the port you set in the Callback URL.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">Which --scope should I use?</span>
+            <code>--scope project</code> writes the server into <code>.mcp.json</code> at your project root, so it's easy to share with teammates (minus their own auth token). Use <code>--scope user</code> instead if you want this server available across every project on your machine, not just this folder.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">2</div>
+      <div class="step-content">
+        <div class="step-title">Authenticate</div>
+        <div class="step-body">
+          <p>Start Claude Code (<code>claude</code>) and run the slash command:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Inside a Claude Code session</span>
+            <span class="cmd-line">/mcp</span>
+          </div>
+          <p>Select <strong>salesforce</strong> from the list, press Enter, and choose <strong>Authenticate</strong>. Your browser opens to the Salesforce login screen — log in and click <strong>Allow</strong>. Back in Claude Code, the server's status flips to <strong>✓ Connected</strong>.</p>
+          <p>Prefer doing it outside a session? This works too:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Terminal</span>
+            <span class="cmd-line">claude mcp login salesforce</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">3</div>
+      <div class="step-content">
+        <div class="step-title">Verify and test it</div>
+        <div class="step-body">
+          <p>Check the connection from the shell any time:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Terminal</span>
+            <span class="cmd-line">claude mcp list</span>
+          </div>
+          <p>Then, inside Claude Code, just ask it something about your org:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Claude Code prompt</span>
+            <span class="cmd-line">Query the 5 most recently created Accounts in my org</span>
+          </div>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ How to know it's working</span>
+            Claude should call the MCP tool and come back with real records from your org — actual Account names and dates, not a generic answer. That's the "headless" connection: no browser tab, no clicking through Setup, just natural language against live data.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">★</div>
+      <div class="step-content">
+        <div class="step-title">What .mcp.json looks like when you're done</div>
+        <div class="step-body">
+          <p>For reference, this is roughly what <code>claude mcp add</code> writes to <code>.mcp.json</code> in your project root:</p>
+          <div class="cmd-block json">
+            <span class="cmd-label">.mcp.json</span>
+{
+  "mcpServers": {
+    "salesforce": {
+      "type": "http",
+      "url": "https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all",
+      "oauth": {
+        "clientId": "YOUR_CONSUMER_KEY",
+        "callbackPort": 8080
+      }
+    }
+  }
+}
+          </div>
+          <p>Your OAuth token itself is stored securely outside this file (system keychain / credentials store) — never committed to git.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 6 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#14B8A618;color:var(--teal)">6</div>
+    <div>
+      <div class="phase-title">Optional: Connect Claude (the Chat App) Instead</div>
+      <div class="phase-desc">Prefer talking to Claude in the browser over the CLI? Same MCP server, same External Client App — just a different front door. <span class="time-tag time-teal">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">Why this works so well</span>
+    Since Anthropic authored the original MCP specification, Claude (the chat app at claude.ai) has strong native support for the protocol — it's a solid option for quick developer testing, not just Claude Code. Everything below reuses the permission set from Phase 2 and the External Client App from Phase 4, so if you've already done those, this is a five-minute add-on.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">1</div>
+      <div class="step-content">
+        <div class="step-title">Open Connectors and start a custom connector</div>
+        <div class="step-body">
+          <p>In Claude, click <strong>Customize</strong> in the left sidebar, then click <strong>Connectors</strong> and the <strong>+</strong> button. Click <strong>Add custom connector</strong>.</p>
+          <p>Give it a name (e.g. <code>Salesforce MCP</code>) and an optional description.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">2</div>
+      <div class="step-content">
+        <div class="step-title">Enter the server URL</div>
+        <div class="step-body">
+          <p>Substitute the server name from Phase 3 into the format for your org type:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">All production orgs</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/SERVER-NAME</span>
+          </div>
+          <div class="cmd-block">
+            <span class="cmd-label">Sandbox or scratch orgs</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/SERVER-NAME</span>
+          </div>
+          <p>For example, to use the <code>platform/sobject-all</code> server in a scratch org:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Example</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-all</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">3</div>
+      <div class="step-content">
+        <div class="step-title">Add the Consumer Key and connect</div>
+        <div class="step-body">
+          <p>Open <strong>Advanced settings</strong> and paste the <strong>Consumer Key</strong> you copied in Phase 4 into <strong>OAuth Client ID</strong>. Click <strong>Add</strong>.</p>
+          <p>Click <strong>Connect</strong> next to the connector you just created. Claude redirects to the org containing the External Client App from Phase 4 — if you're already logged in there, the user challenge is skipped and Claude gets its access token straight away.</p>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ Optional: fine-tune tool permissions</span>
+            Once the connector authenticates, click <strong>Configure</strong> next to it to see the tools exposed by that MCP server and adjust which ones Claude is allowed to use.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#14B8A618;color:var(--teal)">4</div>
+      <div class="step-content">
+        <div class="step-title">Test it</div>
+        <div class="step-body">
+          <p>Start a new chat and ask Claude something about your org, the same way you tested Claude Code in Phase 5 — for example, <em>"Query the 5 most recently created Accounts in my org."</em> A real answer with actual record names and dates means the connector is live.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#EF444418;color:var(--red)">?</div>
+    <div>
+      <div class="phase-title">Common problems</div>
+      <div class="phase-desc">Things that catch people out the first time through this flow.</div>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Browser opens for OAuth but the redirect fails / "connection refused"</div>
+    <div class="trouble-a">Almost always a port mismatch. The <code>--callback-port</code> you passed to <code>claude mcp add</code> must exactly match the port in the Callback URL on your External Client App (e.g. both <code>8080</code>). If they don't match, remove the server (<code>claude mcp remove salesforce</code>) and re-add it with the correct port — or update the Callback URL in Salesforce to match. If the browser shows an error page after you log in, copy the full URL from the address bar and paste it back into the prompt Claude Code shows — it can recover the auth code from that.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q"><code>/mcp</code> shows "Needs authentication" even after I logged in</div>
+    <div class="trouble-a">Run <code>/mcp</code> again and re-select <strong>Authenticate</strong> — refresh tokens occasionally expire or get revoked (e.g. if you edited the ECA's policies afterwards). You don't need to remove and re-add the server, just re-authenticate.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Tools list is empty even though the server shows Connected</div>
+    <div class="trouble-a">Check that the permission set (<code>MCP Client User</code>) is actually assigned to the user you authenticated as, and that it's listed in the ECA's <strong>Selected Permission Set</strong>. A connected-but-toolless server almost always means the authenticated user doesn't have access to that server's underlying permission set.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Claude says it can't reach the tool / times out</div>
+    <div class="trouble-a">Double-check the Server URL from Phase 3 was copied in full and the standard server is still <strong>Activated</strong> in Setup → MCP Servers. Also confirm your org's IP restrictions on the ECA are set to <strong>Relax IP Restrictions</strong> — a strict IP range will silently block requests coming from your machine.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">"Admin approved users are pre-authorized" but I still get a permission error</div>
+    <div class="trouble-a">Go back to the permission set → <strong>Manage Assignments</strong> and confirm your user is actually in the assigned list — creating the permission set doesn't assign it to anyone automatically.</div>
+  </div>
+</div>
+
+<!-- SUCCESS BANNER -->
+<div class="success-banner">
+  <h2>You're connected. Claude can now talk to your org.</h2>
+  <p>MCP is enabled, your permission set is scoped, the External Client App is authorising real requests, and Claude Code (and/or the Claude chat app, if you did Phase 6) has a live connection to Salesforce.<br>Start with read-only questions, then work up to writes once you trust the flow.</p>
+</div>
+
+<div class="engage-section">
+  <span class="engage-label">Found this useful?</span>
+  <div class="share-buttons">
+    <button class="share-btn native" type="button" id="nativeShareBtn">🔗 Share this page</button>
+    <a class="share-btn x" id="shareXBtn" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">𝕏 Share on X</a>
+    <a class="share-btn linkedin" id="shareLinkedInBtn" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer">in Share on LinkedIn</a>
+  </div>
+  <div class="giscus-wrap">
+    <script src="https://giscus.app/client.js"
+      data-repo="PaceyMia/Salesforce-Guides"
+      data-repo-id="R_kgDOSzW9FA"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOSzW9FM4DA4N4"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Mia</strong><br>
+  Based on the Salesforce Headless 360 workshop, San Francisco Salesforce Admin Group.<br>
+  <br>
+  ⚠️ This guide is for connecting to a <strong>Developer Edition or Sandbox org only</strong>. Never point the permission set or client app you build here at production without a full security review.
+</div>
+
+<script>
+(function(){
+  var shareUrl = location.href;
+  var shareTitle = document.title;
+  var xBtn = document.getElementById('shareXBtn');
+  var liBtn = document.getElementById('shareLinkedInBtn');
+  var nativeBtn = document.getElementById('nativeShareBtn');
+  if (xBtn) xBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(shareUrl);
+  if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+  if (nativeBtn) {
+    nativeBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: shareTitle, url: shareUrl }).catch(function(){});
+        return;
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          var original = nativeBtn.textContent;
+          nativeBtn.textContent = '✓ Link copied';
+          nativeBtn.classList.add('copied');
+          setTimeout(function(){ nativeBtn.textContent = original; nativeBtn.classList.remove('copied'); }, 1800);
+        });
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
