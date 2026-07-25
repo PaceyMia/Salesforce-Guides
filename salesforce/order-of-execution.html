@@ -9,10 +9,11 @@
   :root {
     --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
     --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
-    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
+    --amber:#F59E0B;--pink:#EC4899;--muted:#6B84A3;--light:#CBD5E1;--white:#F1F5F9;
     --red:#EF4444;--teal:#14B8A6;
-    --load:#4B607A;--before:#00A1E0;--savept:#F59E0B;--after:#F26522;--commit:#22C55E;--async:#8B5CF6;
+    --load:#6B84A3;--before:#00A1E0;--savept:#F59E0B;--after:#F26522;--commit:#22C55E;--async:#8B5CF6;
   }
+  html{scroll-behavior:smooth}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
 
@@ -26,9 +27,11 @@
   .source-note strong{color:var(--light)}
 
   .phase-nav{display:flex;gap:0;margin-bottom:18px;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-  .phase-nav-item{flex:1;padding:10px 6px;text-align:center;font-size:10px;font-weight:700;letter-spacing:0.3px;border-right:1px solid var(--border);cursor:default}
+  .phase-nav-item{flex:1;padding:10px 6px;text-align:center;font-size:10px;font-weight:700;letter-spacing:0.3px;border-right:1px solid var(--border);cursor:pointer;text-decoration:none;display:block;transition:opacity 0.2s}
+  .phase-nav-item:hover{opacity:0.75}
+  .phase-nav-item.active{box-shadow:inset 0 -2px 0 currentColor}
   .phase-nav-item:last-child{border-right:none}
-  .phase-nav-item.pL{color:var(--muted);background:#4B607A12}
+  .phase-nav-item.pL{color:var(--muted);background:#6B84A312}
   .phase-nav-item.pB{color:var(--before);background:#00A1E010}
   .phase-nav-item.pA{color:var(--after);background:#F2652210}
   .phase-nav-item.pC{color:var(--commit);background:#22C55E10}
@@ -37,7 +40,7 @@
 
   .expand-hint{font-size:12px;color:var(--muted);margin-bottom:26px;font-style:italic}
 
-  .phase{margin-bottom:30px}
+  .phase{margin-bottom:30px;scroll-margin-top:16px}
   .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:13px;border-bottom:1px solid var(--border)}
   .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
   .phase-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:2px}
@@ -127,6 +130,16 @@
   .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
   .giscus-wrap{margin-top:22px}
 </style>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<meta name="description" content="Every record save is a passenger going through the terminal. Walk all 20 steps of the Salesforce Order of Execution, with what fires, what breaks, and a debugging checklist.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Salesforce Order of Execution · The Airport Walkthrough · Mia's Admin Playbook">
+<meta property="og:description" content="Every record save is a passenger going through the terminal. Walk all 20 steps of the Salesforce Order of Execution, with what fires, what breaks, and a debugging checklist.">
+<meta property="og:url" content="https://paceymia.github.io/Salesforce-Guides/salesforce/order-of-execution.html">
+<meta property="og:site_name" content="Mia's Salesforce Guides">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Salesforce Order of Execution · The Airport Walkthrough · Mia's Admin Playbook">
+<meta name="twitter:description" content="Every record save is a passenger going through the terminal. Walk all 20 steps of the Salesforce Order of Execution, with what fires, what breaks, and a debugging checklist.">
 </head>
 <body>
 
@@ -134,6 +147,7 @@
 <div class="doc-tag">Admin Playbook · PD1 Study Guide · Order of Execution</div>
 <h1>The Salesforce Order of Execution,<br><span>walked through an airport</span></h1>
 <p class="subtitle">Every record save is a passenger going through the terminal. Each checkpoint must be passed <strong>in order, every time, no skipping</strong> — except where the diagram says it skips.<br>Tap any checkpoint to see what it does, when it matters, and what goes wrong.</p>
+<div class="last-updated">Updated Jul 10, 2026</div>
 
 <div class="source-note">
   📋 Built directly from the official <strong>Salesforce Order of Execution Overview</strong> — Apex API v64.0 (Summer '25), diagram updated 15 April 2025. All 20 steps, in the real sequence, including the ones people usually skip.

@@ -33,16 +33,16 @@
 
 <!-- PHASE NAV -->
 <div class="phase-nav">
-  <div class="phase-nav-item p1"><span class="phase-num">1</span>Enable<br>MCP</div>
-  <div class="phase-nav-item p2"><span class="phase-num">2</span>Permission<br>Set</div>
-  <div class="phase-nav-item p3"><span class="phase-num">3</span>Activate<br>Server</div>
-  <div class="phase-nav-item p4"><span class="phase-num">4</span>External<br>Client App</div>
-  <div class="phase-nav-item p5"><span class="phase-num">5</span>Connect<br>Claude Code</div>
-  <div class="phase-nav-item p6"><span class="phase-num">6</span>Claude<br>Chat App</div>
+  <a class="phase-nav-item p1" href="#phase-1"><span class="phase-num">1</span>Enable<br>MCP</a>
+  <a class="phase-nav-item p2" href="#phase-2"><span class="phase-num">2</span>Permission<br>Set</a>
+  <a class="phase-nav-item p3" href="#phase-3"><span class="phase-num">3</span>Activate<br>Server</a>
+  <a class="phase-nav-item p4" href="#phase-4"><span class="phase-num">4</span>External<br>Client App</a>
+  <a class="phase-nav-item p5" href="#phase-5"><span class="phase-num">5</span>Connect<br>Claude Code</a>
+  <a class="phase-nav-item p6" href="#phase-6"><span class="phase-num">6</span>Claude<br>Chat App</a>
 </div>
 
 <!-- ═══ PHASE 1 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-1">
   <div class="phase-header">
     <div class="phase-badge" style="background:#00A1E018;color:var(--blue)">1</div>
     <div>
@@ -75,7 +75,7 @@
 </div>
 
 <!-- ═══ PHASE 2 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-2">
   <div class="phase-header">
     <div class="phase-badge" style="background:#F2652218;color:var(--orange)">2</div>
     <div>
@@ -127,7 +127,7 @@
 </div>
 
 <!-- ═══ PHASE 3 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-3">
   <div class="phase-header">
     <div class="phase-badge" style="background:#8B5CF618;color:var(--purple)">3</div>
     <div>
@@ -183,7 +183,7 @@
 </div>
 
 <!-- ═══ PHASE 4 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-4">
   <div class="phase-header">
     <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
     <div>
@@ -310,7 +310,7 @@
 </div>
 
 <!-- ═══ PHASE 5 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-5">
   <div class="phase-header">
     <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
     <div>
@@ -419,7 +419,7 @@
 </div>
 
 <!-- ═══ PHASE 6 ═══ -->
-<div class="phase">
+<div class="phase" id="phase-6">
   <div class="phase-header">
     <div class="phase-badge" style="background:#14B8A618;color:var(--teal)">6</div>
     <div>
@@ -502,7 +502,7 @@
 </div>
 
 <!-- TROUBLESHOOTING -->
-<div class="phase">
+<div class="phase" id="phase-7">
   <div class="phase-header">
     <div class="phase-badge" style="background:#EF444418;color:var(--red)">?</div>
     <div>
@@ -610,5 +610,25 @@
 })();
 </script>
 
+<script>
+(function(){
+  var navItems = document.querySelectorAll(".phase-nav-item");
+  if(!navItems.length) return;
+  var sections = Array.prototype.map.call(navItems, function(a){ return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+  if(!sections.length || !("IntersectionObserver" in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting) return;
+      var targetHref = "#" + entry.target.id;
+      var item = null;
+      navItems.forEach(function(n){ if(n.getAttribute("href") === targetHref) item = n; });
+      if(!item) return;
+      navItems.forEach(function(n){ n.classList.remove("active"); });
+      item.classList.add("active");
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  sections.forEach(function(s){ io.observe(s); });
+})();
+</script>
 </body>
 </html>

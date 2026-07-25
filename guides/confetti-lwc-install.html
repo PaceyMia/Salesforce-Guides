@@ -5,92 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Install the Confetti LWC from GitHub · Mia's Admin Playbook</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --dark:#080C14;--card:#0F1520;--card2:#131C2B;--border:#1A2538;
-    --blue:#00A1E0;--orange:#F26522;--purple:#8B5CF6;--green:#22C55E;
-    --amber:#F59E0B;--pink:#EC4899;--muted:#4B607A;--light:#CBD5E1;--white:#F1F5F9;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--dark);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;max-width:860px;margin:0 auto;padding:32px 20px 80px}
-
-  /* HEADER */
-  .doc-tag{display:inline-block;font-size:10px;letter-spacing:2px;font-weight:600;background:linear-gradient(90deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-transform:uppercase;margin-bottom:10px}
-  h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;line-height:1.1;letter-spacing:-0.5px;margin-bottom:8px}
-  h1 span{color:var(--pink)}
-  .subtitle{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.6}
-  .subtitle strong{color:var(--light)}
-
-  /* PHASE HEADERS */
-  .phase{margin-bottom:40px}
-  .phase-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
-  .phase-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;flex-shrink:0}
-  .phase-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:2px}
-  .phase-desc{font-size:12px;color:var(--muted)}
-
-  /* STEP CARDS */
-  .step{background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
-  .step-header{display:flex;align-items:flex-start;gap:13px;padding:15px 16px}
-  .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
-  .step-content{flex:1}
-  .step-title{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
-  .step-body{font-size:13px;line-height:1.75;color:var(--light)}
-  .step-body p{margin-bottom:8px}
-  .step-body p:last-child{margin-bottom:0}
-
-  /* CODE BLOCKS */
-  .cmd-block{background:#060A10;border:1px solid var(--border);border-radius:8px;padding:12px 15px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#7DD3FC;position:relative;overflow-x:auto}
-  .cmd-block .cmd-label{font-size:10px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:1px;display:block;margin-bottom:6px;text-transform:uppercase}
-  .cmd-line{display:block;line-height:1.8}
-  .cmd-line::before{content:'> ';color:var(--muted)}
-
-  /* CALLOUT BOXES */
-  .callout{border-radius:10px;padding:12px 15px;margin:12px 0;font-size:13px;line-height:1.65}
-  .callout-tip{background:#00A1E010;border:1px solid #00A1E033;color:var(--light)}
-  .callout-warn{background:#F59E0B10;border:1px solid #F59E0B33;color:var(--light)}
-  .callout-success{background:#22C55E10;border:1px solid #22C55E33;color:var(--light)}
-  .callout-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px}
-  .callout-tip .callout-label{color:var(--blue)}
-  .callout-warn .callout-label{color:var(--amber)}
-  .callout-success .callout-label{color:var(--green)}
-
-  /* WHAT'S HAPPENING MOCKS */
-  .ui-mock{background:#060A10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:12.5px}
-  .ui-mock-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:block}
-  .ui-mock-item{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);color:var(--light);line-height:1.5}
-  .ui-mock-item:last-child{border-bottom:none}
-  .ui-mock-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-
-  /* FINAL SUCCESS */
-  .success-banner{background:linear-gradient(135deg,#EC489912,#8B5CF612);border:1.5px solid var(--pink);border-radius:14px;padding:22px 24px;margin-top:40px;text-align:center}
-  .success-banner h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--pink);margin-bottom:8px}
-  .success-banner p{font-size:13px;color:var(--light);line-height:1.65}
-
-  /* FOOTER */
-  .footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center}
-  .footer strong{color:var(--light)}
-
-  /* INLINE HIGHLIGHTS */
-  code{background:#0A1628;border:1px solid var(--border);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#7DD3FC}
-
-  /* VIDEO */
-  .section-h{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin:34px 0 6px;letter-spacing:-0.3px}
-  .section-sub{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-  .video-wrap{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:12px 0;background:#060A10}
-  .video-wrap video{width:100%;display:block}
-
-  /* ENGAGE: SHARE + REACTIONS */
-  .engage-section{margin-top:48px;padding-top:22px;border-top:1px solid var(--border)}
-  .engage-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-  .share-buttons{display:flex;flex-wrap:wrap;gap:10px}
-  .share-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--light);text-decoration:none;cursor:pointer;font-family:'Inter',sans-serif;transition:border-color 0.2s,opacity 0.2s}
-  .share-btn:hover{opacity:0.85}
-  .share-btn.native{border-color:var(--pink);color:var(--pink);background:#EC489914}
-  .share-btn.native.copied{border-color:var(--green);color:var(--green);background:#22C55E14}
-  .share-btn.x{color:var(--white)}
-  .share-btn.linkedin{border-color:#00A1E060;color:var(--blue)}
-  .giscus-wrap{margin-top:22px}
-</style>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/style.css">
+<meta name="description" content="Grab a Lightning Web Component from a GitHub repo and get it live on a record page -- no git knowledge needed, Claude does the work.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Install the Confetti LWC from GitHub · Mia's Admin Playbook">
+<meta property="og:description" content="Grab a Lightning Web Component from a GitHub repo and get it live on a record page -- no git knowledge needed, Claude does the work.">
+<meta property="og:url" content="https://paceymia.github.io/Salesforce-Guides/guides/confetti-lwc-install.html">
+<meta property="og:site_name" content="Mia's Salesforce Guides">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Install the Confetti LWC from GitHub · Mia's Admin Playbook">
+<meta name="twitter:description" content="Grab a Lightning Web Component from a GitHub repo and get it live on a record page -- no git knowledge needed, Claude does the work.">
 </head>
 <body>
 
@@ -98,6 +23,7 @@
 <div class="doc-tag">Bonus Guide · GitHub · LWC Install</div>
 <h1>Install the Confetti LWC<br><span>from GitHub</span></h1>
 <p class="subtitle">No git knowledge required. No command-line typing. <strong>Claude does the work</strong> — you just paste a folder path, approve a few prompts, and drag-and-drop to finish.</p>
+<div class="last-updated">Updated Jul 10, 2026</div>
 
 <div class="section-h" style="margin-top:0">See it in action</div>
 <p class="section-sub">The whole install, start to finish — download, prompt, approvals, drag-and-drop, confetti.</p>
