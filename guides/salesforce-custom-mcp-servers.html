@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom MCP Servers in Salesforce Setup Guide · Mia's Admin Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<a href="../" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);text-decoration:none;margin-bottom:18px">← All guides</a>
+<div class="doc-tag">Admin Setup Guide · MCP · Custom Servers</div>
+<h1>Custom MCP Servers<br><span>expose your own Apex, Flows & REST to Claude</span></h1>
+<p class="subtitle">The standard hosted MCP servers only give Claude generic CRUD. This guide covers building your <strong>own</strong> MCP server — bundling your Apex actions, Flows, and REST endpoints (plus any standard tools you want alongside them) under a single URL Claude can call.<br>Companion to the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">Salesforce MCP Server → Claude Code guide</a> — do that one first if you haven't, since custom servers reuse the same permission set and External Client App.</p>
+
+<div class="callout callout-danger" style="margin-bottom:28px">
+  <span class="callout-label">⚠ Before you start</span>
+  Do this in a <strong>Developer Edition org or a Sandbox</strong> — never your production org. A custom server can expose whatever Apex or Flow logic you point it at, so treat every tool you add the same way you'd treat any other integration user.<br><br>
+  You'll need <strong>Salesforce Hosted MCP Servers</strong> enabled (Setup → <code>User Interface</code> → <strong>Enable MCP Service (Beta)</strong>, same switch as the companion guide) and the <code>MCP Client User</code> permission set from Phase 2 of that guide.
+</div>
+
+<!-- PHASE NAV -->
+<div class="phase-nav">
+  <div class="phase-nav-item p1"><span class="phase-num">1</span>Create the<br>Server Shell</div>
+  <div class="phase-nav-item p2"><span class="phase-num">2</span>Add Your<br>Own Tools</div>
+  <div class="phase-nav-item p3"><span class="phase-num">3</span>Bundle in<br>Standard Tools</div>
+  <div class="phase-nav-item p4"><span class="phase-num">4</span>Activate<br>& Grant Access</div>
+  <div class="phase-nav-item p5"><span class="phase-num">5</span>Test It</div>
+</div>
+
+<!-- ═══ PHASE 1 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#00A1E018;color:var(--blue)">1</div>
+    <div>
+      <div class="phase-title">Create the Custom Server Shell</div>
+      <div class="phase-desc">An empty container you'll fill with tools in the next phase. <span class="time-tag time-blue">~2 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">Custom vs. standard servers</span>
+    Standard servers (<code>sobject-reads</code>, <code>sobject-all</code>, etc.) are Salesforce's pre-built generic CRUD tools. A custom server is one <strong>you</strong> assemble — your own Apex actions, your own Flows, your own REST endpoints, optionally mixed with tools borrowed from the standard servers. Same OAuth model, same activation flow, just a different set of tools under the URL.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">1</div>
+      <div class="step-content">
+        <div class="step-title">Open MCP Servers and start a new one</div>
+        <div class="step-body">
+          <p>In Setup Quick Find, search <code>MCP Servers</code> and open it — the same "MCP Servers" area (under <strong>API Catalog</strong>) that lists the standard Salesforce Servers also has the option to build your own. Click <strong>Create Salesforce MCP Server</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#00A1E018;color:var(--blue)">2</div>
+      <div class="step-content">
+        <div class="step-title">Name it and write a real description</div>
+        <div class="step-body">
+          <p>Label: something specific, e.g. <code>Custom Sales Tools</code> (the API Name auto-populates, e.g. <code>CustomSalesTools</code>). Description: <em>"A custom MCP server with sales tools."</em> — or whatever actually describes what's inside.</p>
+          <p>Click <strong>Create</strong>. You now have an empty server ready for tools.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 2 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F2652218;color:var(--orange)">2</div>
+    <div>
+      <div class="phase-title">Add Your Own Tools</div>
+      <div class="phase-desc">Turn Apex you've already written — or Flows you've already built — into tools Claude can call. <span class="time-tag time-orange">~10 min</span></div>
+    </div>
+  </div>
+
+  <div class="ui-mock" style="padding:0;overflow-x:auto">
+    <table class="mcp-table">
+      <tr><th>Asset type</th><th>What it is</th><th>Best for</th></tr>
+      <tr><td>Apex Invocable Action</td><td>An Apex method with <code>@InvocableMethod</code></td><td>Multi-step or complex business logic</td></tr>
+      <tr><td>Autolaunched Flow</td><td>Declarative automation you've already built</td><td>Reusing existing automation, no code</td></tr>
+      <tr><td><code>@AuraEnabled</code> method</td><td>An existing Lightning component controller method</td><td>Logic already wired into a component</td></tr>
+      <tr><td>Apex REST endpoint</td><td>A class with <code>@RestResource</code></td><td>Integrations with an existing REST contract</td></tr>
+      <tr><td>API Catalog endpoint</td><td>Any REST API registered in your API Catalog</td><td>Third-party or platform APIs already catalogued</td></tr>
+    </table>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">1</div>
+      <div class="step-content">
+        <div class="step-title">Add a tool from the server page</div>
+        <div class="step-body">
+          <p>On your new server, click <strong>Add Server Assets → Add Tools</strong>. Use the type dropdown to switch between <strong>Apex actions</strong> and <strong>Flows</strong> (and the other asset types above), then pick the specific action, Flow, or endpoint you want to expose.</p>
+          <p>Click <strong>Add Tool</strong> for each one, then <strong>Save</strong>. Repeat for every tool you want on this server — e.g. an Apex action like <code>Create Account Sync Meeting Task</code> alongside a Flow like <code>Account Health Check Calculator</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F2652218;color:var(--orange)">2</div>
+      <div class="step-content">
+        <div class="step-title">Write descriptions like Claude is reading them — because it is</div>
+        <div class="step-body">
+          <p>Whatever description sits on the underlying Apex method, Flow, or REST endpoint is what Claude sees when it's deciding which tool to call. Vague names and blank descriptions mean Claude either picks the wrong tool or ignores it entirely.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">Why this matters</span>
+            Clear, specific descriptions help AI clients select the right tool at the right time. Write them the way you'd explain the tool to a new hire, not the way you'd name a variable.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 3 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#8B5CF618;color:var(--purple)">3</div>
+    <div>
+      <div class="phase-title">Bundle in Standard Tools (Optional)</div>
+      <div class="phase-desc">Mix generic CRUD from the standard servers in alongside your custom logic, all under one URL. <span class="time-tag time-purple">~3 min</span></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip" style="margin-bottom:16px">
+    <span class="callout-label">Why bother?</span>
+    Without this, Claude needs two separate MCP connections — one for your custom tools, one for basic record lookups. Bundling a few standard tools in means one connection covers both, which is one less thing to configure on the Claude Code / Claude chat side.
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#8B5CF618;color:var(--purple)">1</div>
+      <div class="step-content">
+        <div class="step-title">Borrow tools from a standard server</div>
+        <div class="step-body">
+          <p>Click <strong>Add Server Assets → Add from Server</strong>, pick a standard server (e.g. <code>sobject-reads</code>), and add the specific tools you want — for example <strong>Query Records (SOQL)</strong> and <strong>Search Across Objects (SOSL)</strong>. Click <strong>Save</strong>.</p>
+          <p>These sit alongside your Apex- and Flow-backed tools from Phase 2 — Claude sees one server, one URL, one set of tools.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 4 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#22C55E18;color:var(--green)">4</div>
+    <div>
+      <div class="phase-title">Activate and Grant Access</div>
+      <div class="phase-desc">Flip it on, grab the URL, and make sure the authenticating user can actually run what you built. <span class="time-tag time-green">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">1</div>
+      <div class="step-content">
+        <div class="step-title">Activate and copy the Server URL</div>
+        <div class="step-body">
+          <p>Click <strong>Activate</strong>. The Server URL for a custom server looks like:</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Server URL — copy this</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/custom/CustomSalesTools</span>
+          </div>
+          <p>For a sandbox or scratch org, this likely follows the same <code>sandbox/</code> prefix pattern used by the standard servers — check the Details tab on your activated server for the exact URL rather than assuming.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#22C55E18;color:var(--green)">2</div>
+      <div class="step-content">
+        <div class="step-title">Give the running user access to what's inside</div>
+        <div class="step-body">
+          <p>Activating the server and having <code>API Enabled</code> isn't enough on its own — whoever authenticates also needs ordinary access to the Apex classes and Flows you added: Apex Class Access for each Invocable Action or <code>@AuraEnabled</code> controller, and Flow access for each Autolaunched Flow.</p>
+          <div class="callout callout-warn">
+            <span class="callout-label">⚠ Add this to the same permission set</span>
+            Go back to the <code>MCP Client User</code> permission set from the companion guide and add Apex Class Access / Flow Access for everything you exposed in Phase 2. Skip this and the tool will show up in the list but fail — or silently return nothing — when Claude actually calls it.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PHASE 5 ═══ -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#F59E0B18;color:var(--amber)">5</div>
+    <div>
+      <div class="phase-title">Test It</div>
+      <div class="phase-desc">Check the tools work before you point a real Claude session at them. <span class="time-tag time-amber">~5 min</span></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">1</div>
+      <div class="step-content">
+        <div class="step-title">Try it in the Headless 360 Playground first</div>
+        <div class="step-body">
+          <p>Open the Headless 360 Playground, go to the <strong>Servers</strong> tab, paste your Server URL into the <strong>URL</strong> field, and click <strong>Add</strong>, then <strong>Test</strong>. You should see every tool you added in Phases 2 and 3 listed out — that confirms the server itself is wired up correctly, before Claude is even involved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num" style="background:#F59E0B18;color:var(--amber)">2</div>
+      <div class="step-content">
+        <div class="step-title">Connect it to Claude Code or Claude</div>
+        <div class="step-body">
+          <p>Same process as the companion guide — just swap in this server's URL instead of a standard one. For Claude Code: <code>claude mcp add</code> with this Server URL and your existing Consumer Key (Phase 5 of that guide). For the Claude chat app: paste this URL into your custom connector's Server URL field instead (Phase 6 of that guide).</p>
+          <div class="callout callout-success">
+            <span class="callout-label">✓ How to know it's working</span>
+            Ask Claude to use one of your custom tools by describing what it does — e.g. <em>"Check the account health for Arroyo Medical Group"</em> or <em>"Create a sync meeting for that account."</em> Then go verify it in your org: the health score or the new Task under Open Activities should actually be there, not just described back to you.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<div class="phase">
+  <div class="phase-header">
+    <div class="phase-badge" style="background:#EF444418;color:var(--red)">?</div>
+    <div>
+      <div class="phase-title">Common problems</div>
+      <div class="phase-desc">Issues specific to custom servers, not covered in the companion guide's troubleshooting.</div>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">My Apex action or Flow doesn't show up in the "Add Tools" dropdown</div>
+    <div class="trouble-a">For Apex, the method needs the <code>@InvocableMethod</code> annotation — plain public methods won't appear. For Flow, it needs to be an <strong>Autolaunched Flow</strong> that's <strong>Active</strong> — Screen Flows and inactive versions won't show up either.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">The tool is listed and the server shows Connected, but calling it fails or returns nothing</div>
+    <div class="trouble-a">Almost always missing access, not a broken tool. Check that the <code>MCP Client User</code> permission set actually grants Apex Class Access to the class behind the action (or Flow access for a Flow) — being able to see the tool in the server config and being able to <em>run</em> it as the authenticated user are two different permissions.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">An Apex REST tool returns data the logged-in user shouldn't be able to see</div>
+    <div class="trouble-a">Check whether the <code>@RestResource</code> class is declared <code>with sharing</code>. Apex REST classes default to <code>without sharing</code> unless you say otherwise, which means the tool can quietly bypass the record-level access you're relying on elsewhere in this setup.</div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-q">Standard tools I added in Phase 3 aren't appearing next to my custom ones</div>
+    <div class="trouble-a">Confirm you used <strong>Add from Server</strong> (not <strong>Add Tools</strong>, which is for your own Apex/Flow assets) and that you clicked <strong>Save</strong> after adding them — each asset type saves independently on this page.</div>
+  </div>
+</div>
+
+<!-- SUCCESS BANNER -->
+<div class="success-banner">
+  <h2>Your custom server is live and Claude can use your own logic.</h2>
+  <p>Your Apex actions and Flows are exposed as real tools, the running user has access to what's behind them, and Claude Code (or Claude's chat app) can call your business logic — not just generic CRUD.<br>Start with read-only or low-risk tools, then add anything that writes once you trust the flow.</p>
+</div>
+
+<div class="callout callout-tip" style="margin-top:24px">
+  <span class="callout-label">Where this came from</span>
+  Based on the "Create a Custom MCP Server" exercise from Salesforce's <a href="https://developer.salesforce.com/workshops/headless-360-workshop" style="color:var(--light)">Headless 360 Workshop</a> — I ran this as part of a session for Sydney last week, alongside the <a href="salesforce-mcp-claude-code-setup.html" style="color:var(--light)">companion Claude Code / Claude chat setup guide</a>.
+</div>
+
+<div class="engage-section">
+  <span class="engage-label">Found this useful?</span>
+  <div class="share-buttons">
+    <button class="share-btn native" type="button" id="nativeShareBtn">🔗 Share this page</button>
+    <a class="share-btn x" id="shareXBtn" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer">𝕏 Share on X</a>
+    <a class="share-btn linkedin" id="shareLinkedInBtn" href="https://www.linkedin.com/sharing/share-offsite/" target="_blank" rel="noopener noreferrer">in Share on LinkedIn</a>
+  </div>
+  <div class="giscus-wrap">
+    <script src="https://giscus.app/client.js"
+      data-repo="PaceyMia/Salesforce-Guides"
+      data-repo-id="R_kgDOSzW9FA"
+      data-category="Announcements"
+      data-category-id="DIC_kwDOSzW9FM4DA4N4"
+      data-mapping="pathname"
+      data-strict="0"
+      data-reactions-enabled="1"
+      data-emit-metadata="0"
+      data-input-position="top"
+      data-theme="dark"
+      data-lang="en"
+      data-loading="lazy"
+      crossorigin="anonymous"
+      async>
+    </script>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>Mia</strong><br>
+  Adapted from Salesforce's <a href="https://developer.salesforce.com/workshops/headless-360-workshop" style="color:var(--light)">Headless 360 Workshop</a> — I ran this session for Sydney last week.<br>
+  <br>
+  ⚠️ This guide is for connecting to a <strong>Developer Edition or Sandbox org only</strong>. Never point a custom server built here at production without a full security review of every Apex class and Flow it exposes.
+</div>
+
+<script>
+(function(){
+  var shareUrl = location.href;
+  var shareTitle = document.title;
+  var xBtn = document.getElementById('shareXBtn');
+  var liBtn = document.getElementById('shareLinkedInBtn');
+  var nativeBtn = document.getElementById('nativeShareBtn');
+  if (xBtn) xBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(shareTitle) + '&url=' + encodeURIComponent(shareUrl);
+  if (liBtn) liBtn.href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(shareUrl);
+  if (nativeBtn) {
+    nativeBtn.addEventListener('click', function(){
+      if (navigator.share) {
+        navigator.share({ title: shareTitle, url: shareUrl }).catch(function(){});
+        return;
+      }
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          var original = nativeBtn.textContent;
+          nativeBtn.textContent = '✓ Link copied';
+          nativeBtn.classList.add('copied');
+          setTimeout(function(){ nativeBtn.textContent = original; nativeBtn.classList.remove('copied'); }, 1800);
+        });
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
