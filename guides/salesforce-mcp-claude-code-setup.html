@@ -138,12 +138,13 @@
 
   <div class="ui-mock" style="padding:0;overflow-x:auto">
     <table class="mcp-table">
-      <tr><th>Standard server</th><th>What it exposes</th><th>Tools</th></tr>
-      <tr><td><code>sobject-all</code></td><td>Full CRUD — create, read, update, delete, query and search — across all objects</td><td>11 + 2 prompts</td></tr>
-      <tr><td><code>sobject-reads</code></td><td>Read and query only, no mutations</td><td>6</td></tr>
-      <tr><td><code>sobject-mutations</code></td><td>Create and update only, no delete</td><td>9</td></tr>
-      <tr><td><code>sobject-deletes</code></td><td>Delete operations only</td><td>8</td></tr>
-      <tr><td><code>salesforce-api-context</code></td><td>Lets Claude inspect your org's objects, fields and relationships without touching data</td><td>6</td></tr>
+      <tr><th>Standard server</th><th>Server name in URL</th><th>What it exposes</th></tr>
+      <tr><td>SObject all</td><td><code>platform/sobject-all</code></td><td>Full CRUD — create, read, update, delete, query and search — across all objects</td></tr>
+      <tr><td>SObject reads</td><td><code>platform/sobject-reads</code></td><td>Read and query only, no mutations</td></tr>
+      <tr><td>SObject mutations</td><td><code>platform/sobject-mutations</code></td><td>Create and update only, no delete</td></tr>
+      <tr><td>SObject deletes</td><td><code>platform/sobject-deletes</code></td><td>Delete operations only</td></tr>
+      <tr><td>Salesforce API context</td><td><code>platform/salesforce-api-context</code></td><td>Lets Claude inspect your org's objects, fields and relationships without touching data</td></tr>
+      <tr><td>Metadata experts</td><td><code>platform/metadata-experts</code></td><td>Beta — tools for generating and managing Salesforce metadata (fields, objects, etc.)</td></tr>
     </table>
   </div>
 
@@ -168,14 +169,18 @@
     <div class="step-header">
       <div class="step-num" style="background:#8B5CF618;color:var(--purple)">2</div>
       <div class="step-content">
-        <div class="step-title">Activate it and copy the Server URL</div>
+        <div class="step-title">Activate it and build the Server URL</div>
         <div class="step-body">
-          <p>Click <strong>Activate</strong>. Once active, copy the <strong>Server URL</strong> shown on the Details tab — it looks like:</p>
+          <p>Click <strong>Activate</strong>. The URL you'll actually connect Claude to isn't something you copy from the page — it's a fixed pattern built from the "Server name in URL" column above. Production orgs (including Developer Edition) and sandbox/scratch orgs use different roots:</p>
           <div class="cmd-block">
-            <span class="cmd-label">Server URL — copy this</span>
-            <span class="cmd-line">https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all</span>
+            <span class="cmd-label">Production orgs (incl. Developer Edition)</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/platform/sobject-all</span>
           </div>
-          <p>You'll paste this into Claude Code in Phase 5. Keep this tab open, or paste it into a notes file for now.</p>
+          <div class="cmd-block">
+            <span class="cmd-label">Sandbox or scratch orgs</span>
+            <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/sandbox/platform/sobject-all</span>
+          </div>
+          <p>Swap <code>platform/sobject-all</code> for whichever server you activated. You'll use this same URL in both Phase 5 (Claude Code) and Phase 6 (Claude chat app) — paste it into a notes file for now.</p>
         </div>
       </div>
     </div>
@@ -330,7 +335,7 @@
             <span class="cmd-label">Terminal</span>
             <span class="cmd-line">claude mcp add --scope project --transport http \</span>
             <span class="cmd-line">  --callback-port 8080 --client-id YOUR_CONSUMER_KEY \</span>
-            <span class="cmd-line">  salesforce https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all</span>
+            <span class="cmd-line">  salesforce https://api.salesforce.com/platform/mcp/v1/platform/sobject-all</span>
           </div>
           <p>Swap in the <strong>Server URL</strong> from Phase 3 and the <strong>Consumer Key</strong> from Phase 4. Make sure <code>--callback-port</code> matches the port you set in the Callback URL.</p>
           <div class="callout callout-tip">
@@ -402,7 +407,7 @@
   "mcpServers": {
     "salesforce": {
       "type": "http",
-      "url": "https://your-instance.my.salesforce.com/platform/mcp/v1/alpha/servers/sobject-all",
+      "url": "https://api.salesforce.com/platform/mcp/v1/platform/sobject-all",
       "oauth": {
         "clientId": "YOUR_CONSUMER_KEY",
         "callbackPort": 8080
@@ -452,7 +457,7 @@
       <div class="step-content">
         <div class="step-title">Enter the server URL</div>
         <div class="step-body">
-          <p>Substitute the server name from Phase 3 into the format for your org type:</p>
+          <p>Use the same URL you built in Phase 3 — substitute the "Server name in URL" value from that table into the format for your org type:</p>
           <div class="cmd-block">
             <span class="cmd-label">All production orgs</span>
             <span class="cmd-line">https://api.salesforce.com/platform/mcp/v1/SERVER-NAME</span>
@@ -528,7 +533,7 @@
 
   <div class="trouble-item">
     <div class="trouble-q">Claude says it can't reach the tool / times out</div>
-    <div class="trouble-a">Double-check the Server URL from Phase 3 was copied in full and the standard server is still <strong>Activated</strong> in Setup → MCP Servers. Also confirm your org's IP restrictions on the ECA are set to <strong>Relax IP Restrictions</strong> — a strict IP range will silently block requests coming from your machine.</div>
+    <div class="trouble-a">Double-check the Server URL from Phase 3 was built correctly (right server name, right <code>sandbox/</code> prefix for non-production orgs) and the standard server is still <strong>Activated</strong> in Setup → MCP Servers. Also confirm your org's IP restrictions on the ECA are set to <strong>Relax IP Restrictions</strong> — a strict IP range will silently block requests coming from your machine.</div>
   </div>
 
   <div class="trouble-item">
