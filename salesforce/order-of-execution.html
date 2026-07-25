@@ -154,17 +154,17 @@
 </div>
 
 <div class="phase-nav">
-  <div class="phase-nav-item pL"><span class="phase-num">1–2</span>Load</div>
-  <div class="phase-nav-item pB"><span class="phase-num">3–6</span>Before save</div>
-  <div class="phase-nav-item pA"><span class="phase-num">7–18</span>Saved &amp; after</div>
-  <div class="phase-nav-item pC"><span class="phase-num">19</span>Commit</div>
-  <div class="phase-nav-item pY"><span class="phase-num">20</span>Async</div>
+  <a class="phase-nav-item pL" href="#phase-load-section"><span class="phase-num">1–2</span>Load</a>
+  <a class="phase-nav-item pB" href="#phase-before-section"><span class="phase-num">3–6</span>Before save</a>
+  <a class="phase-nav-item pA" href="#phase-after-section"><span class="phase-num">7–18</span>Saved &amp; after</a>
+  <a class="phase-nav-item pC" href="#phase-commit-section"><span class="phase-num">19</span>Commit</a>
+  <a class="phase-nav-item pY" href="#phase-async-section"><span class="phase-num">20</span>Async</a>
 </div>
 <p class="expand-hint">👆 Tap a checkpoint to expand it. 🚩 = the steps most often behind automation conflicts.</p>
 
-<div class="phase">
+<div class="phase" id="phase-load-section">
   <div class="phase-header">
-    <div class="phase-badge" style="background:#4B607A18">🛫</div>
+    <div class="phase-badge" style="background:#6B84A318">🛫</div>
     <div>
       <div class="phase-title">Arriving at the airport</div>
       <div class="phase-desc">Steps 1–2 · The record is pulled and your new values are loaded before anything runs.</div>
@@ -173,7 +173,7 @@
   <div id="phase-load"></div>
 </div>
 
-<div class="phase">
+<div class="phase" id="phase-before-section">
   <div class="phase-header">
     <div class="phase-badge" style="background:#00A1E018">🧳</div>
     <div>
@@ -184,7 +184,7 @@
   <div id="phase-before"></div>
 </div>
 
-<div class="phase">
+<div class="phase" id="phase-after-section">
   <div class="phase-header">
     <div class="phase-badge" style="background:#F2652218">🎫</div>
     <div>
@@ -195,7 +195,7 @@
   <div id="phase-after"></div>
 </div>
 
-<div class="phase">
+<div class="phase" id="phase-commit-section">
   <div class="phase-header">
     <div class="phase-badge" style="background:#22C55E18">✈️</div>
     <div>
@@ -206,7 +206,7 @@
   <div id="phase-commit"></div>
 </div>
 
-<div class="phase">
+<div class="phase" id="phase-async-section">
   <div class="phase-header">
     <div class="phase-badge" style="background:#8B5CF618">🧭</div>
     <div>
@@ -479,6 +479,26 @@ buildQref();
       }
     });
   }
+})();
+</script>
+<script>
+(function(){
+  var navItems = document.querySelectorAll(".phase-nav-item");
+  if(!navItems.length) return;
+  var sections = Array.prototype.map.call(navItems, function(a){ return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+  if(!sections.length || !("IntersectionObserver" in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting) return;
+      var targetHref = "#" + entry.target.id;
+      var item = null;
+      navItems.forEach(function(n){ if(n.getAttribute("href") === targetHref) item = n; });
+      if(!item) return;
+      navItems.forEach(function(n){ n.classList.remove("active"); });
+      item.classList.add("active");
+    });
+  }, { rootMargin: "-20% 0px -70% 0px" });
+  sections.forEach(function(s){ io.observe(s); });
 })();
 </script>
 </body>

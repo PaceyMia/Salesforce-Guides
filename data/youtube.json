@@ -1,0 +1,63 @@
+{
+  "channel": "@paceyourself_",
+  "channelUrl": "https://www.youtube.com/@paceyourself_",
+  "fetchedAt": "2026-07-25T03:33:55.938Z",
+  "videos": [
+    {
+      "id": "gvDhoKSU0Vo",
+      "title": "Connect Claude to Salesforce with MCP Server (Step by Step)",
+      "url": "https://www.youtube.com/watch?v=gvDhoKSU0Vo",
+      "thumbnail": "https://i4.ytimg.com/vi/gvDhoKSU0Vo/hqdefault.jpg",
+      "published": "2026-07-19T08:44:15+00:00"
+    },
+    {
+      "id": "Yv3CYN5OqnY",
+      "title": "Build a Salesforce LWC in Claude Code and Claude Design | Part 2",
+      "url": "https://www.youtube.com/watch?v=Yv3CYN5OqnY",
+      "thumbnail": "https://i2.ytimg.com/vi/Yv3CYN5OqnY/hqdefault.jpg",
+      "published": "2026-07-06T10:27:26+00:00"
+    },
+    {
+      "id": "cjqEsHX97gc",
+      "title": "How I Use Claude Code to Build a Salesforce LWC",
+      "url": "https://www.youtube.com/watch?v=cjqEsHX97gc",
+      "thumbnail": "https://i4.ytimg.com/vi/cjqEsHX97gc/hqdefault.jpg",
+      "published": "2026-06-30T09:06:45+00:00"
+    },
+    {
+      "id": "RmEhylXRvgg",
+      "title": "User Access Policies That Run Themselves | Work Smarter as a Salesforce Admin",
+      "url": "https://www.youtube.com/watch?v=RmEhylXRvgg",
+      "thumbnail": "https://i3.ytimg.com/vi/RmEhylXRvgg/hqdefault.jpg",
+      "published": "2025-12-29T20:00:33+00:00"
+    },
+    {
+      "id": "mWlISJf7-Cg",
+      "title": "How to Count Records in a Collection Using the Assignment Element in Salesforce Flow",
+      "url": "https://www.youtube.com/watch?v=mWlISJf7-Cg",
+      "thumbnail": "https://i2.ytimg.com/vi/mWlISJf7-Cg/hqdefault.jpg",
+      "published": "2025-12-09T00:30:48+00:00"
+    },
+    {
+      "id": "OxRHDQdjlJo",
+      "title": "Salesforce Custom Permissions: Control Page Layout Visibility",
+      "url": "https://www.youtube.com/watch?v=OxRHDQdjlJo",
+      "thumbnail": "https://i4.ytimg.com/vi/OxRHDQdjlJo/hqdefault.jpg",
+      "published": "2025-12-01T22:30:12+00:00"
+    },
+    {
+      "id": "cG7NSp-3azg",
+      "title": "Salesforce Platform Events Tutorial: Track & Store Previous Account-Contact Relationships",
+      "url": "https://www.youtube.com/watch?v=cG7NSp-3azg",
+      "thumbnail": "https://i4.ytimg.com/vi/cG7NSp-3azg/hqdefault.jpg",
+      "published": "2025-11-12T03:30:27+00:00"
+    },
+    {
+      "id": "IAu0rUEVJrk",
+      "title": "Salesforce Admin Setup Step #1 Add an 18-Digit ID Field to Every Object",
+      "url": "https://www.youtube.com/watch?v=IAu0rUEVJrk",
+      "thumbnail": "https://i2.ytimg.com/vi/IAu0rUEVJrk/hqdefault.jpg",
+      "published": "2025-11-07T03:30:11+00:00"
+    }
+  ]
+}

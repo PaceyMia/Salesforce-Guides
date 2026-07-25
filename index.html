@@ -212,6 +212,13 @@
 
 <div class="no-results" id="noResults">No guides match that search. Try a different term or clear the filter.</div>
 
+<div class="yt-section">
+  <span class="engage-label">📺 Latest from YouTube</span>
+  <div class="yt-grid" id="ytGrid">
+    <div class="yt-empty">Loading recent videos…</div>
+  </div>
+</div>
+
 <div class="engage-section">
   <span class="engage-label">Found this useful?</span>
   <div class="share-buttons">
@@ -279,6 +286,76 @@
   });
 
   search.addEventListener('input', applyFilters);
+})();
+</script>
+
+<script>
+(function(){
+  // Most-specific pattern first — first match wins.
+  var GUIDES = [
+    { href: 'guides/confetti-lwc-install.html', title: 'Install the Confetti LWC from GitHub', pattern: /confetti/i },
+    { href: 'guides/worktree-create.html', title: 'Worktree Create', pattern: /worktree/i },
+    { href: 'guides/sandbox-seed.html', title: 'Sandbox Seed', pattern: /sandbox seed|seed.*sandbox/i },
+    { href: 'guides/code-review.html', title: 'Code Review — Two Lenses', pattern: /code review/i },
+    { href: 'guides/salesforce-custom-mcp-servers.html', title: 'Custom MCP Servers in Salesforce', pattern: /custom mcp/i },
+    { href: 'guides/salesforce-mcp-claude-code-setup.html', title: 'Salesforce MCP Server → Claude Code', pattern: /\bmcp\b/i },
+    { href: 'guides/brand-skill.html', title: 'Brand Skill', pattern: /brand skill|design system/i },
+    { href: 'salesforce/order-of-execution-map.html', title: 'Order of Execution — Overhead Map', pattern: /order of execution.*map|overhead map/i },
+    { href: 'salesforce/order-of-execution.html', title: 'Salesforce Order of Execution', pattern: /order of execution/i },
+    { href: 'guides/vscode-salesforce-claude-setup.html', title: 'VS Code + Salesforce + Claude', pattern: /vs code|vscode|visual studio code/i },
+    { href: 'guides/salesforce-build.html', title: 'Salesforce Build — Architecture Before Code', pattern: /build.*lwc|salesforce build/i }
+  ];
+
+  function matchGuide(videoTitle){
+    for (var i = 0; i < GUIDES.length; i++) {
+      if (GUIDES[i].pattern.test(videoTitle)) return GUIDES[i];
+    }
+    return null;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function formatDate(iso){
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  var grid = document.getElementById('ytGrid');
+  if (!grid) return;
+
+  fetch('data/youtube.json')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      var videos = data && data.videos ? data.videos : [];
+      if (!videos.length) {
+        grid.innerHTML = '<div class="yt-empty">No videos loaded yet — check back soon.</div>';
+        return;
+      }
+      grid.innerHTML = videos.map(function(v){
+        var guide = matchGuide(v.title || '');
+        var relatedHtml = guide
+          ? '<a class="yt-related" href="' + guide.href + '">🔗 Related guide: ' + escapeHtml(guide.title) + '</a>'
+          : '';
+        return '<div class="yt-card">'
+          + '<a href="' + v.url + '" target="_blank" rel="noopener noreferrer" style="display:flex;gap:14px;flex:1;text-decoration:none;color:inherit;min-width:0">'
+          + '<img class="yt-thumb" src="' + v.thumbnail + '" alt="" loading="lazy">'
+          + '<div class="yt-body">'
+          + '<div class="yt-title">' + escapeHtml(v.title) + '</div>'
+          + '<div class="yt-meta">' + formatDate(v.published) + '</div>'
+          + '</div></a>'
+          + relatedHtml
+          + '</div>';
+      }).join('');
+    })
+    .catch(function(){
+      grid.innerHTML = '<div class="yt-empty">No videos loaded yet — check back soon.</div>';
+    });
 })();
 </script>
 
