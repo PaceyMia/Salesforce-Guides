@@ -2,7 +2,7 @@ name: Fetch latest YouTube uploads
 
 on:
   schedule:
-    - cron: '17 3 * * *' # daily
+    - cron: '17 3 * * 1' # weekly, Monday
   workflow_dispatch: {}
 
 permissions:
