@@ -23,7 +23,7 @@
 <div class="doc-tag">Bonus Guide · GitHub · LWC Install</div>
 <h1>Install the Confetti LWC<br><span>from GitHub</span></h1>
 <p class="subtitle">No git knowledge required. No command-line typing. <strong>Claude does the work</strong> — you just paste a folder path, approve a few prompts, and drag-and-drop to finish.</p>
-<div class="last-updated">Updated Jul 10, 2026</div>
+<div class="last-updated">Updated Sep 2, 2026</div>
 
 <div class="section-h" style="margin-top:0">See it in action</div>
 <p class="section-sub">The whole install, start to finish — download, prompt, approvals, drag-and-drop, confetti.</p>
@@ -113,7 +113,11 @@
         <div class="step-title">Drag and drop to finish — in Salesforce, not VS Code</div>
         <div class="step-body">
           <p>Once Claude confirms the deploy succeeded, go to your Salesforce org. Open any record page in <strong>App Builder</strong> (Setup → App Builder, or the gear icon on a record → Edit Page).</p>
-          <p>Find <strong>Custom Confetti</strong> in the component list on the left. Drag it onto the page. Fill in three boxes — the object API name, the field to watch, and the value that triggers the confetti. Save and activate.</p>
+          <p>Find <strong>Custom Confetti</strong> in the component list on the left. Drag it onto the page. Fill in three properties: <strong>Field API Path</strong> (the object and field together, e.g. <code>Opportunity.StageName</code>), <strong>Trigger Value</strong> (e.g. <code>Closed Won</code>), and <strong>Confetti Theme</strong> — paste the theme's <strong>API Name</strong>, not its Label (e.g. <code>Green_Yellow</code>, not "Green Yellow"). Save and activate.</p>
+          <div class="callout callout-tip">
+            <span class="callout-label">A word from an Aussie</span>
+            It's <strong>Colour</strong>. Not Color. Every field, every label, every theme in this build spells it properly — six letters, one very important U. If your fingers just autocorrected that out of habit, put it back. 🇦🇺
+          </div>
           <div class="callout callout-success">
             <span class="callout-label">Done</span>
             Go to a record, set your field to the trigger value, and watch it go. Total effort: paste a folder path, approve three prompts, drag-and-drop.
