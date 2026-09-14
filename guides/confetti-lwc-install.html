@@ -52,12 +52,17 @@
     <div class="step-header">
       <div class="step-num" style="background:#EC489918;color:var(--pink)">1</div>
       <div class="step-content">
-        <div class="step-title">Download the code from GitHub — no git required</div>
+        <div class="step-title">Get the code from the Salesforce Labs repo</div>
         <div class="step-body">
-          <p>Go to the <a href="https://github.com/PaceyMia/Custom-Confetti" style="color:var(--pink)">Custom Confetti GitHub repo</a>. Click the green <strong>Code</strong> button then <strong>Download ZIP</strong>. Save it somewhere you can find it (Downloads is fine). Unzip it.</p>
+          <p>Custom Confetti now lives in the <a href="https://github.com/TrailblazerLabs/Custom-Confetti" style="color:var(--pink)">Trailblazer Labs GitHub repo</a> — its Quick Start Guide lists two official ways in:</p>
+          <div class="ui-mock">
+            <span class="ui-mock-label">Two install paths from the repo's README</span>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">1</div><span><strong>1-Click Install</strong> — the repo's <a href="https://githubsfdeploy.herokuapp.com/?owner=TrailblazerLabs&amp;repo=Custom-Confetti" style="color:var(--blue)">Deploy to Salesforce</a> button pushes it straight to a sandbox or Developer Edition org. No CLI, no Claude, no local files at all.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">2</div><span><strong>Salesforce CLI</strong> — <code>git clone https://github.com/TrailblazerLabs/Custom-Confetti.git</code>, then <code>sf project deploy start --target-org your-alias --source-dir force-app</code>.</span></div>
+          </div>
           <div class="callout callout-tip">
-            <span class="callout-label">That is the only step you do yourself</span>
-            Everything after this — moving files, running the deploy, wiring it up — Claude handles.
+            <span class="callout-label">Which one this guide uses</span>
+            If you just want it live with zero terminal typing, use the <a href="https://githubsfdeploy.herokuapp.com/?owner=TrailblazerLabs&amp;repo=Custom-Confetti" style="color:var(--pink)">1-Click Install</a> button above and skip straight to Step 4. If you'd rather have it inside your own project (so you can tweak the component), keep reading — the rest of this guide is the CLI path, with Claude running the git and CLI commands for you.
           </div>
         </div>
       </div>
@@ -68,14 +73,13 @@
     <div class="step-header">
       <div class="step-num" style="background:#EC489918;color:var(--pink)">2</div>
       <div class="step-content">
-        <div class="step-title">Tell Claude where you put it</div>
+        <div class="step-title">Tell Claude to grab it</div>
         <div class="step-body">
-          <p>Open Claude Code (<code>Ctrl + Esc</code>) and paste this prompt — just swap in your actual folder path:</p>
+          <p>Open Claude Code (<code>Ctrl + Esc</code>) and paste this prompt as-is — no folder path or ZIP needed, Claude clones straight from GitHub:</p>
           <div class="cmd-block">
             <span class="cmd-label">Claude Code prompt</span>
-            <span class="cmd-line">I have downloaded and unzipped the confetti LWC from GitHub.</span>
-            <span class="cmd-line">The unzipped folder is at: C:\Users\YourName\Downloads\confetti-lwc-main</span>
-            <span class="cmd-line">Please copy the component files into this project and deploy to my connected org.</span>
+            <span class="cmd-line">Please clone https://github.com/TrailblazerLabs/Custom-Confetti.git into a temp folder,</span>
+            <span class="cmd-line">copy the component files into this project, and deploy to my connected org.</span>
           </div>
           <p style="margin-top:10px">Claude knows your project structure. It will move the four component parts — the confetti widget, helper code, settings object, and starter colour themes — into the right spots automatically.</p>
         </div>
@@ -93,13 +97,14 @@
           <p>In this specific install, each prompt maps to one safe action:</p>
           <div class="ui-mock">
             <span class="ui-mock-label">What each prompt is actually doing</span>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">1</div><span><code>sf org list</code> — checks which org is connected. Reads only, changes nothing.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">2</div><span><code>Copy-Item</code> — moves your downloaded files into the project folder. Stays entirely inside your own machine.</span></div>
-            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">3</div><span><code>sf project deploy start</code> — uploads the component to your already-connected org. Adds new pieces only, removes nothing.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#8B5CF620;color:var(--purple)">1</div><span><code>git clone</code> — pulls the public Trailblazer Labs repo down to a temp folder on your own machine. Reads only, changes nothing outside that folder.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#00A1E020;color:var(--blue)">2</div><span><code>sf org list</code> — checks which org is connected. Reads only, changes nothing.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#F2652220;color:var(--orange)">3</div><span><code>Copy-Item</code> — moves the cloned files into the project folder. Stays entirely inside your own machine.</span></div>
+            <div class="ui-mock-item"><div class="ui-mock-icon" style="background:#22C55E20;color:var(--green)">4</div><span><code>sf project deploy start</code> — uploads the component to your already-connected org. Adds new pieces only, removes nothing.</span></div>
           </div>
           <div class="callout callout-warn">
             <span class="callout-label">Good habit to keep</span>
-            It is safe to approve all three of these because each one acts only on your own downloaded files and your own connected org — nothing reaches outside that scope. That said, it is always worth a quick glance at what a prompt says before approving rather than auto-approving everything forever.
+            It is safe to approve all of these because each one acts only on the public Labs repo, your own machine, and your own connected org — nothing reaches outside that scope. That said, it is always worth a quick glance at what a prompt says before approving rather than auto-approving everything forever.
           </div>
         </div>
       </div>
