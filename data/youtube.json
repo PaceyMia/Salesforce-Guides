@@ -1,8 +1,15 @@
 {
   "channel": "@paceyourself_",
   "channelUrl": "https://www.youtube.com/@paceyourself_",
-  "fetchedAt": "2026-10-07T10:12:21.949Z",
+  "fetchedAt": "2026-10-08T10:31:18.757Z",
   "videos": [
+    {
+      "id": "VXA40R5UKCw",
+      "title": "Salesforce Flow Builder Tutorial: Stop Users Deleting Records",
+      "url": "https://www.youtube.com/watch?v=VXA40R5UKCw",
+      "thumbnail": "https://i3.ytimg.com/vi/VXA40R5UKCw/hqdefault.jpg",
+      "published": "2026-10-07T23:00:06+00:00"
+    },
     {
       "id": "gvDhoKSU0Vo",
       "title": "Salesforce MCP Server: Connect Claude Step by Step",
@@ -51,13 +58,6 @@
       "url": "https://www.youtube.com/watch?v=cG7NSp-3azg",
       "thumbnail": "https://i4.ytimg.com/vi/cG7NSp-3azg/hqdefault.jpg",
       "published": "2025-11-12T03:30:27+00:00"
-    },
-    {
-      "id": "IAu0rUEVJrk",
-      "title": "Salesforce Admin Setup Step #1 Add an 18-Digit ID Field to Every Object",
-      "url": "https://www.youtube.com/watch?v=IAu0rUEVJrk",
-      "thumbnail": "https://i2.ytimg.com/vi/IAu0rUEVJrk/hqdefault.jpg",
-      "published": "2025-11-07T03:30:11+00:00"
     }
   ]
 }
