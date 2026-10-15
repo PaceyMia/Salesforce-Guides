@@ -1,8 +1,15 @@
 {
   "channel": "@paceyourself_",
   "channelUrl": "https://www.youtube.com/@paceyourself_",
-  "fetchedAt": "2026-10-14T08:39:15.451Z",
+  "fetchedAt": "2026-10-15T08:14:30.013Z",
   "videos": [
+    {
+      "id": "ab4suEGTCLU",
+      "title": "Salesforce Flow Builder Tutorial: Roll-Up Summary on a Lookup (No Code)",
+      "url": "https://www.youtube.com/watch?v=ab4suEGTCLU",
+      "thumbnail": "https://i2.ytimg.com/vi/ab4suEGTCLU/hqdefault.jpg",
+      "published": "2026-10-14T23:00:13+00:00"
+    },
     {
       "id": "VXA40R5UKCw",
       "title": "Salesforce Flow Builder Tutorial: Stop Users Deleting Records",
@@ -51,13 +58,6 @@
       "url": "https://www.youtube.com/watch?v=OxRHDQdjlJo",
       "thumbnail": "https://i4.ytimg.com/vi/OxRHDQdjlJo/hqdefault.jpg",
       "published": "2025-12-01T22:30:12+00:00"
-    },
-    {
-      "id": "cG7NSp-3azg",
-      "title": "Salesforce Platform Events Tutorial: Track & Store Previous Account-Contact Relationships",
-      "url": "https://www.youtube.com/watch?v=cG7NSp-3azg",
-      "thumbnail": "https://i4.ytimg.com/vi/cG7NSp-3azg/hqdefault.jpg",
-      "published": "2025-11-12T03:30:27+00:00"
     }
   ]
 }
